@@ -46,11 +46,11 @@ public class Elemental_Blade extends RegisteredSkill
 		super(new Elemental_Blade_Handler(), MalaMMO_Skill.plugin.getConfig());
 		
 		addModifier("power", new LinearValue(25, 3));
-		addModifier("fire_power", new LinearValue(53, 8));
-		addModifier("ice_power", new LinearValue(40, 5));
-		addModifier("lightning_power", new LinearValue(82, 12));
-		addModifier("mana_power", new LinearValue(2.1, .1));
-		addModifier("cooldown", new LinearValue(59.5, -0.5));
+		addModifier("fire_power", new LinearValue(120, 20));
+		addModifier("ice_power", new LinearValue(72, 12));
+		addModifier("lightning_power", new LinearValue(60, 10));
+		addModifier("mana_power", new LinearValue(1.6, .1));
+		addModifier("cooldown", new LinearValue(90, 0));
 		addModifier("mana", new LinearValue(63, 3));
 		
 		skill = this;

@@ -39,9 +39,9 @@ public class Frost_Wave extends RegisteredSkill
 		super(new Frost_Wave_Handler(), MalaMMO_Skill.plugin.getConfig());
 
 		addModifier("distance", new LinearValue(10, 0.5, 10, 30));
-		addModifier("damage", new LinearValue(60, 10));
-		addModifier("cooldown", new LinearValue(15, 0));
-		addModifier("mana", new LinearValue(19, 5));
+		addModifier("damage", new LinearValue(82, 22));
+		addModifier("cooldown", new LinearValue(20, 0));
+		addModifier("mana", new LinearValue(48, 8));
 	}
 }
 

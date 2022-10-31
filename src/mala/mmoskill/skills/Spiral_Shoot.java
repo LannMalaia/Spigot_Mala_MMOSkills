@@ -41,8 +41,8 @@ public class Spiral_Shoot extends RegisteredSkill
 		addModifier("dash_damage", new LinearValue(21, 6));
 		addModifier("distance", new LinearValue(8.5, 0.5));
 		addModifier("fall_damage", new LinearValue(47, 7));
-		addModifier("cooldown", new LinearValue(0, 0));
-		addModifier("stamina", new LinearValue(21.5, 1.5));
+		addModifier("cooldown", new LinearValue(0.5, 0));
+		addModifier("stamina", new LinearValue(32.5, 2.5));
 	}
 }
 

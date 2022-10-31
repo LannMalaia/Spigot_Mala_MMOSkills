@@ -38,8 +38,8 @@ public class Burning_Zone extends RegisteredSkill
 
 		addModifier("damage", new LinearValue(14, 4));
 		addModifier("radius", new LinearValue(4, 0.3));
-		addModifier("cooldown", new LinearValue(30, -0.5));
-		addModifier("mana", new LinearValue(10, -.3, 3, 5));
+		addModifier("cooldown", new LinearValue(25, 0));
+		addModifier("mana", new LinearValue(22, 2));
 	}
 }
 

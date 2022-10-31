@@ -164,25 +164,25 @@ public class MalaMMO_Skill extends JavaPlugin
 			}
 			return true;
 		}
-		if (cmd.getName().equalsIgnoreCase("MM_AprilReset"))
-		{
-			if (args.length == 0 && sender instanceof Player)
-			{
-				Player player = (Player)sender;
-				int count = Manager_April.loadPlayerReset(player);
-				if (count < 2)
-				{
-					Manager_April.savePlayerReset(player, ++count);
-					Reset_Player_Attributes((Player)sender);
-					Reset_Player_Skills((Player)sender);
-					sender.sendMessage("§b스킬과 스탯을 초기화했습니다.");
-					sender.sendMessage("§b앞으로 " + (2 - count) + "회 초기화가 가능합니다.");
-				}
-				else
-					sender.sendMessage("§c더 이상 초기화 할 수 없습니다.");
-			}
-			return true;
-		}
+//		if (cmd.getName().equalsIgnoreCase("MM_AprilReset"))
+//		{
+//			if (args.length == 0 && sender instanceof Player)
+//			{
+//				Player player = (Player)sender;
+//				int count = Manager_April.loadPlayerReset(player);
+//				if (count < 2)
+//				{
+//					Manager_April.savePlayerReset(player, ++count);
+//					Reset_Player_Attributes((Player)sender);
+//					Reset_Player_Skills((Player)sender);
+//					sender.sendMessage("§b스킬과 스탯을 초기화했습니다.");
+//					sender.sendMessage("§b앞으로 " + (2 - count) + "회 초기화가 가능합니다.");
+//				}
+//				else
+//					sender.sendMessage("§c더 이상 초기화 할 수 없습니다.");
+//			}
+//			return true;
+//		}
 		return false;
 	}
 	  

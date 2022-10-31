@@ -60,7 +60,7 @@ public class Stance_Change extends RegisteredSkill
 		addModifier("hp_deal", new LinearValue(0.55, 0.1));
 		addModifier("sta_deal", new LinearValue(1.0, 0.75));
 		addModifier("damage", new LinearValue(0.03, 0.03, 0.0, 2.0));
-		addModifier("count", new LinearValue(2.5, 0.5, 0, 20));
+		addModifier("count", new LinearValue(2.2, 0.2, 0, 20));
 		addModifier("defense", new LinearValue(1.5, 1.5, 10.0, 30.0));
 		addModifier("speed", new LinearValue(21.5, 1.5, 10.0, 50.0));
 		addModifier("cooldown", new LinearValue(1, 0));

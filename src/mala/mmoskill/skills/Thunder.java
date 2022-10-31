@@ -40,7 +40,7 @@ public class Thunder extends RegisteredSkill
 
 		addModifier("damage", new LinearValue(70, 17));
 		addModifier("cooldown", new LinearValue(25, 0));
-		addModifier("mana", new LinearValue(35, 9));
+		addModifier("mana", new LinearValue(48, 8));
 	}
 }
 

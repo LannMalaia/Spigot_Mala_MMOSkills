@@ -34,9 +34,9 @@ public class Dark_Ball extends RegisteredSkill
 	{	
 		super(new Dark_Ball_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("damage", new LinearValue(60, 6));
-		addModifier("cooldown", new LinearValue(14.9, -0.1));
-		addModifier("mana", new LinearValue(35, 5));
+		addModifier("damage", new LinearValue(100, 20));
+		addModifier("cooldown", new LinearValue(15, 0));
+		addModifier("mana", new LinearValue(60, 10));
 	}
 }
 

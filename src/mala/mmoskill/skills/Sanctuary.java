@@ -36,7 +36,7 @@ public class Sanctuary extends RegisteredSkill
 	{	
 		super(new Sanctuary_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("damage", new LinearValue(5, 2));
+		addModifier("damage", new LinearValue(12, 4));
 		addModifier("radius", new LinearValue(6, 1.5));
 		addModifier("cooldown", new LinearValue(240, 0));
 		addModifier("mana", new LinearValue(200, 20));

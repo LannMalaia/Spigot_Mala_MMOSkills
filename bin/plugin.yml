@@ -1,16 +1,12 @@
 name: Mala_MMOSkills
 main: mala_mmoskill.main.MalaMMO_Skill
-version: 1.18
+version: 1.18.1
 api-version: 1.18
 author: Malaia_Garnet
 description: Adds some mmocore skills
 depend: [Laylia_Core_API, LibsDisguises]
 softdepend: [Spartan, Quests]
 commands:
-   MM_AprilReset:
-      description: april reset. only for 30, April.
-      usage: /MM_AprilReset
-      default: true
    MM_ChangeClass:
       description: change player class. no level initialization.
       usage: /MM_ChangeClass <playername> <class_id>

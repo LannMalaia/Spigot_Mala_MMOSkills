@@ -46,7 +46,7 @@ public class Lucky_Star extends RegisteredSkill
 	{	
 		super(new Lucky_Star_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("cooldown", new LinearValue(30.0, 0.0));
+		addModifier("cooldown", new LinearValue(20.0, 0.0));
 		
 		skill = this;
 	}

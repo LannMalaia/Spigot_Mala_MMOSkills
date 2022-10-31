@@ -18,9 +18,9 @@ public class Mastery_Stance extends RegisteredSkill
 	public Mastery_Stance()
 	{	
 		super(new Mastery_Stance_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("bloodstack", new LinearValue(110, 10));
-		addModifier("hp_max", new LinearValue(1.75, 1.75, 0, 30.0));
-		addModifier("sta_sub", new LinearValue(2.5, 2.5, 0, 50.0));
+		addModifier("bloodstack", new LinearValue(112, 12));
+		addModifier("hp_max", new LinearValue(1, 1, 0, 0));
+		addModifier("sta_sub", new LinearValue(2, 2, 0, 0));
 		skill = this;
 	}
 	public static int Get_Max_Bloodstack(Player player)

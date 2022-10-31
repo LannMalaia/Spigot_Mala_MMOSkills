@@ -37,7 +37,7 @@ public class Boltage_Circle extends RegisteredSkill
 		super(new Boltage_Circle_Handler(), MalaMMO_Skill.plugin.getConfig());
 
 		addModifier("power", new LinearValue(12, 4));
-		addModifier("radius", new LinearValue(4.2, 0.2));
+		addModifier("radius", new LinearValue(4.3, 0.3));
 		addModifier("cooldown", new LinearValue(20, -0.4));
 		addModifier("mana", new LinearValue(20, 3));
 		addModifier("stamina", new LinearValue(12.7, 0.7));

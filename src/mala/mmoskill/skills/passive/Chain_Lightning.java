@@ -14,8 +14,8 @@ public class Chain_Lightning extends RegisteredSkill
 	{	
 		super(new Chain_Lightning_Handler(), MalaMMO_Skill.plugin.getConfig());
 		
-		addModifier("dam_reduce", new LinearValue(59, -1, 20, 60));
-		addModifier("move_count", new LinearValue(2.2, 0.2, 2, 10));
+		addModifier("dam_reduce", new LinearValue(69, -1, 20, 70));
+		addModifier("move_count", new LinearValue(2.1, 0.1, 2, 10));
 	}
 }
 
