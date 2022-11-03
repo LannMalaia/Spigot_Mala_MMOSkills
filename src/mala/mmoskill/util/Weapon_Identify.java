@@ -2,6 +2,7 @@ package mala.mmoskill.util;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -63,6 +64,12 @@ public class Weapon_Identify
 		return false;
 	}
 	
+	// 맨 주먹이여?
+	public static boolean Has_No_Item(Player _player)
+	{
+		return _player.getInventory().getItemInMainHand().getType() == Material.AIR
+				&& _player.getInventory().getItemInOffHand().getType() == Material.AIR;
+	}	
 	// 이게 창이여?
 	public static boolean Hold_MMO_Spear(Player _player)
 	{

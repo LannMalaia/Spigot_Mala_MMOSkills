@@ -35,7 +35,7 @@ public class Trick extends RegisteredSkill
 		addModifier("speed", new LinearValue(0.15, 0.15));
 		addModifier("reduce", new LinearValue(10, 0));
 		skill = this;
-		Bukkit.getScheduler().runTaskTimer(MalaMMO_Skill.plugin, new Trick_Manager(), 0, 20);
+		Bukkit.getScheduler().runTaskTimer(MalaMMO_Skill.plugin, new Trick_Manager(), 0, 40);
 	}
 
 	public static int Get_Stack(Player player)

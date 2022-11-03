@@ -49,7 +49,7 @@ public class HookShot extends RegisteredSkill
 		super(new HookShot_Handler(), MalaMMO_Skill.plugin.getConfig());
 
 		addModifier("length", new LinearValue(10.5, 0.5));
-		addModifier("damage", new LinearValue(15.0, 5.0));
+		addModifier("damage", new LinearValue(27.0, 7.0));
 		addModifier("cooldown", new LinearValue(2, 0));
 		addModifier("stamina", new LinearValue(26, 1));
 		

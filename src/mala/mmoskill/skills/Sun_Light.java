@@ -39,10 +39,10 @@ public class Sun_Light extends RegisteredSkill
 	{	
 		super(new Sun_Light_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("damage", new LinearValue(25, 3));
-		addModifier("radius", new LinearValue(6.4, 0.4));
+		addModifier("damage", new LinearValue(34, 4));
+		addModifier("radius", new LinearValue(8.2, 0.2));
 		addModifier("cooldown", new LinearValue(30, 0));
-		addModifier("mana", new LinearValue(35, 5));
+		addModifier("mana", new LinearValue(40, 7));
 	}
 }
 

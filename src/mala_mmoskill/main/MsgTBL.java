@@ -10,7 +10,8 @@ public class MsgTBL
 	public static final String WEAPON_WHIP = "&7채찍 - ";
 	public static final String WEAPON_HORSE = "&7기마 - ";
 	public static final String WEAPON_SHIELD = "&7방패 - ";
-	
+
+	public static final String UNARMED = "&6맨손 ";
 	public static final String WEAPON = "&f무기 ";
 	public static final String PROJECTILE = "&e투사체 ";
 	public static final String SKILL = "&a스킬 ";

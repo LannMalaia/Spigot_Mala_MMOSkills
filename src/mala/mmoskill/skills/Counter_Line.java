@@ -52,8 +52,8 @@ public class Counter_Line extends RegisteredSkill
 	{	
 		super(new Counter_Line_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("damage", new LinearValue(36, 6));
-		addModifier("cooldown", new LinearValue(15.5, 0.5, 5, 50));
+		addModifier("damage", new LinearValue(48, 8));
+		addModifier("cooldown", new LinearValue(20, 0));
 		addModifier("stamina", new LinearValue(0, 0));
 		
 		skill = this;

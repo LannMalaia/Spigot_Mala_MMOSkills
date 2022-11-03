@@ -38,7 +38,7 @@ public class Explode_Dust extends RegisteredSkill
 	{	
 		super(new Explode_Dust_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("damage", new LinearValue(11.5, 1.5));
+		addModifier("damage", new LinearValue(44, 4));
 		addModifier("cooldown", new LinearValue(20, 0));
 		addModifier("stamina", new LinearValue(12, 2));
 		skill = this;
@@ -150,14 +150,11 @@ class Explode_Dust_Skill implements Runnable
 			{
 				if (Damage.Is_Possible(player, entity) && entity instanceof LivingEntity)
 				{
-					if (entity.isOnGround())
-					{
-						if (isNormal)
-							Damage.Attack(player, (LivingEntity)entity, damage, DamageType.PHYSICAL, DamageType.WEAPON);
-						else
-							Damage.Attack(player, (LivingEntity)entity, damage, DamageType.PHYSICAL, DamageType.SKILL);
-						Buff_Manager.Increase_Buff((LivingEntity)entity, PotionEffectType.BLINDNESS, 0, 100, null, 0);
-					}
+					if (isNormal)
+						Damage.Attack(player, (LivingEntity)entity, damage, DamageType.PHYSICAL, DamageType.WEAPON);
+					else
+						Damage.Attack(player, (LivingEntity)entity, damage, DamageType.PHYSICAL, DamageType.SKILL);
+					Buff_Manager.Increase_Buff((LivingEntity)entity, PotionEffectType.BLINDNESS, 0, 100, null, 0);
 				}
 			}
 		}

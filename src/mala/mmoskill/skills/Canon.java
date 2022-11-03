@@ -40,8 +40,8 @@ public class Canon extends RegisteredSkill
 	{	
 		super(new Canon_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("radius", new LinearValue(1.55, 0.05));
-		addModifier("damage", new LinearValue(22.0, 2.0));
+		addModifier("radius", new LinearValue(1.65, 0.15));
+		addModifier("damage", new LinearValue(33.5, 3.5));
 		addModifier("count", new LinearValue(0.15, 0.15));
 		addModifier("cooldown", new LinearValue(30.0, 0));
 		addModifier("stamina", new LinearValue(25.5, .5));

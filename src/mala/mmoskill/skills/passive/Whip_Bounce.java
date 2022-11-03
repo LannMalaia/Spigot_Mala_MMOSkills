@@ -44,7 +44,7 @@ public class Whip_Bounce extends RegisteredSkill
 	public Whip_Bounce()
 	{	
 		super(new Whip_Bounce_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("move_count", new LinearValue(0.25, 0.25, 0, 4));
+		addModifier("move_count", new LinearValue(0.125, 0.125, 0, 2));
 		addModifier("dam_reduce", new LinearValue(58, -2));
 		skill = this;
 	}
