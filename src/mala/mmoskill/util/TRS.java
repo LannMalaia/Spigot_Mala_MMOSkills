@@ -1,5 +1,7 @@
 package mala.mmoskill.util;
 
+import java.util.ArrayList;
+
 import org.bukkit.util.Vector;
 
 public class TRS
@@ -45,6 +47,28 @@ public class TRS
 			new_vec[i] = Mult(mat, origin_vecs[i]);
 		return new_vec;
 	}
+	public static ArrayList<Vector> Translate(ArrayList<Vector> origin_vecs, double x, double y, double z)
+	{
+		/*
+		 * [ 1  0  0  x]
+		 * [ 0  1  0  y]
+		 * [ 0  0  1  z]
+		 * [ 0  0  0  1]
+		 */
+		double[][] mat = new double[4][4];
+		mat[0][0] = 1;
+		mat[0][3] = x;
+		mat[1][1] = 1;
+		mat[1][3] = y;
+		mat[2][2] = 1;
+		mat[2][3] = z;
+		mat[3][3] = 1;
+		
+		ArrayList<Vector> new_vec = new ArrayList<Vector>();
+		for(int i = 0; i < origin_vecs.size(); i++)
+			new_vec.add(Mult(mat, origin_vecs.get(i)));
+		return new_vec;
+	}
 
 	public static Vector[] Rotate_X(Vector[] origin_vecs, double angle)
 	{
@@ -65,6 +89,27 @@ public class TRS
 		Vector[] new_vec = new Vector[origin_vecs.length];
 		for(int i = 0; i < origin_vecs.length; i++)
 			new_vec[i] = Mult(mat, origin_vecs[i]);
+		return new_vec;
+	}
+	public static ArrayList<Vector> Rotate_X(ArrayList<Vector> origin_vecs, double angle)
+	{
+		/*
+		 * [ 1  0    0   0]
+		 * [ 0 cos -sin  0]
+		 * [ 0 sin  cos  0]
+		 * [ 0  0    0   1]
+		 */
+		double[][] mat = new double[4][4];
+		mat[0][0] = 1;
+		mat[1][1] = Math.cos(Math.toRadians(angle));
+		mat[2][1] = -Math.sin(Math.toRadians(angle));
+		mat[1][2] = Math.sin(Math.toRadians(angle));
+		mat[2][2] = Math.cos(Math.toRadians(angle));
+		mat[3][3] = 1;
+		
+		ArrayList<Vector> new_vec = new ArrayList<>();
+		for(int i = 0; i < origin_vecs.size(); i++)
+			new_vec.add(Mult(mat, origin_vecs.get(i)));
 		return new_vec;
 	}
 
@@ -89,6 +134,27 @@ public class TRS
 			new_vec[i] = Mult(mat, origin_vecs[i]);
 		return new_vec;
 	}
+	public static ArrayList<Vector> Rotate_Y(ArrayList<Vector> origin_vecs, double angle)
+	{
+		/*
+		 * [ cos 0 sin 0]
+		 * [  0  1  0  0]
+		 * [-sin 0 cos 0]
+		 * [  0  0  0  1]
+		 */
+		double[][] mat = new double[4][4];
+		mat[0][0] = Math.cos(Math.toRadians(angle));
+		mat[2][0] = -Math.sin(Math.toRadians(angle));
+		mat[1][1] = 1;
+		mat[0][2] = Math.sin(Math.toRadians(angle));
+		mat[2][2] = Math.cos(Math.toRadians(angle));
+		mat[3][3] = 1;
+		
+		ArrayList<Vector> new_vec = new ArrayList<Vector>();
+		for(int i = 0; i < origin_vecs.size(); i++)
+			new_vec.add(Mult(mat, origin_vecs.get(i)));
+		return new_vec;
+	}
 
 	public static Vector[] Rotate_Z(Vector[] origin_vecs, double angle)
 	{
@@ -111,6 +177,27 @@ public class TRS
 			new_vec[i] = Mult(mat, origin_vecs[i]);
 		return new_vec;
 	}
+	public static ArrayList<Vector> Rotate_Z(ArrayList<Vector> origin_vecs, double angle)
+	{
+		/*
+		 * [cos -sin 0 0]
+		 * [sin  cos 0 0]
+		 * [ 0    0  1 0]
+		 * [ 0    0  0 1]
+		 */
+		double[][] mat = new double[4][4];
+		mat[0][0] = Math.cos(Math.toRadians(angle));
+		mat[1][0] = -Math.sin(Math.toRadians(angle));
+		mat[0][1] = Math.sin(Math.toRadians(angle));
+		mat[1][1] = Math.cos(Math.toRadians(angle));
+		mat[2][2] = 1;
+		mat[3][3] = 1;
+		
+		ArrayList<Vector> new_vec = new ArrayList<>();
+		for(int i = 0; i < origin_vecs.size(); i++)
+			new_vec.add(Mult(mat, origin_vecs.get(i)));
+		return new_vec;
+	}
 
 	public static Vector[] Scale(Vector[] origin_vecs, double x, double y, double z)
 	{
@@ -129,6 +216,25 @@ public class TRS
 		Vector[] new_vec = new Vector[origin_vecs.length];
 		for(int i = 0; i < origin_vecs.length; i++)
 			new_vec[i] = Mult(mat, origin_vecs[i]);
+		return new_vec;
+	}
+	public static ArrayList<Vector> Scale(ArrayList<Vector> origin_vecs, double x, double y, double z)
+	{
+		/*
+		 * [ x  0  0  0]
+		 * [ 0  y  0  0]
+		 * [ 0  0  z  0]
+		 * [ 0  0  0  1]
+		 */
+		double[][] mat = new double[4][4];
+		mat[0][0] = x;
+		mat[1][1] = y;
+		mat[2][2] = z;
+		mat[3][3] = 1;
+		
+		ArrayList<Vector> new_vec = new ArrayList<Vector>();
+		for(int i = 0; i < origin_vecs.size(); i++)
+			new_vec.add(Mult(mat, origin_vecs.get(i)));
 		return new_vec;
 	}
 
