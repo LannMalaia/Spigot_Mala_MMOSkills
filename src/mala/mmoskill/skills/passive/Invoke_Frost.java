@@ -63,7 +63,7 @@ public class Invoke_Frost extends RegisteredSkill
 
 			for (int i = 0; i < 12; i++)
 			{
-				double randPitch = Math.random() * 360.0;
+				double randPitch = -90.0 + Math.random() * 180.0;
 				double randYaw = Math.random() * 360.0;
 				double length = 3.0 + Math.random() * 7.0;
 				Particle_Drawer_EX.drawLine(targetLocation, Particle.CLOUD, length,

@@ -13,6 +13,7 @@ import mala.mmoskill.skills.passive.Invoke_Fire.FireSpell;
 import mala.mmoskill.skills.passive.Invoke_Flame.FlameSpell;
 import mala.mmoskill.skills.passive.Invoke_Frost.FrostSpell;
 import mala.mmoskill.skills.passive.Invoke_Lightning.LightningSpell;
+import mala.mmoskill.skills.passive.Invoke_VaporBlast.VaporBlastSpell;
 import mala.mmoskill.util.MalaSpell;
 import mala.mmoskill.util.Particle_Drawer_EX;
 import net.Indyuce.mmocore.api.player.PlayerData;
@@ -71,6 +72,8 @@ public class CastChain
 		case 2:
 			if (chain.get(0) == SpellChainType.FIRE && chain.get(1) == SpellChainType.FIRE)
 				return new FlameSpell(PlayerData.get(player));
+			if (chain.contains(SpellChainType.FIRE) && chain.contains(SpellChainType.ICE))
+				return new VaporBlastSpell(PlayerData.get(player));
 			break;
 		case 1:
 			if (chain.contains(SpellChainType.FIRE))
@@ -115,41 +118,41 @@ public class CastChain
 		{
 		case 0:
 			Particle_Drawer_EX.drawCircle(loc, Particle.SMALL_FLAME,
-					2.75, loc.getPitch() + 90, loc.getYaw(), 3, test * 2.0, 0.01);
+					2.75, loc.getPitch() - 90.0, loc.getYaw(), 3, test * 2.0, 0.01);
 			Particle_Drawer_EX.drawCircle(loc, Particle.FLAME,
-					2.7, loc.getPitch() + 90, loc.getYaw(), 0, test, 0.0);
+					2.7, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0.0);
 //			Particle_Drawer_EX.drawSquare(loc, dts,
-//					2.7, loc.getPitch() + 90, loc.getYaw(), test * 1.5);
+//					2.7, loc.getPitch(), loc.getYaw() + 90, test * 1.5);
 //			Particle_Drawer_EX.drawSquare(loc, dts,
-//					2.7, loc.getPitch() + 90, loc.getYaw(), -test * 1.5);
+//					2.7, loc.getPitch(), loc.getYaw() + 90, -test * 1.5);
 			Particle_Drawer_EX.drawTriangle(loc, dts,
-					3.4, loc.getPitch() + 90, loc.getYaw(), test);
+					3.4, loc.getPitch() - 90.0, loc.getYaw(), test);
 			break;
 		case 1:
 			//Particle_Drawer_EX.drawCircle(loc, Particle.FLAME,
-			//		1.7, loc.getPitch() + 90, loc.getYaw(), 0, test, 0.0);
+			//		1.7, loc.getPitch(), loc.getYaw() + 90, 0, test, 0.0);
 			Particle_Drawer_EX.drawCircle(loc, Particle.SMALL_FLAME,
-					1.75, loc.getPitch() + 90, loc.getYaw(), 3, test * -6.0, -0.01);
+					1.75, loc.getPitch() - 90.0, loc.getYaw(), 3, test * -6.0, -0.01);
 //			Particle_Drawer_EX.drawCircle(loc, dts,
-//					2.2, loc.getPitch() + 90, loc.getYaw(), 0, test);
+//					2.2, loc.getPitch(), loc.getYaw() + 90, 0, test);
 			Particle_Drawer_EX.drawTriangle(loc, dts,
-					1.75, loc.getPitch() + 90, loc.getYaw(), -test);
+					1.75, loc.getPitch() - 90.0, loc.getYaw(), -test);
 			Particle_Drawer_EX.drawTriangle(loc, dts,
-					1.75, loc.getPitch() + 90, loc.getYaw(), -test - 180.0);
+					1.75, loc.getPitch() - 90.0, loc.getYaw(), -test - 180.0);
 			break;
 		case 2:
 			Particle_Drawer_EX.drawCircle(loc, Particle.SOUL,
-					2.7, loc.getPitch() + 90, loc.getYaw(), 8, test, -0.04);
+					2.7, loc.getPitch() - 90.0, loc.getYaw(), 8, test, -0.04);
 			Particle_Drawer_EX.drawTriangle(loc, dts,
-					4.8, loc.getPitch() + 90, loc.getYaw(), test * 1.0);
+					4.8, loc.getPitch() - 90.0, loc.getYaw(), test * 1.0);
 			Particle_Drawer_EX.drawTriangle(loc, dts,
-					4.8, loc.getPitch() + 90, loc.getYaw(), 180.0 + test * 1.0);
+					4.8, loc.getPitch() - 90.0, loc.getYaw(), 180.0 + test * 1.0);
 			break;
 		case 3:
 			Particle_Drawer_EX.drawCircle(loc, Particle.SMOKE_NORMAL,
-					4.8, loc.getPitch() + 90, loc.getYaw(), 0, test, 0);
+					4.8, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0);
 			Particle_Drawer_EX.drawCircle(loc, Particle.SMOKE_NORMAL,
-					4.8, loc.getPitch() + 90, loc.getYaw(), 6, test, -0.04);
+					4.8, loc.getPitch() - 90.0, loc.getYaw(), 6, test, -0.04);
 			break;
 		}
 	}
@@ -163,37 +166,37 @@ public class CastChain
 		{
 		case 0:
 			Particle_Drawer_EX.drawCircle(loc, Particle.WATER_WAKE,
-					2.75, loc.getPitch() + 90, loc.getYaw(), 3, test * 2.0, -0.01);
+					2.75, loc.getPitch() - 90.0, loc.getYaw(), 3, test * 2.0, -0.01);
 			Particle_Drawer_EX.drawCircle(loc, Particle.SOUL_FIRE_FLAME,
-					2.7, loc.getPitch() + 90, loc.getYaw(), 0, test, 0.0);
+					2.7, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0.0);
 			Particle_Drawer_EX.drawSquare(loc, dts,
-					2.7, loc.getPitch() + 90, loc.getYaw(), test * 1.5);
+					2.7, loc.getPitch() - 90.0, loc.getYaw(), test * 1.5);
 			break;
 		case 1:
 //			Particle_Drawer_EX.drawCircle(loc, dts,
-//					1.75, loc.getPitch() + 90, loc.getYaw(), 0, test);
+//					1.75, loc.getPitch() - 90.0, loc.getYaw(), 0, test);
 			Particle_Drawer_EX.drawCircle(loc, Particle.SOUL_FIRE_FLAME,
-					1.75, loc.getPitch() + 90, loc.getYaw(), 2, test * -4.0, -0.01);
+					1.75, loc.getPitch() - 90.0, loc.getYaw(), 2, test * -4.0, -0.01);
 			Particle_Drawer_EX.drawCircle(loc, Particle.SOUL_FIRE_FLAME,
-					1.75, loc.getPitch() + 90, loc.getYaw(), 2, test * -4.0, 0.01);
+					1.75, loc.getPitch() - 90.0, loc.getYaw(), 2, test * -4.0, 0.01);
 			Particle_Drawer_EX.drawSquare(loc, dts,
-					1.75, loc.getPitch() + 90, loc.getYaw(), -test);
+					1.75, loc.getPitch() - 90.0, loc.getYaw(), -test);
 			Particle_Drawer_EX.drawSquare(loc, dts,
-					1.75, loc.getPitch() + 90, loc.getYaw(), -test - 45.0);
+					1.75, loc.getPitch() - 90.0, loc.getYaw(), -test - 45.0);
 			break;
 		case 2:
 			Particle_Drawer_EX.drawCircle(loc, Particle.CRIT,
-					2.7, loc.getPitch() + 90, loc.getYaw(), 4, test * 2.5, -0.25);
+					2.7, loc.getPitch() - 90.0, loc.getYaw(), 4, test * 2.5, -0.25);
 			Particle_Drawer_EX.drawSquare(loc, dts,
-					3.8, loc.getPitch() + 90, loc.getYaw(), test * 1.0);
+					3.8, loc.getPitch() - 90.0, loc.getYaw(), test * 1.0);
 			Particle_Drawer_EX.drawSquare(loc, dts,
-					3.8, loc.getPitch() + 90, loc.getYaw(), test * 1.0 + 45.0);
+					3.8, loc.getPitch() - 90.0, loc.getYaw(), test * 1.0 + 45.0);
 			break;
 		case 3:
 			Particle_Drawer_EX.drawCircle(loc, Particle.SNOWFLAKE,
-					4.8, loc.getPitch() + 90, loc.getYaw(), 0, test, 0);
+					4.8, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0);
 			Particle_Drawer_EX.drawCircle(loc, Particle.SNOWFLAKE,
-					4.8, loc.getPitch() + 90, loc.getYaw(), 6, test, -0.05);
+					4.8, loc.getPitch() - 90.0, loc.getYaw(), 6, test, -0.05);
 			break;
 		}
 	}
@@ -207,29 +210,29 @@ public class CastChain
 		{
 		case 0:
 			Particle_Drawer_EX.drawCircle(loc, Particle.CRIT,
-					2.7, loc.getPitch() + 90, loc.getYaw(), 3, test * 6.0, 0.15);
+					2.7, loc.getPitch() - 90.0, loc.getYaw(), 3, test * 6.0, 0.15);
 			Particle_Drawer_EX.drawCircle(loc, Particle.CRIT,
-					2.7, loc.getPitch() + 90, loc.getYaw(), 3, test * 6.0, -0.25);
+					2.7, loc.getPitch() - 90.0, loc.getYaw(), 3, test * 6.0, -0.25);
 			Particle_Drawer_EX.drawCircle(loc, Particle.ELECTRIC_SPARK,
-					2.7, loc.getPitch() + 90, loc.getYaw(), 0, test, 0.0);
+					2.7, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0.0);
 			break;
 		case 1:
 			Particle_Drawer_EX.drawCircle(loc, dts,
-					1.75, loc.getPitch() + 90, loc.getYaw(), 0, test);
+					1.75, loc.getPitch() - 90.0, loc.getYaw(), 0, test);
 			Particle_Drawer_EX.drawStar(loc, dts,
-					1.75, loc.getPitch() + 90, loc.getYaw(), test * -3.0);
+					1.75, loc.getPitch() - 90.0, loc.getYaw(), test * -3.0);
 			break;
 		case 2:
 			Particle_Drawer_EX.drawCircle(loc, Particle.CRIT_MAGIC ,
-					2.7, loc.getPitch() + 90, loc.getYaw(), 4, test * 4.0, 0.7);
+					2.7, loc.getPitch() - 90.0, loc.getYaw(), 4, test * 4.0, 0.7);
 			Particle_Drawer_EX.drawStar(loc, dts,
-					4.8, loc.getPitch() + 90, loc.getYaw(), test * 1.0);
+					4.8, loc.getPitch() - 90.0, loc.getYaw(), test * 1.0);
 			break;
 		case 3:
 			Particle_Drawer_EX.drawCircle(loc, Particle.END_ROD,
-					4.8, loc.getPitch() + 90, loc.getYaw(), 5, test, -0.04);
+					4.8, loc.getPitch() - 90.0, loc.getYaw(), 5, test, -0.04);
 			Particle_Drawer_EX.drawCircle(loc, Particle.END_ROD,
-					4.8, loc.getPitch() + 90, loc.getYaw(), 0, test, 0);
+					4.8, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0);
 			break;
 		}
 	}

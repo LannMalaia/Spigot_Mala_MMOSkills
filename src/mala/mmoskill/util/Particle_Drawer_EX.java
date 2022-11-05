@@ -44,7 +44,7 @@ public class Particle_Drawer_EX
 			}
 			vec.removeAll(removeVec);
 		}
-			
+		
 		vec = TRS.Rotate_X(vec, _pitch);
 		vec = TRS.Rotate_Y(vec, _yaw);
 		return vec;
@@ -327,7 +327,7 @@ public class Particle_Drawer_EX
 					Math.cos(r + corrRadian) * _radius,
 					0.0,
 					Math.sin(r + corrRadian) * _radius));
-		
+
 		vec = TRS.Rotate_X(vec, _pitch);
 		vec = TRS.Rotate_Y(vec, _yaw);
 
@@ -335,6 +335,62 @@ public class Particle_Drawer_EX
 		{
 			Location loc = _loc.clone().add(vec.get(i));
 			Vector vel = vec.get(i).clone();
+			loc.getWorld().spawnParticle(_particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), _strength, null);
+		}
+	}
+	public static void drawArc(Location _loc, Particle _particle,
+			double _radius, double _angle,
+			double _pitch, double _yaw, double _roll,
+			double _corrAngle, double _strength)
+	{
+		// 龋 积己
+		double radianGap = (Math.PI * 2.0) / (25.0 * _radius); // 痢埃 芭府
+		double corrRadian = Math.toRadians(_corrAngle);
+		
+		// 龋 积己
+		ArrayList<Vector> vec = new ArrayList<>();
+		for (double r = 0.0; r <= Math.toRadians(_angle); r += radianGap)
+			vec.add(new Vector(
+					Math.cos(r + corrRadian) * _radius,
+					0.0,
+					Math.sin(r + corrRadian) * _radius));
+		
+		vec = TRS.Rotate_Z(vec, _roll);
+		vec = TRS.Rotate_X(vec, _pitch);
+		vec = TRS.Rotate_Y(vec, _yaw);
+
+		for (int i = 0; i < vec.size(); i++)
+		{
+			Location loc = _loc.clone().add(vec.get(i));
+			Vector vel = vec.get(i).clone();
+			loc.getWorld().spawnParticle(_particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), _strength, null);
+		}
+	}
+	public static void drawArcVelocity(Location _loc, Particle _particle,
+			double _radius, double _angle,
+			double _pitch, double _yaw, double _roll,
+			double _corrAngle, Vector _velocity, double _strength)
+	{
+		// 龋 积己
+		double radianGap = (Math.PI * 2.0) / (25.0 * _radius); // 痢埃 芭府
+		double corrRadian = Math.toRadians(_corrAngle);
+		
+		// 龋 积己
+		ArrayList<Vector> vec = new ArrayList<>();
+		for (double r = 0.0; r <= Math.toRadians(_angle); r += radianGap)
+			vec.add(new Vector(
+					Math.cos(r + corrRadian) * _radius,
+					0.0,
+					Math.sin(r + corrRadian) * _radius));
+		
+		vec = TRS.Rotate_Z(vec, _roll);
+		vec = TRS.Rotate_X(vec, _pitch);
+		vec = TRS.Rotate_Y(vec, _yaw);
+
+		for (int i = 0; i < vec.size(); i++)
+		{
+			Location loc = _loc.clone().add(vec.get(i));
+			Vector vel = _velocity;
 			loc.getWorld().spawnParticle(_particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), _strength, null);
 		}
 	}
@@ -384,7 +440,7 @@ public class Particle_Drawer_EX
 			for (double d = 0; d < distance; d += 0.07)
 				vec.add(start.clone().add(dir.clone().multiply(d)));
 		}
-		
+
 		vec = TRS.Rotate_X(vec, _pitch);
 		vec = TRS.Rotate_Y(vec, _yaw);
 		

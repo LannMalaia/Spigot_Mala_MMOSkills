@@ -12,6 +12,7 @@ public abstract class MalaSpell implements Runnable
 {
 	protected PlayerData playerData;
 	protected Player player;
+	protected Location frontLocation;
 	protected Location targetLocation;
 	protected World world;
 	protected double targetDuration;
@@ -22,6 +23,7 @@ public abstract class MalaSpell implements Runnable
 	{
 		this.playerData = playerData;
 		this.player = playerData.getPlayer();
+		this.frontLocation = player.getEyeLocation().add(player.getEyeLocation().getDirection().multiply(2.0));
 		this.targetLocation = RayUtil.getLocation(player);
 		this.world = targetLocation.getWorld();
 		this.targetDuration = duration;
@@ -30,6 +32,7 @@ public abstract class MalaSpell implements Runnable
 	@Override
 	public void run()
 	{
+		this.frontLocation = player.getEyeLocation().add(player.getEyeLocation().getDirection().multiply(2.0));
 		if (durationCounter == 0)
 			whenStart();
 		
