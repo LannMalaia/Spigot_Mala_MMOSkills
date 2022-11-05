@@ -52,7 +52,7 @@ public class Sakurakagetsu extends RegisteredSkill
 	{	
 		super(new Sakurakagetsu_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("distance", new LinearValue(12, 1.25, 12, 25));
+		addModifier("distance", new LinearValue(10.75, 0.75));
 		addModifier("power", new LinearValue(67, 7));
 		addModifier("sec", new LinearValue(1.0, 0.05));
 		addModifier("cooldown", new LinearValue(29, -1, 15, 30));
@@ -135,7 +135,7 @@ class Sakurakagetsu_Handler extends MalaSkill implements Listener
 				MsgTBL.WEAPON_EFFECT,
 				MsgTBL.WEAPON_SWORD + "이베이드 피해량 30% 증가",
 				MsgTBL.WEAPON_AXE + "버서크 피해량 30% 증가",
-				MsgTBL.WEAPON_SPEAR + "측면 범위 50% 증가",
+				MsgTBL.WEAPON_SPEAR + "측면 범위 30% 증가",
 				"",
 				MsgTBL.Cooldown, MsgTBL.StaCost);
 	}

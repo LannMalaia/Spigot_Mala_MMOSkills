@@ -26,6 +26,7 @@ import io.lumine.mythic.lib.skill.handler.SkillHandler;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import mala.mmoskill.manager.ArrowSkill_Manager;
 import mala.mmoskill.manager.ArrowTip;
+import mala.mmoskill.manager.CastSpellSkill_Manager;
 import mala.mmoskill.manager.Not_Skill;
 import mala.mmoskill.manager.Summon_Manager;
 import mala.mmoskill.util.AntiCheat_Ignore;
@@ -70,6 +71,7 @@ public class MalaMMO_Skill extends JavaPlugin
 		Buff_Manager.Run();
 		Summon_Manager.Get_Instance();
 		ArrowSkill_Manager.Get_Instance();
+		CastSpellSkill_Manager.Get_Instance();
 		
 		Bukkit.getPluginManager().registerEvents(new Master_Event(), MalaMMO_Skill.plugin);
 		Bukkit.getPluginManager().registerEvents(new AntiCheat_Ignore(), MalaMMO_Skill.plugin);

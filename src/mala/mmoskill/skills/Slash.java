@@ -59,7 +59,7 @@ class Slash_Handler extends MalaSkill implements Listener
 				"",
 				MsgTBL.WEAPON_EFFECT,
 				MsgTBL.WEAPON_SWORD + "피해량 50% 증가",
-				MsgTBL.WEAPON_SPEAR + "범위 50% 증가",
+				MsgTBL.WEAPON_SPEAR + "범위 30% 증가",
 				"",
 				MsgTBL.Cooldown, MsgTBL.StaCost);
 	}
@@ -76,7 +76,7 @@ class Slash_Handler extends MalaSkill implements Listener
 		if (Weapon_Identify.Hold_MMO_Sword(data.getPlayer()))
 			damage *= 1.5;
 		else if (Weapon_Identify.Hold_MMO_Spear(data.getPlayer()))
-			distance *= 1.5;
+			distance *= 1.3;
 		
 		data.getPlayer().swingMainHand();
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new SlashSkill(data.getPlayer(), distance, damage));

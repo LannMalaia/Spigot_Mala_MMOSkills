@@ -21,7 +21,7 @@ public class Absorb_Edge extends RegisteredSkill
 	public Absorb_Edge()
 	{	
 		super(new Absorb_Edge_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("heal", new LinearValue(0.5, 0.5, 0, 10.0));
+		addModifier("heal", new LinearValue(0.2, 0.2, 0, 10.0));
 	}
 }
 

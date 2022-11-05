@@ -66,10 +66,10 @@ class Catastrophic_Slash_Handler extends MalaSkill implements Listener
 				"파멸의 창상",
 				Material.ENDER_EYE,
 				MsgTBL.NeedSkills,
-				"&e 강격 - lv.20, 블러드 버스트 - lv.10",
-				"&e 순간베기 - lv.20, 앵화월소 - lv.10",
-				"&e 부메랑 칼날 - lv.20, 선풍검 - lv.10",
-				"&e 스피어 차지 - lv.20, 유성격 - lv.10",
+				"&e 강격 - lv.15, 블러드 버스트 - lv.3",
+				"&e 순간베기 - lv.15, 앵화월소 - lv.3",
+				"&e 부메랑 칼날 - lv.15, 선풍검 - lv.3",
+				"&e 스피어 차지 - lv.15, 유성격 - lv.3",
 				"",
 				MsgTBL.WEAPON + MsgTBL.PROJECTILE + MsgTBL.SKILL + MsgTBL.PHYSICAL,
 				"",
@@ -87,10 +87,10 @@ class Catastrophic_Slash_Handler extends MalaSkill implements Listener
 	public SimpleSkillResult getResult(SkillMetadata cast)
 	{
 		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
-		if (Skill_Util.Has_Skill(data, "BASH", 20) && Skill_Util.Has_Skill(data, "BASH_BLOOD", 10)
-			&& Skill_Util.Has_Skill(data, "SLASH", 20) && Skill_Util.Has_Skill(data, "SAKURAKAGETSU", 10)
-			&& Skill_Util.Has_Skill(data, "AERIAL_SLASH", 20) && Skill_Util.Has_Skill(data, "SWORD_CIRCLE", 10)
-			&& Skill_Util.Has_Skill(data, "SPEAR_CHARGE", 20) && Skill_Util.Has_Skill(data, "SPIRAL_SHOOT", 10))
+		if (Skill_Util.Has_Skill(data, "BASH", 15) && Skill_Util.Has_Skill(data, "BASH_BLOOD", 3)
+			&& Skill_Util.Has_Skill(data, "SLASH", 15) && Skill_Util.Has_Skill(data, "SAKURAKAGETSU", 3)
+			&& Skill_Util.Has_Skill(data, "AERIAL_SLASH", 15) && Skill_Util.Has_Skill(data, "SWORD_CIRCLE", 3)
+			&& Skill_Util.Has_Skill(data, "SPEAR_CHARGE", 15) && Skill_Util.Has_Skill(data, "SPIRAL_SHOOT", 3))
 		{
 			return new SimpleSkillResult(true);
 		}
