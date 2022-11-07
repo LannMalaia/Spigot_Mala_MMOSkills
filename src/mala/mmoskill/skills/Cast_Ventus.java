@@ -51,8 +51,8 @@ class Cast_Ventus_Handler extends MalaSkill implements Listener
 		Player player = data.getPlayer();
 		
 		// È¿°ú
-		player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1, 2f);
-		player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 2f);
+		player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 0.5f, 2f);
+		player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_GENERIC_EXPLODE, 0.5f, 2f);
 		CastSpellSkill_Manager.Get_Instance().PutSpellChain(player, SpellChainType.LIGHTNING);
 	}
 }

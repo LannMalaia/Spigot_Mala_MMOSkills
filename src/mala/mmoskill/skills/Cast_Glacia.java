@@ -51,8 +51,8 @@ class Cast_Glacia_Handler extends MalaSkill implements Listener
 		Player player = data.getPlayer();
 		
 		// È¿°ú
-		player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1, 2);
-		player.getWorld().playSound(player.getEyeLocation(), Sound.BLOCK_GLASS_BREAK, 1, 1.5f);
+		player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.5f, 2);
+		player.getWorld().playSound(player.getEyeLocation(), Sound.BLOCK_GLASS_BREAK, 0.5f, 1.5f);
 		CastSpellSkill_Manager.Get_Instance().PutSpellChain(player, SpellChainType.ICE);
 	}
 }

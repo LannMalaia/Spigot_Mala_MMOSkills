@@ -51,8 +51,8 @@ class Cast_Ignis_Handler extends MalaSkill implements Listener
 		Player player = data.getPlayer();
 		
 		// È¿°ú
-		player.getWorld().playSound(player.getEyeLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
-		player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_BLAZE_SHOOT, 1, 1);
+		player.getWorld().playSound(player.getEyeLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 1);
+		player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.5f, 1);
 		CastSpellSkill_Manager.Get_Instance().PutSpellChain(player, SpellChainType.FIRE);
 	}
 }
