@@ -26,9 +26,9 @@ public class Particle_Drawer_Expand
 		ArrayList<Vector> vec = new ArrayList<>();
 		for (double r = 0.0; r <= Math.PI * 2.0; r += radianGap)
 			vec.add(new Vector(
-					Math.cos(r + corrRadian) * _radius,
+					Math.cos(r + corrRadian),
 					0.0,
-					Math.sin(r + corrRadian) * _radius));
+					Math.sin(r + corrRadian)));
 		
 		// holeCount에 맞춰 원에 구멍 뚫기
 		if (_holeCount > 0)
@@ -44,8 +44,6 @@ public class Particle_Drawer_Expand
 			}
 			vec.removeAll(removeVec);
 		}
-		for (Vector v : vec)
-			v.multiply(1.0 / _radius); // 형태를 유지하면서 정규화
 		vec = TRS.Rotate_X(vec, _pitch);
 		vec = TRS.Rotate_Y(vec, _yaw);
 		return vec;
@@ -59,9 +57,8 @@ public class Particle_Drawer_Expand
 		
 		for (int i = 0; i < vec.size(); i++)
 		{
-			Location loc = _loc.clone();
 			Vector vel = vec.get(i).clone();
-			loc.getWorld().spawnParticle(_particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), _strength, null);
+			_loc.getWorld().spawnParticle(_particle, _loc, 0, vel.getX(), vel.getY(), vel.getZ(), _strength, null);
 		}
 	}
 	public static void drawCircleRandomize(Location _loc, Particle _particle, double _radius,
@@ -73,9 +70,8 @@ public class Particle_Drawer_Expand
 		
 		for (int i = 0; i < vec.size(); i++)
 		{
-			Location loc = _loc.clone();
 			Vector vel = vec.get(i).clone();
-			loc.getWorld().spawnParticle(_particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), Math.random() * _strength, null);
+			_loc.getWorld().spawnParticle(_particle, _loc, 0, vel.getX(), vel.getY(), vel.getZ(), Math.random() * _strength, null);
 		}
 	}
 
@@ -116,11 +112,10 @@ public class Particle_Drawer_Expand
 		
 		for (int i = 0; i < vec.size(); i++)
 		{
-			Location loc = _loc.clone().add(vec.get(i));
 			Vector vel = vec.get(i).clone();
 			double newStrength = _strength * vel.distance(new Vector());
 			vel.normalize();
-			loc.getWorld().spawnParticle(_particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), newStrength, null);
+			_loc.getWorld().spawnParticle(_particle, _loc, 0, vel.getX(), vel.getY(), vel.getZ(), newStrength, null);
 		}
 	}
 
@@ -161,11 +156,10 @@ public class Particle_Drawer_Expand
 		
 		for (int i = 0; i < vec.size(); i++)
 		{
-			Location loc = _loc.clone().add(vec.get(i));
 			Vector vel = vec.get(i).clone();
 			double newStrength = _strength * vel.distance(new Vector());
 			vel.normalize();
-			loc.getWorld().spawnParticle(_particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), newStrength, null);
+			_loc.getWorld().spawnParticle(_particle, _loc, 0, vel.getX(), vel.getY(), vel.getZ(), newStrength, null);
 		}
 	}
 
@@ -206,7 +200,7 @@ public class Particle_Drawer_Expand
 			Vector vel = vec.get(i).clone();
 			double newStrength = _strength * vel.distance(new Vector());
 			vel.normalize();
-			loc.getWorld().spawnParticle(_particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), newStrength, null);
+			_loc.getWorld().spawnParticle(_particle, _loc, 0, vel.getX(), vel.getY(), vel.getZ(), newStrength, null);
 		}
 	}
 
@@ -230,7 +224,7 @@ public class Particle_Drawer_Expand
 		vec = TRS.Rotate_X(vec, _pitch);
 		vec = TRS.Rotate_Y(vec, _yaw);
 		
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new EffectDrawerExpand(_loc, _particle, vec, _strength, _speed));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new EffectDrawer(_loc, _particle, vec, _strength, _speed));
 	}
 	
 
@@ -248,6 +242,92 @@ public class Particle_Drawer_Expand
 		for(Vector v : vec)
 		{
 			double strength = _strength * v.distance(new Vector());
+			Vector vel = v.clone().normalize();
+			_loc.getWorld().spawnParticle(_particle, _loc, 0, vel.getX(), vel.getY(), vel.getZ(), strength, null);
+		}
+	}
+
+	// 원점 -> 수정 모양으로 뻗어나감
+	public static void drawCrystal(Location _loc, Particle _particle,
+			int _point, double _width, double _length,
+			double _pitch, double _yaw, double _roll,
+			double _strength)
+	{
+		ArrayList<Vector> points = new ArrayList<>();
+		ArrayList<Vector> vec = new ArrayList<>();
+		// 정점 설정 (사각형이면 1->2->3->4->1로 5개의 정점을 설정)
+		for (int i = 0; i <= _point; i++)
+		{
+			double rad = Math.toRadians(360.0 / _point);
+			points.add(new Vector(Math.cos(rad * i) * _width, 0.0, Math.sin(rad * i) * _width));
+		}
+		// 정점에 따른 n각형 선
+//		for (int i = 0; i < points.size() - 1; i++)
+//		{
+//			Vector start = points.get(i), end = points.get(i + 1);
+//			Vector dir = end.clone().subtract(start).normalize();
+//			double distance = start.distance(end);
+//			for (double d = 0; d < distance; d += 0.07)
+//				vec.add(start.clone().add(dir.clone().multiply(d)));
+//		}
+		// 정점과 기둥 윗 끝을 연결하는 선
+		for (int i = 0; i < points.size() - 1; i++)
+		{
+			Vector start = points.get(i), end = new Vector(0.0, -_length, 0.0);
+			Vector dir = end.clone().subtract(start).normalize();
+			double distance = start.distance(end);
+			for (double d = 0; d < distance; d += 0.07)
+				vec.add(start.clone().add(dir.clone().multiply(d)));
+		}
+		// 정점과 기둥 밑 끝을 연결하는 선
+		for (int i = 0; i < points.size() - 1; i++)
+		{
+			Vector start = points.get(i), end = new Vector(0.0, _length, 0.0);
+			Vector dir = end.clone().subtract(start).normalize();
+			double distance = start.distance(end);
+			for (double d = 0; d < distance; d += 0.07)
+				vec.add(start.clone().add(dir.clone().multiply(d)));
+		}
+		
+		// 굴리기
+		vec = TRS.Rotate_Z(vec, _roll);
+		vec = TRS.Rotate_X(vec, _pitch);
+		vec = TRS.Rotate_Y(vec, _yaw);
+		
+		for (Vector v : vec)
+		{
+			double strength = _strength * v.distance(new Vector());
+			Vector vel = v.clone().normalize();
+			_loc.getWorld().spawnParticle(_particle, _loc, 0, vel.getX(), vel.getY(), vel.getZ(), strength, null);
+		}
+	}
+
+	// 원점 -> 랜덤한 구 모양으로 뻗어나감
+	public static void drawRandomSphere(Location _loc, Particle _particle,
+			int _count, double _radius, double _strength, double _randomStrength)
+	{
+		ArrayList<Vector> vec = new ArrayList<>();
+		
+		for (int i = 0; i <= _count; i++)
+		{
+			double altitude = Math.toRadians(-90.0 + Math.random() * 180.0);
+			double alt_cos = Math.cos(altitude);
+			double alt_sin = Math.sin(altitude);
+
+			double rad = Math.toRadians(Math.random() * 360.0);
+			double rad_cos = Math.cos(rad);
+			double rad_sin = Math.sin(rad);
+			
+			Vector pos = new Vector(rad_cos * alt_cos, alt_sin, rad_sin * alt_cos);
+			vec.add(pos);
+		}
+		
+		// 굴리기
+		vec = TRS.Scale(vec, _radius, _radius, _radius);
+		
+		for (Vector v : vec)
+		{
+			double strength = (_strength + Math.random() * _randomStrength) * v.distance(new Vector());
 			Vector vel = v.clone().normalize();
 			_loc.getWorld().spawnParticle(_particle, _loc, 0, vel.getX(), vel.getY(), vel.getZ(), strength, null);
 		}

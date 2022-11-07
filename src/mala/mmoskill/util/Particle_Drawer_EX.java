@@ -77,6 +77,21 @@ public class Particle_Drawer_EX
 			loc.getWorld().spawnParticle(_particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), _strength, null);
 		}
 	}
+	public static void drawCircleRandomize(Location _loc, Particle _particle, double _radius,
+			double _pitch, double _yaw,
+			int _holeCount, double _corrAngle, double _strength, double _random)
+	{
+		// 盔 积己
+		ArrayList<Vector> vec = makeCircle(_radius, _pitch, _yaw, _holeCount, _corrAngle);
+		
+		for (int i = 0; i < vec.size(); i++)
+		{
+			Location loc = _loc.clone().add(vec.get(i));
+			Vector vel = vec.get(i).clone();
+			double strength = _strength + Math.random() * _random;
+			loc.getWorld().spawnParticle(_particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), strength, null);
+		}
+	}
 	public static void drawCircleUp(Location _loc, Particle _particle, double _radius,
 			double _pitch, double _yaw,
 			int _holeCount, double _corrAngle, double _strength)
@@ -88,6 +103,20 @@ public class Particle_Drawer_EX
 		{
 			Location loc = _loc.clone().add(vec.get(i));
 			loc.getWorld().spawnParticle(_particle, loc, 0, 0.0, 1.0, 0.0, _strength, null);
+		}
+	}
+	public static void drawCircleVector(Location _loc, Particle _particle, double _radius,
+			double _pitch, double _yaw,
+			int _holeCount, double _corrAngle,
+			Vector _velocity, double _strength)
+	{
+		// 盔 积己
+		ArrayList<Vector> vec = makeCircle(_radius, _pitch, _yaw, _holeCount, _corrAngle);
+		
+		for (int i = 0; i < vec.size(); i++)
+		{
+			Location loc = _loc.clone().add(vec.get(i));
+			loc.getWorld().spawnParticle(_particle, loc, 0, _velocity.getX(), _velocity.getY(), _velocity.getZ(), _strength, null);
 		}
 	}
 	public static void drawCircleUpRandomize(Location _loc, Particle _particle, double _radius,
@@ -448,6 +477,65 @@ public class Particle_Drawer_EX
 		{
 			Location loc = _loc.clone().add(v);
 			_loc.getWorld().spawnParticle(_particle, loc, 1, 0, 0, 0, 0);
+		}
+	}
+	
+	// 罚待茄 备
+	public static void drawRandomSphere(Location _loc, Particle _particle,
+			int _count, double _radius, double _strength)
+	{
+		ArrayList<Vector> vec = new ArrayList<>();
+		
+		for (int i = 0; i <= _count; i++)
+		{
+			double altitude = Math.toRadians(-90.0 + Math.random() * 180.0);
+			double alt_cos = Math.cos(altitude);
+			double alt_sin = Math.sin(altitude);
+
+			double rad = Math.toRadians(Math.random() * 360.0);
+			double rad_cos = Math.cos(rad);
+			double rad_sin = Math.sin(rad);
+			
+			Vector pos = new Vector(rad_cos * alt_cos, alt_sin, rad_sin * alt_cos);
+			vec.add(pos);
+		}
+		
+		// 奔府扁
+		vec = TRS.Scale(vec, _radius, _radius, _radius);
+		
+		for (Vector v : vec)
+		{
+			Location loc = _loc.clone().add(v);
+			Vector vel = v.clone().normalize();
+			_loc.getWorld().spawnParticle(_particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), _strength, null);
+		}
+	}
+	public static void drawRandomSphere(Location _loc, DustTransition _particle,
+			int _count, double _radius)
+	{
+		ArrayList<Vector> vec = new ArrayList<>();
+		
+		for (int i = 0; i <= _count; i++)
+		{
+			double altitude = Math.toRadians(-90.0 + Math.random() * 180.0);
+			double alt_cos = Math.cos(altitude);
+			double alt_sin = Math.sin(altitude);
+
+			double rad = Math.toRadians(Math.random() * 360.0);
+			double rad_cos = Math.cos(rad);
+			double rad_sin = Math.sin(rad);
+			
+			Vector pos = new Vector(rad_cos * alt_cos, alt_sin, rad_sin * alt_cos);
+			vec.add(pos);
+		}
+		
+		// 奔府扁
+		vec = TRS.Scale(vec, _radius, _radius, _radius);
+		
+		for (Vector v : vec)
+		{
+			Location loc = _loc.clone().add(v);
+			loc.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, loc, 1, 0, 0, 0, 0, _particle);
 		}
 	}
 }

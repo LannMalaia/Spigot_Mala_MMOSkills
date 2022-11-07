@@ -46,6 +46,46 @@ public class Particle_Drawer
 			_loc.getWorld().spawnParticle(_particle, loc, 1, 0, 0, 0, 0);
 		}
 	}
+	public static void Draw_Sphere(Location _loc, DustTransition _particle, double _radius,
+			double _pitch, double _yaw, double _roll,
+			double _angle_correct, double _density)
+	{
+		ArrayList<Vector> temp_vecs = new ArrayList<Vector>();
+		
+		for(int i = -90; i <= 90; i += 60.0 / _density / _radius)
+		{
+			double altitude = Math.toRadians(i + _angle_correct);
+			double alt_cos = Math.cos(altitude);
+			double alt_sin = Math.sin(altitude);
+			
+			for(double angle = 0.0; angle <= 360.0; angle += 60.0 / _density / _radius)
+			{
+				double rad = Math.toRadians(angle);
+				double rad_cos = Math.cos(rad);
+				double rad_sin = Math.sin(rad);
+				
+				Vector pos = new Vector(rad_cos * alt_cos, alt_sin, rad_sin * alt_cos);
+				temp_vecs.add(pos.clone());
+			}
+		}
+		
+		// 옮겨심기
+		Vector[] vecs = new Vector[temp_vecs.size()];
+		for(int i = 0; i < temp_vecs.size(); i++)
+			vecs[i] = temp_vecs.get(i);
+
+		//angle_correct += 3;
+		vecs = TRS.Rotate_Z(vecs, _roll);
+		vecs = TRS.Rotate_X(vecs, _pitch);
+		vecs = TRS.Rotate_Y(vecs, _yaw);
+		vecs = TRS.Scale(vecs, _radius, _radius, _radius);
+		
+		for (int i = 0; i < vecs.length; i++)
+		{
+			Location loc = _loc.clone().add(vecs[i]);
+			_loc.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, loc, 1, 0, 0, 0, _particle);
+		}
+	}
 	
 	public static void Draw_Circle(Location _loc, Particle _particle, double _radius, double _angle)
 	{

@@ -53,14 +53,15 @@ public class Lightning_Bolt extends RegisteredSkill
 		List<Vector> vecs = new ArrayList<Vector>();
 		
 		double random_range = 6;
+		double random_range_y = 4;
 		
 		Vector nor = _end.clone().subtract(_start).toVector().normalize();
 		vecs.add(_start.toVector());
-		for(int i = 3; i < _start.distance(_end); i += 3)
+		for(int i = 3; i < _start.distance(_end) - 3; i += 3)
 		{
 			Vector new_vec = new Vector(
 					random_range * -0.5 + Math.random() * random_range,
-					random_range * -0.5 + Math.random() * random_range,
+					random_range_y * -0.5 + Math.random() * random_range_y,
 					random_range * -0.5 + Math.random() * random_range);
 			new_vec.add(nor.clone().multiply(i).add(_start.toVector()));
 			vecs.add(new_vec);

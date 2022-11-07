@@ -12,7 +12,12 @@ import mala.mmoskill.skills.passive.Invoke_Fire;
 import mala.mmoskill.skills.passive.Invoke_Fire.FireSpell;
 import mala.mmoskill.skills.passive.Invoke_Flame.FlameSpell;
 import mala.mmoskill.skills.passive.Invoke_Frost.FrostSpell;
+import mala.mmoskill.skills.passive.Invoke_FrostBomb.FrostBombSpell;
+import mala.mmoskill.skills.passive.Invoke_FrostZone.FrostZoneSpell;
 import mala.mmoskill.skills.passive.Invoke_Lightning.LightningSpell;
+import mala.mmoskill.skills.passive.Invoke_Meteor.MeteorSpell;
+import mala.mmoskill.skills.passive.Invoke_OverCharge.OverChargeSpell;
+import mala.mmoskill.skills.passive.Invoke_Thunder.ThunderSpell;
 import mala.mmoskill.skills.passive.Invoke_VaporBlast.VaporBlastSpell;
 import mala.mmoskill.util.MalaSpell;
 import mala.mmoskill.util.Particle_Drawer_EX;
@@ -68,12 +73,22 @@ public class CastChain
 		case 4:
 			break;
 		case 3:
+			if (chain.get(0) == SpellChainType.FIRE && chain.get(1) == SpellChainType.FIRE && chain.get(2) == SpellChainType.FIRE)
+				return new MeteorSpell(PlayerData.get(player));
 			break;
 		case 2:
 			if (chain.get(0) == SpellChainType.FIRE && chain.get(1) == SpellChainType.FIRE)
 				return new FlameSpell(PlayerData.get(player));
 			if (chain.contains(SpellChainType.FIRE) && chain.contains(SpellChainType.ICE))
 				return new VaporBlastSpell(PlayerData.get(player));
+			if (chain.get(0) == SpellChainType.ICE && chain.get(1) == SpellChainType.ICE)
+				return new FrostZoneSpell(PlayerData.get(player));
+			if (chain.contains(SpellChainType.ICE) && chain.contains(SpellChainType.LIGHTNING))
+				return new FrostBombSpell(PlayerData.get(player));
+			if (chain.get(0) == SpellChainType.LIGHTNING && chain.get(1) == SpellChainType.LIGHTNING)
+				return new ThunderSpell(PlayerData.get(player));
+			if (chain.contains(SpellChainType.FIRE) && chain.contains(SpellChainType.LIGHTNING))
+				return new OverChargeSpell(PlayerData.get(player));
 			break;
 		case 1:
 			if (chain.contains(SpellChainType.FIRE))
@@ -112,7 +127,7 @@ public class CastChain
 	{
 		Location loc = player.getLocation().add(0, 1.5, 0);
 		loc.add(loc.getDirection().multiply(2.0));
-		DustTransition dts = new DustTransition(Color.ORANGE, Color.BLACK, 0.5f);
+		DustTransition dts = new DustTransition(Color.ORANGE, Color.YELLOW, 0.5f);
 		
 		switch (level)
 		{

@@ -9,7 +9,7 @@ import org.bukkit.util.Vector;
 
 import mala_mmoskill.main.MalaMMO_Skill;
 
-public class EffectDrawerExpand implements Runnable
+public class EffectDrawerSpiral implements Runnable
 {
 	Location location;
 	Particle particle;
@@ -17,9 +17,9 @@ public class EffectDrawerExpand implements Runnable
 	double strength;
 	int drawSpeed;
 	
-	public EffectDrawerExpand(Location location, Particle particle, ArrayList<Vector> vecs, double strength)
+	public EffectDrawerSpiral(Location location, Particle particle, ArrayList<Vector> vecs, double strength)
 	{ this(location, particle, vecs, strength, 1); }
-	public EffectDrawerExpand(Location location, Particle particle, ArrayList<Vector> vecs, double strength, int drawSpeed)
+	public EffectDrawerSpiral(Location location, Particle particle, ArrayList<Vector> vecs, double strength, int drawSpeed)
 	{
 		this.location = location.clone();
 		this.particle = particle;

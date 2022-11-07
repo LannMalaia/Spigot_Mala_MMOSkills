@@ -25,10 +25,10 @@ public class Invoke_Flame extends RegisteredSkill
 	{
 		public FlameSpell(PlayerData playerData)
 		{
-			super(playerData, 5.0);
+			super(playerData, 3.5);
 		}
 		
-		double height = 0.5;
+		double width = 0.5, height = 0.5;
 		
 		@Override
 		public void whenStart() {
@@ -57,7 +57,8 @@ public class Invoke_Flame extends RegisteredSkill
 			}
 			else
 			{
-				height = Math.min(15.0, height + 0.7);
+				width = Math.min(5.0, width + 0.2);
+				height = Math.min(15.0, height + 1.0);
 				if (this.durationCounter % 6 <= 2)
 					world.playSound(targetLocation, Sound.ENTITY_BLAZE_SHOOT, 2.0f, 0.6f);
 
@@ -66,15 +67,15 @@ public class Invoke_Flame extends RegisteredSkill
 					Location loc = targetLocation.clone().add(0, d, 0);
 					Particle_Drawer_Expand.drawCircleRandomize(loc, Particle.FLAME, 1.0,
 							0.0, 0.0,
-							2, this.durationCounter * 5.0 + d * 5.0, 0.6);
+							2, this.durationCounter * 5.0 + d * 5.0, width * 0.12);
 				}
 				for (double d = 0; d <= height; d += 2.0)
 				{
 					Location loc = targetLocation.clone().add(0, d, 0);
-					Particle_Drawer_EX.drawCircleUpRandomize(loc, Particle.FLAME, 4.5,
+					Particle_Drawer_EX.drawCircleUpRandomize(loc, Particle.FLAME, width * 0.9,
 							0.0, 0.0,
 							6, this.durationCounter * 5.0 + d * 5.0, 1.0);
-					Particle_Drawer_EX.drawCircleUp(loc, Particle.FLAME, 5.0,
+					Particle_Drawer_EX.drawCircleUp(loc, Particle.FLAME, width,
 							0.0, 0.0,
 							6, this.durationCounter * 5.0 + d * 5.0, 0.8);
 				}
