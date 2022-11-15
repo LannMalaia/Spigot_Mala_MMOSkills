@@ -4,7 +4,7 @@ version: 1.18.1
 api-version: 1.18
 author: Malaia_Garnet
 description: Adds some mmocore skills
-depend: [Laylia_Core_API, LibsDisguises]
+depend: [Laylia_Core_API, LibsDisguises, MythicMobs, MMOCore, ItemsAdder]
 softdepend: [Spartan, Quests]
 commands:
    MM_ChangeClass:
@@ -18,5 +18,9 @@ commands:
    MM_StatReAlloc:
       description: re allocate player stats
       usage: /MM_StatReAlloc
+      default: true
+   MM_ImageTest:
+      description: just for test
+      usage: /MM_ImageTest
       default: true
 permissions:

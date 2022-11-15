@@ -12,7 +12,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import io.lumine.mythic.bukkit.events.MythicConditionLoadEvent;
+import io.lumine.mythic.bukkit.events.MythicDropLoadEvent;
+import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
+import io.lumine.mythic.bukkit.events.MythicReloadedEvent;
 import io.lumine.mythic.lib.api.event.PlayerAttackEvent;
 import mala.mmoskill.util.Weapon_Identify;
 import net.Indyuce.mmocore.MMOCore;
@@ -21,6 +26,38 @@ import net.Indyuce.mmocore.skill.ClassSkill;
 
 public class Master_Event implements Listener
 {
+	@EventHandler
+	public void whenReload(MythicReloadedEvent event)
+	{
+		Bukkit.getConsoleSender().sendMessage("§b미띡 리로드됨");
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				Bukkit.getConsoleSender().sendMessage("활성화 여부 - " + event.getInstance().isEnabled());
+				if (event.getInstance().isEnabled())
+					MalaMMO_Skill.plugin.Add_Skills();
+				else
+					Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, this, 1);
+			}
+		});
+	}
+	@EventHandler
+	public void whenReload(MythicMechanicLoadEvent event)
+	{
+//		Bukkit.getConsoleSender().sendMessage("§b메카닉 읽음");
+	}
+	@EventHandler
+	public void whenReload(MythicConditionLoadEvent event)
+	{
+//		Bukkit.getConsoleSender().sendMessage("§b컨디션 읽음");
+	}
+	@EventHandler
+	public void whenReload(MythicDropLoadEvent event)
+	{
+//		Bukkit.getConsoleSender().sendMessage("§b드랍템 읽음");
+	}
+	
 	@EventHandler
 	public void when_join(PlayerJoinEvent event)
 	{

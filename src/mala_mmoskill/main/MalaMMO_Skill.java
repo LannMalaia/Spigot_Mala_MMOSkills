@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
@@ -14,6 +15,10 @@ import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Particle.DustTransition;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -31,6 +36,8 @@ import mala.mmoskill.manager.Not_Skill;
 import mala.mmoskill.manager.Summon_Manager;
 import mala.mmoskill.util.AntiCheat_Ignore;
 import mala.mmoskill.util.Buff_Manager;
+import mala.mmoskill.util.ImageReader;
+import mala.mmoskill.util.MalaPassiveSkill;
 import mala.mmoskill.util.Skill_Animal_Ignore;
 import mala_mmoskill.class_version.Manager_April;
 import mala_mmoskill.class_version.Manager_Version;
@@ -166,6 +173,38 @@ public class MalaMMO_Skill extends JavaPlugin
 			}
 			return true;
 		}
+		if (cmd.getName().equalsIgnoreCase("MM_ImageTest"))
+		{
+			if (!sender.hasPermission("*"))
+				return true;
+			
+			if (args.length == 1 && sender instanceof Player)
+			{
+				Player player = (Player)sender;
+				player.sendMessage("§b[ 이미지 테스트 시작 ]");
+				boolean[][] img = ImageReader.readImage(args[0]);
+				double scale = 0.1;
+				Location loc = player.getLocation().clone().subtract(img.length * 0.5 * scale, 0, img.length * 0.5 * scale);
+				DustTransition dts = new DustTransition(Color.ORANGE, Color.YELLOW, 0.5f);
+				Bukkit.getScheduler().runTask(this, new Runnable() {
+					int count = 0;
+					public void run() {
+						for (int y = 0; y < img.length; y += 2) {
+							for (int x = 0; x < img[y].length; x += 2) {
+								if (img[y][x] == true)
+								{
+									Location ptLoc = loc.clone().add(x * scale, 0, y * scale);
+									ptLoc.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, ptLoc, 1, 0, 0, 0, 0);
+								}
+							}
+						}
+						if (count++ < 20)
+							Bukkit.getScheduler().runTaskLater(plugin, this, 5);
+					}
+				});
+			}
+			return true;
+		}
 //		if (cmd.getName().equalsIgnoreCase("MM_AprilReset"))
 //		{
 //			if (args.length == 0 && sender instanceof Player)
@@ -225,103 +264,60 @@ public class MalaMMO_Skill extends JavaPlugin
 		// for (PlayerAttribute pa : MMOCore.plugin.attributeManager.getAll());
 	}
 	
+	
+	private ArrayList<RegisteredSkill> registeredSkills = new ArrayList<RegisteredSkill>();
+	
 	@SuppressWarnings({ "resource" })
 	void Add_Skills()
 	{
-		Bukkit.getConsoleSender().sendMessage("§b스킬 추가");
-
-		File skillFolder = new File("" + MMOCore.plugin.getDataFolder() + "/skills");
-		if (!skillFolder.exists())
-			skillFolder.mkdir();
 		
-		try
+		if (registeredSkills.size() != 0) // 이미 한 번 불러온 경우
 		{
+			Bukkit.getConsoleSender().sendMessage("§b스킬 리로드 - 총 " + registeredSkills.size() + "개의 스킬");
 			// MMOCore.plugin.skillManager.initialize(true);
-			for(Enumeration<JarEntry> en = new JarFile(plugin.getFile()).entries(); en.hasMoreElements();)
+		}
+		else
+		{
+			Bukkit.getConsoleSender().sendMessage("§b스킬 추가");
+			File skillFolder = new File("" + MMOCore.plugin.getDataFolder() + "/skills");
+			if (!skillFolder.exists())
+				skillFolder.mkdir();
+			
+			try
 			{
-				JarEntry entry = en.nextElement();
-
-				if(entry.getName().startsWith("mala/mmoskill/skills/") && !entry.isDirectory() && !entry.getName().contains("$"))
+				for (Enumeration<JarEntry> en = new JarFile(plugin.getFile()).entries(); en.hasMoreElements();)
 				{
-					boolean not_include = false;
-					for(Class<?> c : Class.forName(entry.getName().replace("/", ".").replace(".class", "")).getInterfaces())
+					JarEntry entry = en.nextElement();
+					
+					if (entry.getName().startsWith("mala/mmoskill/skills/") && !entry.isDirectory() && !entry.getName().contains("$"))
 					{
-						if (!c.isAssignableFrom(RegisteredSkill.class))
+						boolean not_include = false;
+						Class<?> skillclass = Class.forName(entry.getName().replace("/", ".").replace(".class", ""));
+						
+						if (skillclass.getModifiers() < 1) // public이 아닌 클래스는 불러오지 않는다
 							not_include = true;
-//						if (c.isAssignableFrom(Not_Skill.class))
-//							not_include = true;
-//						if (c.isAssignableFrom(Runnable.class))
-//							not_include = true;
+						if (not_include)
+							continue;
+						
+						Bukkit.getConsoleSender().sendMessage(skillclass.getSimpleName() + " 읽음");
+						ConfigurationSection cs = getConfig();
+						RegisteredSkill handler = (RegisteredSkill)Class.forName(
+								entry.getName().replace("/", ".").replace(".class", "")).getDeclaredConstructor().newInstance();
+						registeredSkills.add(handler);
 					}
-					if(not_include)
-						continue;
-
-					Class<?> skillclass = Class.forName(entry.getName().replace("/", ".").replace(".class", ""));
-//					for (Field field : skillclass.getDeclaredFields())
-//					{
-//						Class<?> fieldtype = field.getType();
-//						if (Collection.class.isAssignableFrom(fieldtype))
-//						{
-//							ParameterizedType fieldgenerictype = (ParameterizedType)field.getGenericType();
-//							Class<?> classofcollection = null;
-//							if (fieldgenerictype.getActualTypeArguments().length > 0)
-//							{
-//								Type generictype = fieldgenerictype.getActualTypeArguments()[0];
-//								if (generictype != null)
-//								{
-//									if (generictype instanceof Class)
-//									{
-//										classofcollection = (Class<?>)generictype;
-//									}
-//									else if (generictype instanceof ParameterizedType)
-//									{
-//										Type rawtype = ((ParameterizedType)generictype).getRawType();
-//										classofcollection = (Class<?>)rawtype;
-//									}
-//								}
-//								fieldtype = classofcollection;
-//							}
-//						}
-//						Bukkit.getConsoleSender().sendMessage(fieldtype.descriptorString() + " 읽음");
-//					}
-					Bukkit.getConsoleSender().sendMessage(skillclass.getSimpleName() + " 읽음");
-					ConfigurationSection cs = getConfig();
-					RegisteredSkill handler = (RegisteredSkill)Class.forName(
-							entry.getName().replace("/", ".").replace(".class", "")).getDeclaredConstructor().newInstance();
-
-//					File skillfile = new File("" + getDataFolder() + "/skills/" + handler.getLowerCaseId() + ".yml");
-//					if (!skillfile.exists())
-//						skillfile.createNewFile();
-//					ConfigFile config = new ConfigFile("/skills", handler.getLowerCaseId());
-//					if (!config.exists())
-//					{
-//						config.getConfig().set("name", cs.get("name"));
-//						config.getConfig().set("lore", cs.getStringList("lore"));
-//						config.getConfig().set("material", cs.get("material"));
-//						for (Object mod : handler.getModifiers()) 
-//						{
-//							config.getConfig().set("" + mod + ".base", Integer.valueOf(0));
-//							config.getConfig().set("" + mod + ".per-level", Integer.valueOf(0));
-//							config.getConfig().set("" + mod + ".min", Integer.valueOf(0));
-//							config.getConfig().set("" + mod + ".max", Integer.valueOf(0));
-//						}
-//						config.save();
-//					}
-					
-					//for (Type t : ((ParameterizedType)obj.getClass().getGenericSuperclass()).getActualTypeArguments())
-					//	Bukkit.getConsoleSender().sendMessage(t.getTypeName() + " 읽음");
-					//SkillHandler<?> handler = (SkillHandler<?>)obj;
-					MMOCore.plugin.skillManager.registerSkill(handler);
-					
-					//		(Skill)Class.forName(entry.getName().replace("/", ".").replace(".class", "")).newInstance()
-					//		);
 				}
 			}
-			MMOCore.plugin.classManager.initialize(true);
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
 		}
-		catch (Exception exception)
-		{
-			exception.printStackTrace();
-		}
+		
+		// 스킬들을 불러온다
+		for (RegisteredSkill skill : registeredSkills)
+			MMOCore.plugin.skillManager.registerSkill(skill);
+
+		// 클래스를 다시 불러온다
+		MMOCore.plugin.classManager.initialize(true);
 	}
 }
