@@ -3,6 +3,7 @@ package mala.mmoskill.skills.passive;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.event.Listener;
 
 import mala.mmoskill.util.MalaPassiveSkill;
 import mala.mmoskill.util.MalaSpell;
@@ -77,7 +78,7 @@ public class Invoke_Frost extends RegisteredSkill
 	}
 }
 
-class Invoke_Frost_Handler extends MalaPassiveSkill
+class Invoke_Frost_Handler extends MalaPassiveSkill implements Listener
 {
 	public Invoke_Frost_Handler()
 	{

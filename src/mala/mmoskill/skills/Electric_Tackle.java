@@ -106,7 +106,7 @@ class Electric_Tackle_Handler extends MalaSkill implements Listener
 
 		double sec = cast.getModifier("sec");
 		double dash_damage = cast.getModifier("dash_damage");
-		double radius = 2.0;
+		double radius = 3.0;
 		
 		if (Weapon_Identify.Hold_Sword(data.getPlayer()) || Weapon_Identify.Hold_MMO_Sword(data.getPlayer()))
 			dash_damage *= 1.4;
@@ -120,7 +120,7 @@ class Electric_Tackle_Handler extends MalaSkill implements Listener
 		Player player;
 		double sec;
 		double damage;
-		double radius = 2.0;
+		double radius = 3.0;
 		
 		int count = 0;
 		double velocity = 2.0;

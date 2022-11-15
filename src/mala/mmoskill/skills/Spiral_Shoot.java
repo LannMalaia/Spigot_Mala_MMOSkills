@@ -217,7 +217,7 @@ class Spiral_Shoot_Handler extends MalaSkill implements Listener
 			}
 			player.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, player.getEyeLocation(), 5, 0.0, 0.4, 0.0, 0.0);
 			
-			for(Entity en : player.getWorld().getNearbyEntities(player.getLocation(), 2.0, 2.0, 2.0))
+			for(Entity en : player.getWorld().getNearbyEntities(player.getLocation(), 2.5, 2.5, 2.5))
 			{
 				if (!(en instanceof LivingEntity))
 					continue;

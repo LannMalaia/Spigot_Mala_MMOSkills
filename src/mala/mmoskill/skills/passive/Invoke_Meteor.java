@@ -8,6 +8,8 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.util.Vector;
 import org.bukkit.Particle.DustTransition;
+
+import mala.mmoskill.util.Effect;
 import mala.mmoskill.util.MalaPassiveSkill;
 import mala.mmoskill.util.MalaSpell;
 import mala.mmoskill.util.Particle_Drawer;
@@ -52,19 +54,16 @@ public class Invoke_Meteor extends RegisteredSkill
 				randPitch[i] = Math.random() * -10.0;
 				randYaw[i] = Math.random() * 360.0;
 			}
-			Particle_Drawer_EX.drawCircleUpRandomize(targetLocation, Particle.FLAME, 5.0,
-					0.0, 0.0,
-					0, this.durationCounter * 0.3, 0.5);
-			Particle_Drawer_EX.drawTriangle(targetLocation, Particle.FLAME, 5.0,
-					0.0, 0.0,
-					this.durationCounter * 0.3, 0.0);
-			Particle_Drawer_EX.drawTriangle(targetLocation, Particle.FLAME, 5.0,
-					0.0, 180.0,
-					this.durationCounter * 0.3, 0.0);
 		}
 		
 		@Override
 		public void whenCount() {
+			if (durationCounter % 15 == 0 && durationCounter <= 200)
+				new Effect(targetLocation, Particle.FLAME)
+					.append2DImage("meteorCircle.png", 2)
+					.setVelocity(0, 0, 0)
+					.playEffect();
+			
 			Particle_Drawer_EX.drawRandomSphere(ballLocation, Particle.FLAME,
 					(int)(size * 100), size, -0.0);
 			ballLocation.add(0, -speed, 0);

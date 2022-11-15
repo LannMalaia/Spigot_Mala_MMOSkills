@@ -2,12 +2,15 @@ package mala.mmoskill.util;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.Particle.DustTransition;
 import org.bukkit.Sound;
 import org.bukkit.util.Vector;
+
+import mala_mmoskill.main.MalaMMO_Skill;
 
 public class Effect
 {
@@ -20,12 +23,15 @@ public class Effect
 	protected ArrayList<Vector> velocities = new ArrayList<Vector>(); // 방향
 	protected ArrayList<SoundData> sounds = new ArrayList<SoundData>(); // 소리
 	
-	public void EffectMaker(Location location, Particle particle)
+	public Effect(Location location, Particle particle)
 	{
 		this.location = location;
 		this.particle = particle;
 	}
 	
+	/**
+	 * 이펙트를 한 번에 표현합니다.
+	 */
 	public void playEffect()
 	{
 		// 소리가 있으면 소리 출력
@@ -48,6 +54,43 @@ public class Effect
 			else
 				loc.getWorld().spawnParticle(particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), strength, null);
 		}
+	}
+	/**
+	 * 이펙트를 시간차별로 표현합니다.
+	 */
+	public void playAnimation(int particlesPerTick)
+	{
+		// 소리가 있으면 소리 출력
+		if (sounds.size() > 0)
+		{
+			for (SoundData soundData : sounds)
+				location.getWorld().playSound(location, soundData.sound, soundData.volume, soundData.pitch);
+		}
+		
+		// 파티클 출력
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Runnable() {
+			int count = 0;
+			public void run()
+			{
+				if (count < points.size())
+				{
+					for (int i = 0; i < particlesPerTick && count < points.size(); i++, count++)
+					{
+						Location loc = location.clone().add(points.get(i));
+						Vector vel = velocities.get(i);
+						double strength = vel.length();
+						if (dustOptions != null)
+							loc.getWorld().spawnParticle(particle, loc, 1, 0, 0, 0, 0, dustOptions);
+						else if (dustTransition != null)
+							loc.getWorld().spawnParticle(particle, loc, 1, 0, 0, 0, 0, dustTransition);
+						else
+							loc.getWorld().spawnParticle(particle, loc, 0, vel.getX(), vel.getY(), vel.getZ(), strength, null);
+					}
+				}
+				else return;
+				Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, this, 1);
+			}			
+		});
 	}
 	
 	// 소리 설정
@@ -85,7 +128,41 @@ public class Effect
 		return this;
 	}
 	
+	/**
+	 * 파티클이 그려질 원점을 설정합니다.
+	 */
+	public Effect setLocation(Location location)
+	{
+		this.location = location;
+		return this;
+	}
+	
 	// append -> 파티클 위치값을 추가
+	/**
+	 * 평면 이미지를 그립니다. MalaMMO_Skill/images 폴더 내의 이미지 파일을 불러옵니다.
+	 * 이미지 파일은 무조건 0.1배로 축소됩니다. 해상도가 400x400인 그림의 경우 40x40블록 크기가 됩니다.
+	 * 투명도만 체크하여 반영하기 때문에 png 파일을 사용해야 합니다.
+	 * velocity는 중심을 기점으로 퍼지듯이 형성됩니다.
+	 * @param fileName 불러올 이미지의 이름입니다. (ex: circle.png)
+	 * @param skipCount (1 이상으로 설정하세요) 이미지의 해상도가 너무 높은 경우를 대비해, 일정 부분을 건너 뛰면서 그립니다. 숫자가 높을수록 대충 그려집니다.
+	 */
+	public Effect append2DImage(String fileName, int skipCount)
+	{
+		boolean[][] img = ImageReader.readImage(fileName);
+		int height = img.length, width = img[0].length;
+		Vector start = new Vector(-width * 0.1 * 0.5, 0.0, -height * 0.1 * 0.5);
+		for (int y = 0; y < height; y += skipCount) {
+			for (int x = 0; x < width; x += skipCount) {
+				if (!img[y][x])
+					continue;
+				Vector v = start.clone().add(new Vector(x * 0.1, 0.0, y * 0.1));
+				points.add(v);
+				velocities.add(v.clone());
+			}
+		}
+		
+		return this;
+	}
 	/**
 	 * 평면 원을 그립니다.
 	 * @param radius 반지름
@@ -95,11 +172,29 @@ public class Effect
 	public Effect append2DCircle(double radius, double density)
 	{
 		double radianGap = (Math.PI * 2.0) / (25.0 * radius * density);
-		ArrayList<Vector> vec = new ArrayList<>();
 		for (double r = 0.0; r <= Math.PI * 2.0; r += radianGap)
-			vec.add(new Vector(Math.cos(r) * radius, 0.0, Math.sin(r) * radius));
-		points.addAll(vec);
-		velocities.addAll(vec);
+		{
+			Vector v = new Vector(Math.cos(r) * radius, 0.0, Math.sin(r) * radius);
+			points.add(v);
+			velocities.add(v.clone());
+		}
+		return this;
+	}
+	/**
+	 * 평면 호를 그립니다.
+	 * @param radius 반지름
+	 */
+	public Effect append2DArc(double angle, double radius)
+	{ return append2DArc(angle, radius, 1.0); }
+	public Effect append2DArc(double angle, double radius, double density)
+	{
+		double radianGap = (Math.PI * 2.0) / (25.0 * radius * density);
+		for (double r = 0.0; r <= Math.toRadians(angle); r += radianGap)
+		{
+			Vector v = new Vector(Math.cos(r) * radius, 0.0, Math.sin(r) * radius);
+			points.add(v);
+			velocities.add(v.clone());
+		}
 		return this;
 	}
 	/**
@@ -111,25 +206,26 @@ public class Effect
 	{ return append2DShape(corners, radius, 1.0); }
 	public Effect append2DShape(int corners, double radius, double density)
 	{
-		ArrayList<Vector> points = new ArrayList<>();
-		ArrayList<Vector> vec = new ArrayList<>();
+		ArrayList<Vector> cornerList = new ArrayList<>();
 		// 정점 설정 (사각형이면 1->2->3->4->1로 5개의 정점을 설정)
 		for (int i = 0; i <= corners; i++)
 		{
 			double rad = Math.toRadians(360.0 / corners);
-			points.add(new Vector(Math.cos(rad * i) * radius, 0.0, Math.sin(rad * i) * radius));
+			cornerList.add(new Vector(Math.cos(rad * i) * radius, 0.0, Math.sin(rad * i) * radius));
 		}
 		// 정점에 따른 n각형 선
-		for (int i = 0; i < points.size() - 1; i++)
+		for (int i = 0; i < cornerList.size() - 1; i++)
 		{
-			Vector start = points.get(i), end = points.get(i + 1);
+			Vector start = cornerList.get(i), end = cornerList.get(i + 1);
 			Vector dir = end.clone().subtract(start).normalize();
 			double distance = start.distance(end);
 			for (double d = 0; d < distance; d += 0.07 * density)
-				vec.add(start.clone().add(dir.clone().multiply(d)));
+			{
+				Vector v = start.clone().add(dir.clone().multiply(d));
+				points.add(v);
+				velocities.add(v.clone());
+			}
 		}
-		points.addAll(vec);
-		velocities.addAll(vec);
 		return this;
 	}
 	/**
@@ -141,15 +237,17 @@ public class Effect
 	{ return append2DLine(length, 1.0); }
 	public Effect append2DLine(double length, double density)
 	{
-		ArrayList<Vector> vec = new ArrayList<>();
 		for (double d = 0; d < length; d += 0.07 * density)
 		{
-			vec.add(new Vector(0, 0, d));
+			Vector v = new Vector(0, 0, d);
+			points.add(v);
+			velocities.add(v.clone());
 		}
-		points.addAll(vec);
-		velocities.addAll(vec);
 		return this;
 	}
+
+	// 별 그리기, 크리스탈 등 몇 개 빠진 거 있음
+	
 	/**
 	 * 입체 전격 선을 그립니다. 전기가 흐르는듯한 느낌을 줄 수 있습니다.
 	 * @param length 길이
@@ -181,10 +279,12 @@ public class Effect
 			Vector dir = end.clone().subtract(start).normalize();
 			double distance = start.distance(end);
 			for (double d = 0; d < distance; d += 0.07 * density)
-				vec.add(start.clone().add(dir.clone().multiply(d)));
+			{
+				Vector v = start.clone().add(dir.clone().multiply(d));
+				points.add(v);
+				velocities.add(v.clone());
+			}
 		}
-		points.addAll(vec);
-		velocities.addAll(vec);
 		return this;
 	}
 	/**
@@ -196,6 +296,7 @@ public class Effect
 	public Effect append3DSphere(double radius, double density)
 	{
 		ArrayList<Vector> vec = new ArrayList<Vector>();
+		ArrayList<Vector> vel = new ArrayList<Vector>();
 		
 		for(int i = -90; i <= 90; i += 60.0 / density / radius)
 		{
@@ -209,11 +310,13 @@ public class Effect
 				double rad_cos = Math.cos(rad);
 				double rad_sin = Math.sin(rad);
 				
-				vec.add(new Vector(rad_cos * alt_cos, alt_sin, rad_sin * alt_cos));
+				Vector v = new Vector(rad_cos * alt_cos, alt_sin, rad_sin * alt_cos);
+				vec.add(v);
+				vel.add(v.clone());
 			}
 		}
 		points.addAll(vec);
-		velocities.addAll(vec);
+		velocities.addAll(vel);
 		vec = TRS.Scale(vec, radius, radius, radius);
 		return this;
 	}

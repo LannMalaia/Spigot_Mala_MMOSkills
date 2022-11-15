@@ -346,7 +346,7 @@ class Spear_Charge_Handler extends MalaSkill implements Listener
 			}
 			player.getWorld().spawnParticle(Particle.FLAME, player.getEyeLocation(), 5, 0.0, 0.4, 0.0, 0.0);
 			
-			for(Entity en : player.getWorld().getNearbyEntities(player.getLocation(), 1.0, 1.0, 1.0))
+			for(Entity en : player.getWorld().getNearbyEntities(player.getLocation(), 3.0, 3.0, 3.0))
 			{
 				if (!(en instanceof LivingEntity))
 					continue;

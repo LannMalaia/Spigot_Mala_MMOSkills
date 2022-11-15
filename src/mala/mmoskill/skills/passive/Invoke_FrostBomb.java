@@ -10,6 +10,7 @@ import org.bukkit.Sound;
 import org.bukkit.Particle.DustTransition;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import mala.mmoskill.util.MalaPassiveSkill;
@@ -178,7 +179,7 @@ public class Invoke_FrostBomb extends RegisteredSkill
 	}
 }
 
-class Invoke_FrostBomb_Handler extends MalaPassiveSkill
+class Invoke_FrostBomb_Handler extends MalaPassiveSkill implements Listener
 {
 	public Invoke_FrostBomb_Handler()
 	{
