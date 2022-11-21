@@ -27,7 +27,7 @@ public class Cast_Invoke extends RegisteredSkill
 	{	
 		super(new Cast_Invoke_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("level", new LinearValue(1.1, 0.1));
+		addModifier("level", new LinearValue(0.1, 0.1, 1, 4));
 		addModifier("cooldown", new LinearValue(0.0, 0));
 		addModifier("mana", new LinearValue(0, 0));
 	}
@@ -44,7 +44,8 @@ class Cast_Invoke_Handler extends MalaSkill implements Listener
 				"",
 				"&7마술식을 조합해 특정한 마법을 영창합니다.",
 				"&7최대 &e{level}&7단계의 마법을 영창할 수 있습니다.",
-				"&c마술식의 조합은 순서에 상관 없이 이루어집니다.",
+				"&7마술식의 조합은 순서에 상관 없이 이루어집니다.",
+				"&c마술식 조합 중 피해를 입으면 마술식이 해제됩니다.",
 				"",
 				MsgTBL.Cooldown);
 	}

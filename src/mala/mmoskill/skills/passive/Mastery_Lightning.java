@@ -16,7 +16,7 @@ public class Mastery_Lightning extends RegisteredSkill
 	public Mastery_Lightning()
 	{	
 		super(new Mastery_Lightning_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("percent", new LinearValue(3, 3));
+		addModifier("percent", new LinearValue(3.5, 3.5));
 	}
 	
 	public static double Get_Mult(Player player)

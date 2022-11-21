@@ -8,40 +8,57 @@ import org.bukkit.Particle;
 import org.bukkit.Particle.DustTransition;
 import org.bukkit.entity.Player;
 
+import mala.mmoskill.skills.passive.Invoke_Barrier.BarrierSpell;
+import mala.mmoskill.skills.passive.Invoke_BlazeWeb.BlazeWebSpell;
 import mala.mmoskill.skills.passive.Invoke_Fire.FireSpell;
 import mala.mmoskill.skills.passive.Invoke_Flame.FlameSpell;
+import mala.mmoskill.skills.passive.Invoke_Force.ForceSpell;
 import mala.mmoskill.skills.passive.Invoke_Frost.FrostSpell;
 import mala.mmoskill.skills.passive.Invoke_FrostBomb.FrostBombSpell;
 import mala.mmoskill.skills.passive.Invoke_FrostZone.FrostZoneSpell;
 import mala.mmoskill.skills.passive.Invoke_Lightning.LightningSpell;
 import mala.mmoskill.skills.passive.Invoke_Meteor.MeteorSpell;
 import mala.mmoskill.skills.passive.Invoke_OverCharge.OverChargeSpell;
-import mala.mmoskill.skills.passive.Invoke_PrismaticDischarge.PrismaticDischargeSpell;
+import mala.mmoskill.skills.passive.Invoke_DiamondDust.DiamondDustSpell;
 import mala.mmoskill.skills.passive.Invoke_LordOfVermilion.LordOfVermilionSpell;
+import mala.mmoskill.skills.passive.Invoke_MasterSpark.MasterSparkSpell;
 import mala.mmoskill.skills.passive.Invoke_SoulZet.SoulZetSpell;
+import mala.mmoskill.skills.passive.Invoke_SummonFamiliar.SummonFamiliarSpell;
 import mala.mmoskill.skills.passive.Invoke_Thunder.ThunderSpell;
+import mala.mmoskill.skills.passive.Invoke_Tornado.TornadoSpell;
 import mala.mmoskill.skills.passive.Invoke_VaporBlast.VaporBlastSpell;
 import mala.mmoskill.util.MalaSpell;
 import mala.mmoskill.util.Particle_Drawer_EX;
+import net.Indyuce.mmocore.MMOCore;
 import net.Indyuce.mmocore.api.player.PlayerData;
+import net.Indyuce.mmocore.skill.RegisteredSkill;
 
 public class CastChain
 {
+	protected PlayerData playerData;
 	protected Player player;
 	protected double duration;
 	protected ArrayList<SpellChainType> chain;
+
+	RegisteredSkill invokeSkill = MMOCore.plugin.skillManager.getSkill("CAST_INVOKE");
+	int level = 0;
 	
 	public CastChain(Player _player)
 	{
 		player = _player;
+		playerData = PlayerData.get(player);
 		chain = new ArrayList<>();
 		duration = 5.0;
+		level = (int) invokeSkill.getModifier("level", playerData.getSkillLevel(invokeSkill));
 	}
 	
 	public void putElement(SpellChainType _type)
 	{
 		duration = 5.0;
 		chain.add(_type);
+		while (chain.size() > level) {
+			chain.remove(0);
+		}
 		String msg = "¡×6¡×l[ ";
 		for (int i = 0; i < chain.size(); i++)
 			msg += SpellChainType.GetName(chain.get(i)) + " ";
@@ -81,7 +98,19 @@ public class CastChain
 			if (getElementCount(SpellChainType.FIRE) == 2 && getElementCount(SpellChainType.LIGHTNING) == 1)
 				return new LordOfVermilionSpell(PlayerData.get(player));
 			if (getElementCount(SpellChainType.ICE) == 3)
-				return new PrismaticDischargeSpell(PlayerData.get(player));
+				return new DiamondDustSpell(PlayerData.get(player));
+			if (getElementCount(SpellChainType.ICE) == 2 && getElementCount(SpellChainType.FIRE) == 1)
+				return new SummonFamiliarSpell(PlayerData.get(player), chain.indexOf(SpellChainType.FIRE) + 1);
+			if (getElementCount(SpellChainType.ICE) == 2 && getElementCount(SpellChainType.LIGHTNING) == 1)
+				return new BarrierSpell(PlayerData.get(player));
+			if (getElementCount(SpellChainType.LIGHTNING) == 3)
+				return new MasterSparkSpell(PlayerData.get(player));
+			if (getElementCount(SpellChainType.LIGHTNING) == 2 && getElementCount(SpellChainType.ICE) == 1)
+				return new TornadoSpell(PlayerData.get(player));
+			if (getElementCount(SpellChainType.LIGHTNING) == 2 && getElementCount(SpellChainType.FIRE) == 1)
+				return new BlazeWebSpell(PlayerData.get(player));
+			if (getElementCount(SpellChainType.FIRE) == 1 && getElementCount(SpellChainType.ICE) == 1 && getElementCount(SpellChainType.LIGHTNING) == 1)
+				return new ForceSpell(PlayerData.get(player));
 			break;
 		case 2:
 			if (chain.get(0) == SpellChainType.FIRE && chain.get(1) == SpellChainType.FIRE)

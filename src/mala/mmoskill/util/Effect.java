@@ -1,6 +1,7 @@
 package mala.mmoskill.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -76,8 +77,8 @@ public class Effect
 				{
 					for (int i = 0; i < particlesPerTick && count < points.size(); i++, count++)
 					{
-						Location loc = location.clone().add(points.get(i));
-						Vector vel = velocities.get(i);
+						Location loc = location.clone().add(points.get(count));
+						Vector vel = velocities.get(count);
 						double strength = vel.length();
 						if (dustOptions != null)
 							loc.getWorld().spawnParticle(particle, loc, 1, 0, 0, 0, 0, dustOptions);
@@ -295,9 +296,6 @@ public class Effect
 	{ return append3DSphere(radius, 1.0); }
 	public Effect append3DSphere(double radius, double density)
 	{
-		ArrayList<Vector> vec = new ArrayList<Vector>();
-		ArrayList<Vector> vel = new ArrayList<Vector>();
-		
 		for(int i = -90; i <= 90; i += 60.0 / density / radius)
 		{
 			double altitude = Math.toRadians(i);
@@ -311,13 +309,11 @@ public class Effect
 				double rad_sin = Math.sin(rad);
 				
 				Vector v = new Vector(rad_cos * alt_cos, alt_sin, rad_sin * alt_cos);
-				vec.add(v);
-				vel.add(v.clone());
+				v.multiply(radius);
+				points.add(v);
+				velocities.add(v.clone());
 			}
 		}
-		points.addAll(vec);
-		velocities.addAll(vel);
-		vec = TRS.Scale(vec, radius, radius, radius);
 		return this;
 	}
 	
@@ -349,12 +345,15 @@ public class Effect
 	}
 	public Effect translatePoint(double x, double y, double z)
 	{
-		points = TRS.Translate(points, x, y, z);
+		for (Vector point : points)
+			point.add(new Vector(x, y, z));
+		// points = TRS.Translate(points, x, y, z);
 		return this;
 	}
 	public Effect translateVelocity(double x, double y, double z)
 	{
-		velocities = TRS.Translate(velocities, x, y, z);
+		for (Vector velocity : velocities)
+			velocity.add(new Vector(x, y, z));
 		return this;
 	}
 	/**
@@ -414,10 +413,20 @@ public class Effect
 	}
 
 	/**
-	 * 특정 수치만큼 뒤섞습니다. 위치와 속력 모두 영향을 받습니다.
-	 * @param randomizeType default: add: min~max만큼 더합니다. multiply: min~max만큼 곱합니다.
+	 * 파티클 배열 순서를 뒤집습니다.
 	 */
-	public static enum RANDOMIZE_TYPE { ADD, MULTIPLY }
+	public Effect reverse()
+	{
+		Collections.reverse(points);
+		Collections.reverse(velocities);
+		return this;
+	}
+	
+	/**
+	 * 특정 수치만큼 뒤섞습니다. 위치와 속력 모두 영향을 받습니다.
+	 * @param randomizeType add: min~max만큼 더합니다. multiply: min~max만큼 곱합니다. multiply_linear: multiply와 같으나 같은 랜덤값을 사용합니다.
+	 */
+	public static enum RANDOMIZE_TYPE { ADD, MULTIPLY, MULTIPLY_LINEAR }
 	public Effect randomize(RANDOMIZE_TYPE randomizeType, double min, double max)
 	{ return randomize(randomizeType, min, min, min, max, max, max); }
 	public Effect randomize(RANDOMIZE_TYPE randomizeType, double minX, double minY, double minZ, double maxX, double maxY, double maxZ)
@@ -431,6 +440,7 @@ public class Effect
 		double rangeX = maxX - minX;
 		double rangeY = maxY - minY;
 		double rangeZ = maxZ - minZ;
+		double linearValue = Math.random();
 		for (Vector vector : points)
 		{
 			switch (randomizeType)
@@ -441,9 +451,16 @@ public class Effect
 						minZ + Math.random() * rangeZ));
 				break;
 			case MULTIPLY:
-				vector.multiply(new Vector(minX + Math.random() * rangeX,
+				vector.multiply(new Vector(
+						minX + Math.random() * rangeX,
 						minY + Math.random() * rangeY,
 						minZ + Math.random() * rangeZ));
+				break;
+			case MULTIPLY_LINEAR:
+				vector.multiply(new Vector(
+						minX + linearValue * rangeX,
+						minY + linearValue * rangeY,
+						minZ + linearValue * rangeZ));
 				break;
 			}
 		}
@@ -456,6 +473,7 @@ public class Effect
 		double rangeX = maxX - minX;
 		double rangeY = maxY - minY;
 		double rangeZ = maxZ - minZ;
+		double linearValue = Math.random();
 		for (Vector vector : velocities)
 		{
 			switch (randomizeType)
@@ -466,11 +484,33 @@ public class Effect
 						minZ + Math.random() * rangeZ));
 				break;
 			case MULTIPLY:
-				vector.multiply(new Vector(minX + Math.random() * rangeX,
+				vector.multiply(new Vector(
+						minX + Math.random() * rangeX,
 						minY + Math.random() * rangeY,
 						minZ + Math.random() * rangeZ));
 				break;
+			case MULTIPLY_LINEAR:
+				vector.multiply(new Vector(
+						minX + linearValue * rangeX,
+						minY + linearValue * rangeY,
+						minZ + linearValue * rangeZ));
+				break;
 			}
+		}
+		return this;
+	}
+	
+	/**
+	 * 각 파티클이 바로 다음 파티클의 위치로 이동할 수 있도록 속력값을 설정합니다.
+	 * 마지막 파티클은 첫번째 파티클의 위치값을 참조합니다.
+	 */
+	public Effect velocityToAfterPoint()
+	{
+		for (int i = 0; i < points.size(); i++) {
+			Vector gap = points.get((i + 1) % points.size())
+					.clone().subtract(points.get(i));
+			Vector vel = velocities.get(i);
+			vel.setX(gap.getX()).setY(gap.getY()).setZ(gap.getZ()).normalize();
 		}
 		return this;
 	}

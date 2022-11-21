@@ -39,7 +39,7 @@ public class Energy_Bullet extends RegisteredSkill
 		addModifier("distance", new LinearValue(6, 1.0));
 		addModifier("damage", new LinearValue(5, 4));
 		addModifier("cooldown", new LinearValue(0.5, 0));
-		addModifier("stamina", new LinearValue(12, 1.0));
+		addModifier("stamina", new LinearValue(11.5, 1.5));
 	}
 }
 

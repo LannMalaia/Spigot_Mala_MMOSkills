@@ -26,9 +26,9 @@ public class Recovery_Wave extends RegisteredSkill
 	{	
 		super(new Recovery_Wave_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("distance", new LinearValue(3.75, 0.75, 2, 20));
-		addModifier("cooldown", new LinearValue(30, 0));
-		addModifier("mana", new LinearValue(40, 4));
+		addModifier("distance", new LinearValue(4, 1, 2, 20));
+		addModifier("cooldown", new LinearValue(20, 0));
+		addModifier("mana", new LinearValue(20, 2));
 	}
 }
 

@@ -18,8 +18,8 @@ public class Mastery_Trick extends RegisteredSkill
 	public Mastery_Trick()
 	{	
 		super(new Mastery_Trick_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("stack", new LinearValue(12, 2));
-		addModifier("additive", new LinearValue(0.1, 0.1));
+		addModifier("stack", new LinearValue(11.5, 1.5));
+		addModifier("additive", new LinearValue(0.2, 0.2));
 		addModifier("reduce", new LinearValue(0.2, 0.2, 0, 4));
 		skill = this;
 	}

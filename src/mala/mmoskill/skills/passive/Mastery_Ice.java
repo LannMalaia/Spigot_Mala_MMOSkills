@@ -16,7 +16,7 @@ public class Mastery_Ice extends RegisteredSkill
 	public Mastery_Ice()
 	{	
 		super(new Mastery_Ice_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("percent", new LinearValue(3, 3));
+		addModifier("percent", new LinearValue(3.5, 3.5));
 	}
 	
 	public static double Get_Mult(Player player)

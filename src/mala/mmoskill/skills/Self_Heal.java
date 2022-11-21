@@ -22,9 +22,9 @@ public class Self_Heal extends RegisteredSkill
 	{	
 		super(new Self_Heal_Handler(), MalaMMO_Skill.plugin.getConfig());
 		
-		addModifier("damage", new LinearValue(4, 0.5));
-		addModifier("cooldown", new LinearValue(60, 0));
-		addModifier("stamina", new LinearValue(10, 0));
+		addModifier("damage", new LinearValue(5, 1.5));
+		addModifier("cooldown", new LinearValue(30, 0));
+		addModifier("stamina", new LinearValue(5, 0));
 	}
 }
 

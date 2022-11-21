@@ -4,8 +4,8 @@ version: 1.18.1
 api-version: 1.18
 author: Malaia_Garnet
 description: Adds some mmocore skills
-depend: [Laylia_Core_API, LibsDisguises, MythicMobs, MMOCore, ItemsAdder]
-softdepend: [Spartan, Quests]
+depend: [Laylia_Core_API, LibsDisguises, MythicMobs, MMOCore]
+softdepend: [Spartan, Quests, ItemsAdder]
 commands:
    MM_ChangeClass:
       description: change player class. no level initialization.

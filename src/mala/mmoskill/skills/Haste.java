@@ -46,7 +46,7 @@ class Haste_Handler extends MalaTargetSkill implements Listener
 		super(	"HASTE",
 				"헤이스트",
 				Material.GLOWSTONE_DUST,
-				"&7속도 증가 {tier} 버프를 부여합니다.",
+				"&7속도 증가와 성급함 {tier} 버프를 부여합니다.",
 				"&7버프는 {second}초 간 지속합니다.",
 				"&7웅크리고 있으면 자신에게 사용합니다.",
 				"&7대상이 구속에 걸려 있는 경우 해당 디버프의 수준을 낮춥니다.",
@@ -94,6 +94,7 @@ class Haste_Handler extends MalaTargetSkill implements Listener
 	public static boolean Haste_Target(LivingEntity _target, int _amp, int _ticks)
 	{
 		Buff_Manager.Add_Buff(_target, PotionEffectType.SPEED, _amp, _ticks, PotionEffectType.SLOW);
+		Buff_Manager.Add_Buff(_target, PotionEffectType.FAST_DIGGING, _amp, _ticks, PotionEffectType.SLOW_DIGGING);
 		
 		_target.getWorld().playSound(_target.getEyeLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new HasteEffect(_target, 10));

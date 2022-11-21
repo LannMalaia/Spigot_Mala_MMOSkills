@@ -42,7 +42,7 @@ public class Ancient extends RegisteredSkill
 	{	
 		super(new Ancient_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("damage", new LinearValue(33, 3));
+		addModifier("damage", new LinearValue(22, 2));
 		addModifier("radius", new LinearValue(15, 0));
 		//addModifier("cooldown", new LinearValue(2, 0));
 		//addModifier("cooldown", new LinearValue(120, -2));

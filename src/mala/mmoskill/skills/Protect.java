@@ -33,6 +33,7 @@ public class Protect extends RegisteredSkill
 		super(new Protect_Handler(), MalaMMO_Skill.plugin.getConfig());
 
 		addModifier("tier", new LinearValue(1.1, 0.1, 1, 2));
+		addModifier("tier2", new LinearValue(3.5, 0.5, 3, 10));
 		addModifier("second", new LinearValue(15, 15, 15, 600));
 		addModifier("cooldown", new LinearValue(30, 0));
 		addModifier("mana", new LinearValue(33, 3));
@@ -46,8 +47,9 @@ class Protect_Handler extends MalaTargetSkill implements Listener
 		super(	"PROTECT",
 				"프로텍트",
 				Material.GUNPOWDER,
-				"&7방어와 화염 방어 {tier} 버프를 부여합니다.",
-				"버프는 {second}초 간 지속합니다.",
+				"&7방어와 흡수 {tier} 버프를 부여합니다.",
+				"&7흡수의 경우 3배 더 높은 등급이 적용됩니다.",
+				"&7버프는 {second}초 간 지속합니다.",
 				"&7웅크리고 있으면 자신에게 사용합니다.",
 				"",
 				MsgTBL.Cooldown, MsgTBL.ManaCost);
@@ -93,7 +95,7 @@ class Protect_Handler extends MalaTargetSkill implements Listener
 	public static boolean Protect_Target(LivingEntity _target, int _amp, int _ticks)
 	{
 		Buff_Manager.Add_Buff(_target, PotionEffectType.DAMAGE_RESISTANCE, _amp, _ticks, null);
-		Buff_Manager.Add_Buff(_target, PotionEffectType.FIRE_RESISTANCE, _amp, _ticks, null);
+		Buff_Manager.Add_Buff(_target, PotionEffectType.ABSORPTION, _amp * 3, _ticks, null);
 		
 		_target.getWorld().playSound(_target.getEyeLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new ProtectEffect(_target, 10));

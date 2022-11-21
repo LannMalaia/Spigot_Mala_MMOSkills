@@ -32,8 +32,8 @@ public class Recovery extends RegisteredSkill
 	{	
 		super(new Recovery_Handler(), MalaMMO_Skill.plugin.getConfig());
 		
-		addModifier("cooldown", new LinearValue(10, 0));
-		addModifier("mana", new LinearValue(30, 0));
+		addModifier("cooldown", new LinearValue(7, 0));
+		addModifier("mana", new LinearValue(11, 1));
 	}
 }
 

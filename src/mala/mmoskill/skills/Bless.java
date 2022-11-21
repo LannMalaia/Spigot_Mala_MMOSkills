@@ -46,10 +46,10 @@ class Bless_Handler extends MalaTargetSkill implements Listener
 		super(	"BLESS",
 				"블레스",
 				Material.SUGAR,
-				"&7힘과 성급함 {tier} 버프를 부여합니다.",
+				"&7힘과 재생 {tier} 버프를 부여합니다.",
 				"버프는 {second}초 간 지속됩니다.",
 				"&7웅크리고 있으면 자신에게 사용합니다.",
-				"&7대상이 약화, 채굴 피로에 걸려 있는 경우 해당 디버프의 수준을 낮춥니다.",
+				"&7대상이 약화, 독에 걸려 있는 경우 해당 디버프의 수준을 낮춥니다.",
 				"",
 				MsgTBL.Cooldown, MsgTBL.ManaCost);
 		range = 20.0;
@@ -93,7 +93,7 @@ class Bless_Handler extends MalaTargetSkill implements Listener
 	public static boolean Bless_Target(LivingEntity _target, int _amp, int _ticks)
 	{
 		Buff_Manager.Add_Buff(_target, PotionEffectType.INCREASE_DAMAGE, _amp, _ticks, PotionEffectType.WEAKNESS);
-		Buff_Manager.Add_Buff(_target, PotionEffectType.FAST_DIGGING, _amp, _ticks, PotionEffectType.SLOW_DIGGING);
+		Buff_Manager.Add_Buff(_target, PotionEffectType.REGENERATION, _amp, _ticks, PotionEffectType.POISON);
 	
 		_target.getWorld().playSound(_target.getEyeLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new BlessEffect(_target, 10));

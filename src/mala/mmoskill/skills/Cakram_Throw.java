@@ -48,10 +48,10 @@ public class Cakram_Throw extends RegisteredSkill
 	{	
 		super(new Cakram_Throw_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("fly_damage", new LinearValue(20, 2));
-		addModifier("wall_damage", new LinearValue(10, 1));
-		addModifier("sec", new LinearValue(2, 0.2));
-		addModifier("cooldown", new LinearValue(25, -0.25));
+		addModifier("fly_damage", new LinearValue(22, 2));
+		addModifier("wall_damage", new LinearValue(11, 1));
+		addModifier("sec", new LinearValue(1.1, 0.1));
+		addModifier("cooldown", new LinearValue(24.6, -0.4));
 		addModifier("stamina", new LinearValue(14.5, 0.5));
 	}
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -299,11 +300,15 @@ public class MalaMMO_Skill extends JavaPlugin
 						if (not_include)
 							continue;
 						
-						Bukkit.getConsoleSender().sendMessage(skillclass.getSimpleName() + " 읽음");
-						ConfigurationSection cs = getConfig();
-						RegisteredSkill handler = (RegisteredSkill)Class.forName(
-								entry.getName().replace("/", ".").replace(".class", "")).getDeclaredConstructor().newInstance();
-						registeredSkills.add(handler);
+						try {
+							Bukkit.getConsoleSender().sendMessage(skillclass.getSimpleName() + " 읽음");
+							RegisteredSkill handler = (RegisteredSkill)Class.forName(
+									entry.getName().replace("/", ".").replace(".class", "")).getDeclaredConstructor().newInstance();
+							registeredSkills.add(handler);							
+						} catch (InvocationTargetException e) {
+							Bukkit.getConsoleSender().sendMessage("§c오류 발생");
+							e.getTargetException().printStackTrace();
+						}
 					}
 				}
 			}

@@ -46,9 +46,9 @@ public class BindUp extends RegisteredSkill
 	{	
 		super(new BindUp_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("sec", new LinearValue(1.25, 0.25));
+		addModifier("sec", new LinearValue(1.15, 0.15));
 		addModifier("damage", new LinearValue(8, 1));
-		addModifier("cooldown", new LinearValue(25, 0));
+		addModifier("cooldown", new LinearValue(22, 0));
 		addModifier("stamina", new LinearValue(25.5, 0.5));
 		
 		skill = this;
