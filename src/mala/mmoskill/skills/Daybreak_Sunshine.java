@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -37,7 +38,7 @@ public class Daybreak_Sunshine extends RegisteredSkill
 	{	
 		super(new Daybreak_Sunshine_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("second", new LinearValue(5.5, 0.5));
+		addModifier("second", new LinearValue(7.7, 0.7));
 		addModifier("cooldown", new LinearValue(180, 0));
 		addModifier("mana", new LinearValue(80, 0));
 		
@@ -59,7 +60,7 @@ class Daybreak_Sunshine_Handler extends MalaSkill implements Listener
 				"",
 				"&7주변 10m내 아군들에게 &e{second}&7초간 유지되는 축복을 내립니다.",
 				"&7유지되는 동안에는 모든 공격에 면역이 되며,",
-				"&7디버프 또한 전부 해제됩니다.",
+				"&7HP를 최대로 회복하고 디버프 또한 전부 해제됩니다.",
 				"",
 				MsgTBL.Cooldown_Fixed, MsgTBL.ManaCost);
 	}
@@ -216,6 +217,7 @@ class Daybreak_Sunshine_Handler extends MalaSkill implements Listener
 			if (tick % 10 == 0)
 				world.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.5f, 2.0f);
 			
+			player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 			Buff_Remover.Remove_Player_Bad_Buff(player);
 			
 			if (duration > 0)

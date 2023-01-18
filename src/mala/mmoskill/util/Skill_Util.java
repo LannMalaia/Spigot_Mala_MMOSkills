@@ -8,20 +8,25 @@ import net.Indyuce.mmocore.skill.RegisteredSkill;
 
 public class Skill_Util
 {
-	public static boolean Has_Skill(PlayerData _data, String _skill_name, int _level)
+	public static boolean Has_Skill(PlayerData data, String skillName, int level)
 	{
-		RegisteredSkill skill = MMOCore.plugin.skillManager.getSkill(_skill_name);
+		if (data == null)
+			return false;
+		
+		RegisteredSkill skill = MMOCore.plugin.skillManager.getSkill(skillName);
 		if (skill == null)
 		{
-			Bukkit.getConsoleSender().sendMessage(_skill_name + "이란 스킬은 없는데요?");
+			Bukkit.getConsoleSender().sendMessage(skillName + "이란 스킬은 없는데요?");
 			return false;
 		}
 		
-		int lv = _data.getSkillLevel(skill);
+		int lv = data.getSkillLevel(skill);
 		
-		if(!_data.getProfess().hasSkill(skill))
+		if (!data.getProfess().hasSkill(skill))
 			return false;
-		if(lv < _level)
+		if (data.getLevel() < data.getProfess().getSkill(skill).getUnlockLevel())
+			return false;
+		if (lv < level)
 			return false;
 		
 		return true;

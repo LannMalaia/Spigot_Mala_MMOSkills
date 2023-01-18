@@ -38,7 +38,7 @@ public class Rapid_Fire extends RegisteredSkill
 	{	
 		super(new Rapid_Fire_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("stamina_cost", new LinearValue(2.4, -0.1, 0.5, 5.0));
+		addModifier("stamina_cost", new LinearValue(3.9, -0.1, 0.5, 5.0));
 		addModifier("cooldown", new LinearValue(1.0, 0.0));
 		addModifier("stamina", new LinearValue(0, 0));
 		
@@ -152,12 +152,13 @@ class Rapid_Fire_Task implements Runnable
 	public void run()
 	{
 		// 온라인?
-		if (!player.isOnline())
+		if (!player.isOnline()) {
+			player.removeMetadata("malammo.skill.rapid_fire", MalaMMO_Skill.plugin);
 			return;
+		}
 		
 		// 시간 다 된 경우
-		if (playerData.getStamina() <= staminaCost)
-		{
+		if (playerData.getStamina() <= staminaCost) {
 			player.removeMetadata("malammo.skill.rapid_fire", MalaMMO_Skill.plugin);
 			player.sendMessage("§c[ 속사 해제 ]");
 			return;

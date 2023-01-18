@@ -43,7 +43,7 @@ public class HackSlash_Infinite extends RegisteredSkill
 		super(new HackSlash_Infinite_Handler(), MalaMMO_Skill.plugin.getConfig());
 
 		addModifier("power", new LinearValue(11, 1, 10, 50));
-		addModifier("cost", new LinearValue(2, 0.1));
+		addModifier("cost", new LinearValue(2, 0.15));
 		addModifier("cooldown", new LinearValue(10, 0));
 		addModifier("stamina", new LinearValue(10, 0));
 	}
@@ -175,7 +175,7 @@ class HackSlash_Infinite_Handler extends MalaSkill implements Listener
 			if(data.getStamina() > 0)
 			{
 				cost = cost + 0.05;
-				waitingTick = Math.max(1, waitingTick - 1);
+				waitingTick = Math.max(2, waitingTick - 1);
 				Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, this, waitingTick);
 			}
 		}

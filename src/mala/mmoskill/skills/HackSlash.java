@@ -39,10 +39,10 @@ public class HackSlash extends RegisteredSkill
 	{	
 		super(new HackSlash_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("power", new LinearValue(14, 1.5));
-		addModifier("count", new LinearValue(4.25, 0.25));
+		addModifier("power", new LinearValue(14.3, 1.3));
+		addModifier("count", new LinearValue(3.2, 0.2));
 		addModifier("cooldown", new LinearValue(10, 0));
-		addModifier("stamina", new LinearValue(20, 0.5, 20, 35));
+		addModifier("stamina", new LinearValue(16, 1.0));
 	}
 }
 

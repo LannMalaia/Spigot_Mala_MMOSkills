@@ -19,10 +19,13 @@ import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import mala.mmoskill.skills.passive.Mastery_Heal;
 import mala.mmoskill.util.Aggro;
+import mala.mmoskill.util.CooldownFixer;
 import mala.mmoskill.util.MalaSkill;
+import mala.mmoskill.util.RayUtil;
 import mala_mmoskill.main.MalaMMO_Skill;
 import mala_mmoskill.main.MsgTBL;
 import net.Indyuce.mmocore.MMOCore;
+import net.Indyuce.mmocore.api.event.PlayerResourceUpdateEvent.UpdateReason;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import net.Indyuce.mmocore.api.util.math.formula.LinearValue;
 import net.Indyuce.mmocore.skill.ClassSkill;
@@ -36,8 +39,8 @@ public class Heal extends RegisteredSkill
 	{	
 		super(new Heal_Handler(), MalaMMO_Skill.plugin.getConfig());
 		
-		addModifier("heal", new LinearValue(12, 3));
-		addModifier("cooldown", new LinearValue(13, 0));
+		addModifier("heal", new LinearValue(10.5, 2.5));
+		addModifier("cooldown", new LinearValue(10, 0));
 		addModifier("mana", new LinearValue(10, 2));
 		
 		skill = this;
@@ -51,7 +54,7 @@ class Heal_Handler extends MalaSkill implements Listener
 		super(	"HEAL",
 				"힐",
 				Material.REDSTONE,
-				"&720m 내 아군 한 명을 &a{heal}&7만큼 회복시킵니다.",
+				"&725m 내 지정한 아군 한 명을 &a{heal}&7만큼 회복시킵니다.",
 				"&7웅크리고 있으면 자신을 회복량의 절반만큼 회복시킵니다.",
 				"",
 				MsgTBL.Cooldown,
@@ -62,43 +65,18 @@ class Heal_Handler extends MalaSkill implements Listener
 	public void whenCast(SimpleSkillResult _data, SkillMetadata cast)
 	{
 		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
-		LivingEntity target = null;
+		Player target = RayUtil.getPlayer(data.getPlayer(), 25.0);
 		double heal = cast.getModifier("heal");
+		double mana = cast.getModifier("mana");
 		heal *= Mastery_Heal.Get_Mult(data.getPlayer());
-		
-		Vector dir = data.getPlayer().getEyeLocation().getDirection();
-		RayTraceResult rtr = data.getPlayer().getWorld().rayTrace(
-				data.getPlayer().getEyeLocation().add(dir.multiply(1.5)),
-				dir,
-				20.0, FluidCollisionMode.NEVER, true, 0.1, null);
 
-		if(data.getPlayer().isSneaking())
-		{
+		if (data.getPlayer().isSneaking()) {
 			target = data.getPlayer();
 			heal *= 0.5;
 		}
-		else
-		{
-			if (rtr != null)
-			{
-				if (rtr.getHitEntity() != null
-						&& rtr.getHitEntity().getType() == EntityType.PLAYER)
-				{
-					target = (Player)rtr.getHitEntity();
-				}
-			}
-		}
-		if (target == null)
-		{
-			for (ClassSkill cs : data.getProfess().getSkills())
-			{
-				if (cs.getSkill() != Heal.skill)
-					continue;
-				CooldownInfo ci = data.getCooldownMap().getInfo(cs);
-				if (ci == null)
-					continue;
-				ci.reduceFlat(999.0);
-			}
+		if (target == null) {
+			CooldownFixer.Initialize_Cooldown(data, Heal.skill);
+			data.giveMana(mana, UpdateReason.SKILL_COST);
 			return;
 		}
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,

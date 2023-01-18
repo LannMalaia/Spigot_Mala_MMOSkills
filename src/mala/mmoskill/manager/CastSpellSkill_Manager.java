@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import mala_mmoskill.main.MalaMMO_Skill;
 
@@ -84,4 +83,18 @@ public class CastSpellSkill_Manager implements Listener, Runnable
 		if (++counter >= 10)
 			counter = 0;
 	}
+	
+//	@EventHandler (priority = EventPriority.HIGHEST)
+//	public void whenPlayerDamaged(EntityDamageByEntityEvent event)
+//	{
+//		if (event.isCancelled())
+//			return;
+//		if (event.getEntity() instanceof Player) {
+//			Player player = (Player)event.getEntity();
+//			if (castChainMap.containsKey(player)) {
+//				castChainMap.get(player).sendDisableMsg();
+//				castChainMap.remove(player);
+//			}
+//		}
+//	}
 }

@@ -39,9 +39,9 @@ public class Slash extends RegisteredSkill
 	{	
 		super(new Slash_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("cooldown", new LinearValue(39.5, -0.5));
+		addModifier("cooldown", new LinearValue(29.5, -0.5, 10, 30));
 		addModifier("distance", new LinearValue(11, 1, 10, 25));
-		addModifier("power", new LinearValue(28.5, 3.5));
+		addModifier("power", new LinearValue(25, 3));
 		addModifier("stamina", new LinearValue(16.5, 1.5));
 	}
 }

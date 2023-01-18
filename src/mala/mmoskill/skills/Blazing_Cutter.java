@@ -41,9 +41,9 @@ public class Blazing_Cutter extends RegisteredSkill
 		super(new Blazing_Cutter_Handler(), MalaMMO_Skill.plugin.getConfig());
 
 		addModifier("power", new LinearValue(25, 5));
-		addModifier("size", new LinearValue(1.5, 0.05));
+		addModifier("size", new LinearValue(2.07, 0.07));
 		addModifier("cooldown", new LinearValue(40, 0));
-		addModifier("mana", new LinearValue(57.5, 7.5));
+		addModifier("mana", new LinearValue(60.0, 10.0));
 	}
 }
 
@@ -91,7 +91,7 @@ class Blazing_Cutter_Handler extends MalaSkill implements Listener
 		
 		double angle = 0.0;
 		double correction_angle = 0.0;
-		double duration = 7.0;
+		double duration = 10.0;
 		
 		public Blazing_Cutter_Skill(Player p, double _damage, double _size, double _angle)
 		{

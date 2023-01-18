@@ -42,7 +42,7 @@ public class Perfect_Freeze extends RegisteredSkill
 	{	
 		super(new Perfect_Freeze_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("area_damage", new LinearValue(5, 0.5));
+		addModifier("area_damage", new LinearValue(11, 1.0));
 		addModifier("frost_damage", new LinearValue(46, 6));
 		addModifier("radius", new LinearValue(10, 0.5));
 

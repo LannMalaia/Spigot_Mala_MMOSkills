@@ -20,12 +20,22 @@ import net.Indyuce.mmocore.skill.RegisteredSkill;
 
 public class Cast_Glacia extends RegisteredSkill
 {
+	private static Cast_Glacia instance;
+	
 	public Cast_Glacia()
 	{	
 		super(new Cast_Glacia_Handler(), MalaMMO_Skill.plugin.getConfig());
 
 		addModifier("cooldown", new LinearValue(0.0, 0));
-		addModifier("mana", new LinearValue(0, 0));
+		addModifier("mana", new LinearValue(2.2, 2.2));
+		
+		instance = this;
+	}
+	public static Cast_Glacia getInstance() {
+		return instance;
+	}
+	public static int getLevel(PlayerData playerData) {
+		return playerData.getSkillLevel(instance);
 	}
 }
 
@@ -41,7 +51,7 @@ class Cast_Glacia_Handler extends MalaSkill implements Listener
 				"&7냉기의 마법을 준비합니다.",
 				"&7스킬 레벨에 따라 관련 영창 마법의 위력도 증가합니다.",
 				"",
-				MsgTBL.Cooldown);
+				MsgTBL.ManaCost);
 	}
 
 	@Override

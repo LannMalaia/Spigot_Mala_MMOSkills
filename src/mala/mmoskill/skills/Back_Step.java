@@ -4,11 +4,13 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.event.Listener;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import mala.mmoskill.skills.passive.Make_Doppel;
+import mala.mmoskill.util.Buff_Manager;
 import mala.mmoskill.util.MalaSkill;
 import mala_mmoskill.main.MalaMMO_Skill;
 import mala_mmoskill.main.MsgTBL;
@@ -36,7 +38,8 @@ class Back_Step_Handler extends MalaSkill implements Listener
 		super(	"BACK_STEP",
 				"후퇴",
 				Material.FEATHER,
-				"&8{power}&7의 힘으로 뒤를 향해 뜁니다.",
+				"&e{power}&7의 힘으로 뒤를 향해 뜁니다.",
+				"&7이후 공중 부양 및 느린 낙하 버프를 부여받습니다.",
 				"",
 				MsgTBL.Cooldown,
 				MsgTBL.StaCost);
@@ -58,9 +61,11 @@ class Back_Step_Handler extends MalaSkill implements Listener
 		Vector jump = data.getPlayer().getLocation().getDirection().normalize();
 		jump.setX(jump.getX() * -1.0d * power);
 		jump.setZ(jump.getZ() * -1.0d * power);
-		jump.setY(0.15d);
+		jump.setY(jump.getY() * -1.0d * power);
 		jump.multiply(1.5d);
 		data.getPlayer().setVelocity(jump);
+		Buff_Manager.Add_Buff(data.getPlayer(), PotionEffectType.LEVITATION, 0, 20, null);
+		Buff_Manager.Add_Buff(data.getPlayer(), PotionEffectType.SLOW_FALLING, 0, 100, null);
 	}
 
 }

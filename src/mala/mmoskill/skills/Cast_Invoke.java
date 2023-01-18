@@ -13,7 +13,7 @@ import mala.mmoskill.manager.CastChain;
 import mala.mmoskill.manager.CastSpellSkill_Manager;
 import mala.mmoskill.manager.SpellChainType;
 import mala.mmoskill.util.MalaSkill;
-import mala.mmoskill.util.MalaSpell;
+import mala.mmoskill.util.MalaSpellEffect;
 import mala_mmoskill.main.MalaMMO_Skill;
 import mala_mmoskill.main.MsgTBL;
 import net.Indyuce.mmocore.MMOCore;
@@ -23,6 +23,7 @@ import net.Indyuce.mmocore.skill.RegisteredSkill;
 
 public class Cast_Invoke extends RegisteredSkill
 {
+	private static Cast_Invoke instance;
 	public Cast_Invoke()
 	{	
 		super(new Cast_Invoke_Handler(), MalaMMO_Skill.plugin.getConfig());
@@ -30,6 +31,11 @@ public class Cast_Invoke extends RegisteredSkill
 		addModifier("level", new LinearValue(0.1, 0.1, 1, 4));
 		addModifier("cooldown", new LinearValue(0.0, 0));
 		addModifier("mana", new LinearValue(0, 0));
+		
+		instance = this;
+	}
+	public static Cast_Invoke getInstance() {
+		return instance;
 	}
 }
 
@@ -45,7 +51,6 @@ class Cast_Invoke_Handler extends MalaSkill implements Listener
 				"&7마술식을 조합해 특정한 마법을 영창합니다.",
 				"&7최대 &e{level}&7단계의 마법을 영창할 수 있습니다.",
 				"&7마술식의 조합은 순서에 상관 없이 이루어집니다.",
-				"&c마술식 조합 중 피해를 입으면 마술식이 해제됩니다.",
 				"",
 				MsgTBL.Cooldown);
 	}
@@ -65,7 +70,7 @@ class Cast_Invoke_Handler extends MalaSkill implements Listener
 		}
 		
 		// 효과
-		MalaSpell spell = cc.findSpell();
+		MalaSpellEffect spell = cc.findSpell();
 		CastSpellSkill_Manager.Get_Instance().removeSpellChain(player);
 		if (spell == null)
 		{

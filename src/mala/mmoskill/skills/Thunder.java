@@ -24,6 +24,8 @@ import mala.mmoskill.events.LightningMagicEvent;
 import mala.mmoskill.skills.passive.Mastery_Lightning;
 import mala.mmoskill.util.MalaLocationSkill;
 import mala.mmoskill.util.MalaSkill;
+import mala.mmoskill.util.Particle_Drawer_EX;
+import mala.mmoskill.util.Particle_Drawer_Expand;
 import mala.mmoskill.util.Skill_Util;
 import mala_mmoskill.main.MalaMMO_Skill;
 import mala_mmoskill.main.MsgTBL;
@@ -39,8 +41,8 @@ public class Thunder extends RegisteredSkill
 		super(new Thunder_Handler(), MalaMMO_Skill.plugin.getConfig());
 
 		addModifier("damage", new LinearValue(70, 17));
-		addModifier("cooldown", new LinearValue(25, 0));
-		addModifier("mana", new LinearValue(48, 8));
+		addModifier("cooldown", new LinearValue(28, 0));
+		addModifier("mana", new LinearValue(41.5, 6.5));
 	}
 }
 
@@ -108,7 +110,7 @@ class Thunder_Task implements Runnable
 	Location loc;
 	
 	double radius = 6;
-	double timer = 4.0;
+	double timer = 1.0;
 	long interval = 20;
 	World world;
 	
@@ -140,21 +142,35 @@ class Thunder_Task implements Runnable
 		else // ´Ù µÆÀ¸¸é Æø¹ß
 		{
 			Location temp_loc = loc.clone();
-			for(double angle = 0; angle < 360.0; angle += 360.0 / 64.0)
+			Particle_Drawer_EX.drawCircle(temp_loc, Particle.LAVA, radius,
+					0.0, 0.0,
+					0, 0.0, 0.0);
+			for (int i = 0; i < 4; i++)
 			{
-				temp_loc.setX(loc.getX() + Math.cos(Math.toRadians(angle)) * radius);
-				temp_loc.setZ(loc.getZ() + Math.sin(Math.toRadians(angle)) * radius);
-				world.spawnParticle(Particle.LAVA, temp_loc, 1, 0, 0, 0, 0);
+				Location tempLoc = temp_loc.clone().add(
+						-40.0 + Math.random() * 80.0,
+						100.0,
+						-40.0 + Math.random() * 80.0);
+				Lightning_Bolt.Draw_Lightning_Line(tempLoc, temp_loc, Particle.END_ROD);
 			}
-			double temp_rad = radius * 20.0;
-			for(int i = 0; i < 4; i++)
+			
+			Particle_Drawer_Expand.drawRandomSphere(temp_loc, Particle.SOUL_FIRE_FLAME,
+					360, radius,
+					0.1, 0.4);
+			for (int i = 0; i < 12; i++)
 			{
-				temp_loc.setX(loc.getX() + (-temp_rad + Math.random() * temp_rad * 2.0));
-				temp_loc.setY(256);
-				temp_loc.setZ(loc.getZ() + (-temp_rad + Math.random() * temp_rad * 2.0));
-				Lightning_Bolt.Draw_Lightning_Line(temp_loc, loc, Particle.END_ROD);
+				double randPitch = -10.0 + Math.random() * -30.0, randYaw = Math.random() * 360.0;
+				Particle_Drawer_EX.drawArc(temp_loc, Particle.CRIT,
+						1.7 + i * 0.6, 120.0,
+						randPitch, randYaw,
+						0.0, 2.0);
+				Particle_Drawer_EX.drawArc(temp_loc, Particle.CLOUD,
+						1.7 + i * 0.6, 120.0,
+						randPitch, randYaw,
+						0.0, 0.02);
 			}
-
+			
+			
 			for(Entity e : world.getNearbyEntities(loc, radius, radius, radius))
 			{
 				if(!(e instanceof LivingEntity))

@@ -60,6 +60,7 @@ public class Aggro
 		BukkitAPIHelper mythicapi = MythicBukkit.inst().getAPIHelper();
 		for (Entity e : _target.getNearbyEntities(_radius, _radius, _radius))
 		{
+			mythicapi.addThreat(e, _target, 99999999.0);
 			mythicapi.taunt(e, _target);
 		}
 	}

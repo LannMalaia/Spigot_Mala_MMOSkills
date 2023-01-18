@@ -1,5 +1,7 @@
 package mala_mmoskill.main;
 
+import java.util.Calendar;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -7,7 +9,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -169,5 +173,38 @@ public class Master_Event implements Listener
 			}
 		}
 		
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void whenDamage(EntityDamageEvent event)
+	{
+		if (!event.getEntity().getWorld().getName().equals("ArenaWorld"))
+			return;
+		if (!(event.getEntity() instanceof Player))
+			return;
+		
+		Player player = (Player)event.getEntity();
+
+		if (event.getDamage() > 500 && event.getCause() == DamageCause.ENTITY_ATTACK) {
+			event.setDamage(50);
+			
+			long time = 0;
+			if (DamagePreventer.playerDamagedTimes.containsKey(player)) {
+				time = System.currentTimeMillis() - DamagePreventer.playerDamagedTimes.get(player);
+				time = time / 100;
+				if (time > 150.0)
+					time = 0;
+			}
+			DamagePreventer.playerDamagedTimes.put(player, System.currentTimeMillis());
+			if (time == 0)
+				DamagePreventer.addLog(player, "[ 기록 " + Calendar.getInstance().getTime().toString() + " ]");
+			String log = "피해시점-" + (time == 0 ? "시작" : String.format("%.1f초", (time * 0.1))) + "--"
+					+ "피해타입-" + event.getCause().toString() + "--"
+					+ "취소여부-" + event.isCancelled() + "--"
+					+ "잔여HP-" + String.format("%.1f", player.getHealth()) + "--"
+					+ "무적시간-" + player.getNoDamageTicks() + "--"
+					+ "피해량-" + String.format("%.1f", event.getFinalDamage()) + "(" + String.format("%.1f", event.getDamage()) + ")";
+			DamagePreventer.addLog(player, log);
+		}
 	}
 }

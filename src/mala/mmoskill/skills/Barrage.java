@@ -1,5 +1,7 @@
 package mala.mmoskill.skills;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.bukkit.Bukkit;
@@ -20,11 +22,16 @@ import org.bukkit.util.Vector;
 
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
+import io.lumine.mythic.lib.skill.result.def.LocationSkillResult;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import laylia_core.main.Damage;
+import mala.mmoskill.util.AttackUtil;
+import mala.mmoskill.util.Effect;
 import mala.mmoskill.util.MalaSkill;
 import mala.mmoskill.util.Particle_Drawer;
+import mala.mmoskill.util.RayUtil;
 import mala.mmoskill.util.TRS;
+import mala.mmoskill.util.Weapon_Identify;
 import mala_mmoskill.main.MalaMMO_Skill;
 import mala_mmoskill.main.MsgTBL;
 import net.Indyuce.mmocore.MMOCore;
@@ -55,12 +62,30 @@ class Barrage_Handler extends MalaSkill implements Listener
 				Material.ARROW,
 				MsgTBL.PROJECTILE,
 				"",
+				"&6[ 활 ]",
 				"&7화살을 &e{angle}&7도 각도로 &e{count}&7발 발사합니다.",
 				"&7각 화살은 &e{damage}&7의 피해를 줍니다.",
 				"",
+				"&b[ 석궁 ]",
+				"&7즉시 시전해 화살을 무작위 방향으로 한 번에 발사합니다.",
+				"&7화살의 수는 활을 사용한 공격보다 훨씬 적습니다.",
+				"&7화살에 맞은 적들은 &e{damage}&7의 피해를 받고 뒤로 멀리 밀려납니다.",
+				"",
+				"&c활 또는 석궁을 들고 있어야 합니다.",
 				MsgTBL.Cooldown, MsgTBL.StaCost);
 		
 		Bukkit.getPluginManager().registerEvents(this, MalaMMO_Skill.plugin);
+	}
+	
+	@Override
+	public SimpleSkillResult getResult(SkillMetadata cast) {
+		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
+		if (!(Weapon_Identify.Hold_Bow(data.getPlayer()) || Weapon_Identify.Hold_Crossbow(data.getPlayer())))
+		{
+			data.getPlayer().sendMessage(MsgTBL.Equipment_Not_Correct);
+			return new SimpleSkillResult(false);
+		}
+		return super.getResult(cast);
 	}
 	
 	@EventHandler
@@ -89,8 +114,17 @@ class Barrage_Handler extends MalaSkill implements Listener
 	{
 		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
 
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Barrage_Task(data.getPlayer(), 5));
+		if (Weapon_Identify.Hold_Bow(data.getPlayer())) {
+			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
+					new Barrage_Task(data.getPlayer(), 5));
+		} else if (Weapon_Identify.Hold_Crossbow(data.getPlayer())) {
+			data.getPlayer().getWorld().playSound(data.getPlayer().getEyeLocation(), Sound.ENTITY_ARROW_SHOOT, 0.6f, 0.6f);
+			data.getPlayer().getWorld().playSound(data.getPlayer().getEyeLocation(), Sound.ENTITY_GENERIC_EXPLODE, 0.6f, 0.6f);
+			int count = (int)cast.getModifier("count") / 2;
+			double damage = cast.getModifier("damage");
+			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
+					new Barrage_Crossbow_Arrow(data.getPlayer(), count, damage));
+		}
 	}
 
 	public void Shoot_Barrage(PlayerData _data, Arrow _arrow)
@@ -151,6 +185,48 @@ class Barrage_Arrow implements Runnable
 			}
 		}
 		Particle_Drawer.Draw_Line(loc, end_point, Particle.CRIT, 0.5);
+	}
+}
+class Barrage_Crossbow_Arrow implements Runnable
+{
+	Set<LivingEntity> damagedEntities;
+	Player player;
+	int count;
+	double damage;
+	
+	public Barrage_Crossbow_Arrow(Player player, int count, double damage)
+	{
+		this.player = player;
+		this.count = count;
+		this.damage = damage;
+		damagedEntities = new HashSet<>();
+	}
+	
+	
+	public void run()
+	{
+		for (int i = 0; i < count; i++) {
+			Location loc = player.getEyeLocation().add(0, -0.3, 0);
+			Vector dir = player.getLocation().getDirection().add(new Vector(
+					-0.6 + Math.random() * 1.2,
+					-0.6 + Math.random() * 1.2,
+					-0.6 + Math.random() * 1.2)).normalize();
+			new Effect(loc, Particle.CRIT)
+				.append2DLine(dir, 15.0, 2.0)
+				.playEffect();
+			
+			LivingEntity target = RayUtil.getLivingEntity(player, dir, 15.0);
+			if (target == null)
+				continue;
+			if (damagedEntities.contains(target))
+				continue;
+			damagedEntities.add(target);
+			AttackUtil.attack(player, target,
+					damage, (_target) -> {
+						_target.setVelocity(dir.clone().multiply(2.0));
+					},
+					DamageType.PROJECTILE);
+		}
 	}
 }
 

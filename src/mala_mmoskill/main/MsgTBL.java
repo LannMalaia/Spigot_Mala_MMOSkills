@@ -7,6 +7,7 @@ public class MsgTBL
 	public static final String WEAPON_AXE = "&7µµ³¢ - ";
 	public static final String WEAPON_SPEAR = "&7Ã¢ - ";
 	public static final String WEAPON_BOW = "&7È° - ";
+	public static final String WEAPON_CROSSBOW = "&7¼®±Ã - ";
 	public static final String WEAPON_WHIP = "&7Ã¤Âï - ";
 	public static final String WEAPON_HORSE = "&7±â¸¶ - ";
 	public static final String WEAPON_SHIELD = "&7¹æÆÐ - ";

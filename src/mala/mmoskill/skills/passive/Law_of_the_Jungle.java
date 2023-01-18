@@ -21,7 +21,7 @@ public class Law_of_the_Jungle extends RegisteredSkill
 	public Law_of_the_Jungle()
 	{	
 		super(new Law_of_the_Jungle_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("percent", new LinearValue(0.2, 0.2));
+		addModifier("percent", new LinearValue(0.15, 0.15));
 	}
 }
 

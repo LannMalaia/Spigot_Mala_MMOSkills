@@ -8,43 +8,55 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffectType;
 
 import io.lumine.mythic.lib.comp.target.InteractionType;
+import io.lumine.mythic.lib.player.cooldown.CooldownInfo;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import io.lumine.mythic.lib.skill.result.def.TargetSkillResult;
 import mala.mmoskill.util.Buff_Manager;
+import mala.mmoskill.util.CooldownFixer;
 import mala.mmoskill.util.MalaSkill;
 import mala.mmoskill.util.MalaTargetSkill;
+import mala.mmoskill.util.RayUtil;
 import mala_mmoskill.main.MalaMMO_Skill;
 import mala_mmoskill.main.MsgTBL;
+import net.Indyuce.mmocore.skill.ClassSkill;
 import net.Indyuce.mmocore.skill.RegisteredSkill;
 import net.Indyuce.mmocore.MMOCore;
+import net.Indyuce.mmocore.api.event.PlayerResourceUpdateEvent.UpdateReason;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import net.Indyuce.mmocore.api.util.math.formula.LinearValue;
 
 public class Recovery extends RegisteredSkill
 {
+	public static Recovery skill;
+	
 	public Recovery()
 	{	
 		super(new Recovery_Handler(), MalaMMO_Skill.plugin.getConfig());
 		
 		addModifier("cooldown", new LinearValue(7, 0));
 		addModifier("mana", new LinearValue(11, 1));
+		
+		skill = this;
 	}
 }
 
-class Recovery_Handler extends MalaTargetSkill implements Listener
+class Recovery_Handler extends MalaSkill implements Listener
 {
 	public Recovery_Handler()
 	{
 		super(	"RECOVERY",
 				"리커버리",
 				Material.EMERALD,
-				"&720 거리 내 아군 한 명의 멀미, 실명, 허기를 치료합니다.",
+				"&725m 거리 내 아군 한 명의 멀미, 실명, 허기를 치료합니다.",
+				"&7웅크리고 있으면 자신을 치료합니다.",
+				"",
 				"&7스킬 레벨 5에서 나약함을 치료합니다.",
 				"&7스킬 레벨 10에서 독을 치료합니다.",
 				"&7스킬 레벨 15에서 구속을 치료합니다.",
@@ -52,25 +64,25 @@ class Recovery_Handler extends MalaTargetSkill implements Listener
 				"",
 				MsgTBL.Cooldown, MsgTBL.ManaCost);
 	}
-
+	
 	@Override
-	public TargetSkillResult getResult(SkillMetadata cast)
-	{
-		TargetSkillResult tsr = new TargetSkillResult(cast, range, InteractionType.SUPPORT_SKILL);
-		
-		if (tsr.isSuccessful(cast) && tsr.getTarget() instanceof Player)
-			return tsr;
-		return new TargetSkillResult(cast, 0.0, InteractionType.SUPPORT_SKILL);
-	}
-
-	@Override
-	public void whenCast(TargetSkillResult _data, SkillMetadata cast)
+	public void whenCast(SimpleSkillResult _data, SkillMetadata cast)
 	{
 		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
-		RegisteredSkill skill = MMOCore.plugin.skillManager.getSkill("RECOVERY");
-				
+		Player target = RayUtil.getPlayer(data.getPlayer(), 25.0);
+		double mana = cast.getModifier("mana");
+
+		if (data.getPlayer().isSneaking()) {
+			target = data.getPlayer();
+		}
+		if (target == null) {
+			CooldownFixer.Initialize_Cooldown(data, Recovery.skill);
+			data.giveMana(mana, UpdateReason.SKILL_COST);
+			return;
+		}
+		
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Recovery_Task(data.getPlayer(), (Player)_data.getTarget(), data.getSkillLevel(skill)));
+				new Recovery_Task(data.getPlayer(), target, data.getSkillLevel(Recovery.skill)));
 	}
 	
 	public static List<PotionEffectType> Get_TypeList(int level)

@@ -28,7 +28,7 @@ public class Heal_Wave extends RegisteredSkill
 	{	
 		super(new Heal_Wave_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("distance", new LinearValue(3.75, 0.75, 2, 20));
+		addModifier("distance", new LinearValue(5.5, 1.5, 2, 35));
 		addModifier("cooldown", new LinearValue(35, 0));
 		addModifier("mana", new LinearValue(34, 4));
 	}

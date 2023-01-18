@@ -25,7 +25,7 @@ public class Double_Shot extends RegisteredSkill
 	public Double_Shot()
 	{	
 		super(new Double_Shot_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("per", new LinearValue(1.5, 1.5));
+		addModifier("per", new LinearValue(2.5, 2.5));
 	}
 }
 

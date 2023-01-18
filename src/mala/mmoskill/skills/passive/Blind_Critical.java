@@ -21,7 +21,7 @@ public class Blind_Critical extends RegisteredSkill
 	public Blind_Critical()
 	{	
 		super(new Blind_Critical_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("per", new LinearValue(6, 1, 5, 40));
+		addModifier("per", new LinearValue(3.7, 0.7, 3, 40));
 	}
 }
 
@@ -61,7 +61,7 @@ class Blind_Critical_Handler extends MalaPassiveSkill implements Listener
 		
 		double per = 1.0 + skill.getModifier("per", level) * 0.01d;
 		
-		event.getDamage().multiplicativeModifier(per);
+		event.getDamage().multiplicativeModifier(per, DamageType.WEAPON);
 	}
 
 }

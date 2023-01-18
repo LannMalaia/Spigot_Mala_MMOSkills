@@ -28,7 +28,7 @@ public class Dominate extends RegisteredSkill
 	public Dominate()
 	{	
 		super(new Dominate_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("per", new LinearValue(10, 10, 0, 600));
+		addModifier("per", new LinearValue(7, 7, 0, 600));
 	}
 }
 

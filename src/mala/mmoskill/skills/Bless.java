@@ -11,23 +11,30 @@ import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffectType;
 
 import io.lumine.mythic.lib.comp.target.InteractionType;
+import io.lumine.mythic.lib.player.cooldown.CooldownInfo;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import io.lumine.mythic.lib.skill.result.def.TargetSkillResult;
 import mala.mmoskill.skills.passive.Mastery_Buff;
 import mala.mmoskill.util.Aggro;
 import mala.mmoskill.util.Buff_Manager;
+import mala.mmoskill.util.CooldownFixer;
 import mala.mmoskill.util.MalaSkill;
 import mala.mmoskill.util.MalaTargetSkill;
+import mala.mmoskill.util.RayUtil;
 import mala_mmoskill.main.MalaMMO_Skill;
 import mala_mmoskill.main.MsgTBL;
+import net.Indyuce.mmocore.skill.ClassSkill;
 import net.Indyuce.mmocore.skill.RegisteredSkill;
 import net.Indyuce.mmocore.MMOCore;
+import net.Indyuce.mmocore.api.event.PlayerResourceUpdateEvent.UpdateReason;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import net.Indyuce.mmocore.api.util.math.formula.LinearValue;
 
 public class Bless extends RegisteredSkill
 {
+	public static Bless skill;
+	
 	public Bless()
 	{	
 		super(new Bless_Handler(), MalaMMO_Skill.plugin.getConfig());
@@ -36,54 +43,42 @@ public class Bless extends RegisteredSkill
 		addModifier("second", new LinearValue(20, 10, 20, 300));
 		addModifier("cooldown", new LinearValue(30, 0));
 		addModifier("mana", new LinearValue(22, 2));
+		
+		skill = this;
 	}
 }
 
-class Bless_Handler extends MalaTargetSkill implements Listener
+class Bless_Handler extends MalaSkill implements Listener
 {
 	public Bless_Handler()
 	{
 		super(	"BLESS",
 				"블레스",
 				Material.SUGAR,
-				"&7힘과 재생 {tier} 버프를 부여합니다.",
-				"버프는 {second}초 간 지속됩니다.",
+				"&7힘과 재생 &e{tier}&7 버프를 부여합니다.",
+				"&7버프는 &e{second}&7초 간 지속됩니다.",
 				"&7웅크리고 있으면 자신에게 사용합니다.",
 				"&7대상이 약화, 독에 걸려 있는 경우 해당 디버프의 수준을 낮춥니다.",
 				"",
 				MsgTBL.Cooldown, MsgTBL.ManaCost);
-		range = 20.0;
-	}
-	
-	@Override
-	public TargetSkillResult getResult(SkillMetadata cast)
-	{
-		TargetSkillResult tsr = new TargetSkillResult(cast, range, InteractionType.SUPPORT_SKILL);
-		
-		if (tsr.isSuccessful(cast) && tsr.getTarget() instanceof Player)
-			return tsr;
-		return new TargetSkillResult(cast, 0.0, InteractionType.SUPPORT_SKILL);
 	}
 
 	@Override
-	public void whenCast(TargetSkillResult _data, SkillMetadata cast)
+	public void whenCast(SimpleSkillResult _data, SkillMetadata cast)
 	{
 		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
-		LivingEntity target = null;
-		int tier = 0; // 피해 증가치
-		int second = 0;
+		Player target = RayUtil.getPlayer(data.getPlayer(), 25.0);
+		double mana = cast.getModifier("mana");
+		int tier = (int) cast.getModifier("tier") - 1;
+		int second = (int) cast.getModifier("second");
 		
-		if (data.getPlayer().isSneaking())
-		{
+		if (data.getPlayer().isSneaking()) {
 			target = data.getPlayer();
-			tier = (int) cast.getModifier("tier") - 1; // 피해 증가치
-			second = (int) cast.getModifier("second"); // 피해 증가치
 		}
-		else
-		{
-			target = _data.getTarget();
-			tier = (int) cast.getModifier("tier") - 1; // 피해 증가치
-			second = (int) cast.getModifier("second"); // 피해 증가치
+		if (target == null) {
+			CooldownFixer.Initialize_Cooldown(data, Bless.skill);
+			data.giveMana(mana, UpdateReason.SKILL_COST);
+			return;
 		}
 		second *= Mastery_Buff.Get_Mult(data.getPlayer());
 		Aggro.Taunt_Area(data.getPlayer(), 15.0, 3);

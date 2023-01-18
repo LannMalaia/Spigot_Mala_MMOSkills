@@ -14,7 +14,7 @@ public class Good_Shot_When_Glowing extends RegisteredSkill
 	public Good_Shot_When_Glowing()
 	{	
 		super(new Good_Shot_When_Glowing_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("per", new LinearValue(1, 1, 1, 20));
+		addModifier("per", new LinearValue(2, 2));
 	}
 }
 

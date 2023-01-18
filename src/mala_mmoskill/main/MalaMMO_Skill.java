@@ -24,6 +24,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -40,6 +41,9 @@ import mala.mmoskill.util.Buff_Manager;
 import mala.mmoskill.util.ImageReader;
 import mala.mmoskill.util.MalaPassiveSkill;
 import mala.mmoskill.util.Skill_Animal_Ignore;
+import mala.mmoskill.xmas.Chain_Snowball;
+import mala.mmoskill.xmas.SnowCircle;
+import mala.mmoskill.xmas.Xmas_ExRange;
 import mala_mmoskill.class_version.Manager_April;
 import mala_mmoskill.class_version.Manager_Version;
 import me.blackvein.quests.libs.mysql.cj.x.protobuf.MysqlxCrud.Collection;
@@ -174,7 +178,23 @@ public class MalaMMO_Skill extends JavaPlugin
 			}
 			return true;
 		}
-		if (cmd.getName().equalsIgnoreCase("MM_ImageTest"))
+		if (cmd.getName().equalsIgnoreCase("MM_ReduceMode"))
+		{
+			if (sender instanceof Player)
+			{
+				Player player = (Player)sender;
+				if (player.hasMetadata("mala_mmoskill.particle_reduce")) {
+					player.removeMetadata("mala_mmoskill.particle_reduce", plugin);
+					player.sendMessage("§b[ 스킬 이펙트 간소화 모드 OFF ]");
+				}
+				else {
+					player.setMetadata("mala_mmoskill.particle_reduce", new FixedMetadataValue(plugin, true));
+					player.sendMessage("§b[ 스킬 이펙트 간소화 모드 ON ]");
+				}
+			}
+			return true;
+		}
+		if (cmd.getName().equalsIgnoreCase("mm_xmasEffect"))
 		{
 			if (!sender.hasPermission("*"))
 				return true;
@@ -182,49 +202,19 @@ public class MalaMMO_Skill extends JavaPlugin
 			if (args.length == 1 && sender instanceof Player)
 			{
 				Player player = (Player)sender;
-				player.sendMessage("§b[ 이미지 테스트 시작 ]");
-				boolean[][] img = ImageReader.readImage(args[0]);
-				double scale = 0.1;
-				Location loc = player.getLocation().clone().subtract(img.length * 0.5 * scale, 0, img.length * 0.5 * scale);
-				DustTransition dts = new DustTransition(Color.ORANGE, Color.YELLOW, 0.5f);
-				Bukkit.getScheduler().runTask(this, new Runnable() {
-					int count = 0;
-					public void run() {
-						for (int y = 0; y < img.length; y += 2) {
-							for (int x = 0; x < img[y].length; x += 2) {
-								if (img[y][x] == true)
-								{
-									Location ptLoc = loc.clone().add(x * scale, 0, y * scale);
-									ptLoc.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, ptLoc, 1, 0, 0, 0, 0);
-								}
-							}
-						}
-						if (count++ < 20)
-							Bukkit.getScheduler().runTaskLater(plugin, this, 5);
-					}
-				});
+				switch(args[0]) {
+				case "snowcircle":
+					Bukkit.getScheduler().runTask(this, 
+							new SnowCircle(player, 12, 10.0));
+					break;
+				case "exrange":
+					Bukkit.getScheduler().runTask(this, 
+							new Xmas_ExRange(player, 30.0, 12));
+					break;
+				}
 			}
 			return true;
 		}
-//		if (cmd.getName().equalsIgnoreCase("MM_AprilReset"))
-//		{
-//			if (args.length == 0 && sender instanceof Player)
-//			{
-//				Player player = (Player)sender;
-//				int count = Manager_April.loadPlayerReset(player);
-//				if (count < 2)
-//				{
-//					Manager_April.savePlayerReset(player, ++count);
-//					Reset_Player_Attributes((Player)sender);
-//					Reset_Player_Skills((Player)sender);
-//					sender.sendMessage("§b스킬과 스탯을 초기화했습니다.");
-//					sender.sendMessage("§b앞으로 " + (2 - count) + "회 초기화가 가능합니다.");
-//				}
-//				else
-//					sender.sendMessage("§c더 이상 초기화 할 수 없습니다.");
-//			}
-//			return true;
-//		}
 		return false;
 	}
 	  

@@ -19,6 +19,7 @@ import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.player.inventory.EquippedItem;
 import io.lumine.mythic.lib.api.event.PlayerAttackEvent;
 import io.lumine.mythic.lib.damage.DamageType;
+import io.lumine.mythic.utils.particles.Particle;
 import mala.mmoskill.util.MalaPassiveSkill;
 import mala.mmoskill.util.Weapon_Identify;
 
@@ -60,7 +61,6 @@ class Mastery_Whip_Handler extends MalaPassiveSkill implements Listener
 		int level = data.getSkillLevel(skill);
 		if (!data.getProfess().hasSkill(skill))
 			return;
-
 		// 아이템 체크
 		if (!Weapon_Identify.Hold_MMO_Whip(player))
 			return;

@@ -31,7 +31,7 @@ public class Bow_Concentrate_More extends RegisteredSkill
 	public Bow_Concentrate_More()
 	{	
 		super(new Bow_Concentrate_More_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("percent", new LinearValue(24, 4));
+		addModifier("percent", new LinearValue(6, 1));
 		skill = this;
 	}
 	
@@ -52,7 +52,8 @@ class Bow_Concentrate_More_Handler extends MalaPassiveSkill implements Listener
 		super(	"BOW_CONCENTRATE_MORE",
 				"극집중",
 				Material.BOW,
-				"&7집중(mcmmo 궁술)의 피해량이 &e{percent}&7% 증가합니다.");
+				"&7집중(mcmmo 궁술)을 사용한 사격시,",
+				"&7피해량이 &e{percent}&7% 증가합니다.");
 		
 		Bukkit.getPluginManager().registerEvents(this, MalaMMO_Skill.plugin);
 	}
@@ -67,7 +68,7 @@ class Bow_Concentrate_More_Handler extends MalaPassiveSkill implements Listener
 		Projectile proj = (Projectile)event.getDamager();
 		if (!(proj.getShooter() instanceof Player))
 			return;
-		if (!proj.hasMetadata("be.archery.concent_dmg"))
+		if (!proj.hasMetadata("be.archery.concent_mult"))
 			return;
 		
 		Player player = (Player)proj.getShooter();

@@ -22,6 +22,8 @@ import net.Indyuce.mmocore.api.util.math.formula.LinearValue;
 
 public class Breeze extends RegisteredSkill
 {
+	public static Breeze skill;
+	
 	public Breeze()
 	{	
 		super(new Breeze_Handler(), MalaMMO_Skill.plugin.getConfig());
@@ -29,6 +31,8 @@ public class Breeze extends RegisteredSkill
 		addModifier("duration", new LinearValue(0.3, 0.05));
 		addModifier("cooldown", new LinearValue(16.5, -0.5, 10, 30));
 		addModifier("mana", new LinearValue(10, .5));
+		
+		skill = this;
 	}
 }
 

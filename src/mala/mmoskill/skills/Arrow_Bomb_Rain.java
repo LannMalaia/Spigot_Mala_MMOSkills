@@ -27,10 +27,16 @@ import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.result.def.LocationSkillResult;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import laylia_core.main.Damage;
+import mala.mmoskill.skills.Arrow_Bomb_Rain.ArrowBombRainSkill;
+import mala.mmoskill.skills.Arrow_Rain.ArrowRainSkill;
+import mala.mmoskill.util.AttackUtil;
+import mala.mmoskill.util.Effect;
 import mala.mmoskill.util.MalaLocationSkill;
 import mala.mmoskill.util.MalaSkill;
+import mala.mmoskill.util.MalaSkillEffect;
 import mala.mmoskill.util.Particle_Drawer;
 import mala.mmoskill.util.Skill_Util;
+import mala.mmoskill.util.Weapon_Identify;
 import mala_mmoskill.main.MalaMMO_Skill;
 import mala_mmoskill.main.MsgTBL;
 import net.Indyuce.mmocore.MMOCore;
@@ -44,13 +50,73 @@ public class Arrow_Bomb_Rain extends RegisteredSkill
 	public Arrow_Bomb_Rain()
 	{	
 		super(new Arrow_Bomb_Rain_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("sec", new LinearValue(3.1, 0.1));
-		addModifier("count", new LinearValue(40, 4));
 		addModifier("damage", new LinearValue(30, 3));
+		addModifier("duration", new LinearValue(2.25, 0.25));
 		addModifier("cooldown", new LinearValue(40, 0));
-		addModifier("stamina", new LinearValue(50, 0));
+		addModifier("stamina", new LinearValue(70, 0));
 		
 		skill = this;
+	}
+	
+	public static class ArrowBombRainSkill extends MalaSkillEffect
+	{
+		double radius = 12.0;
+		double damage = 0;
+		double speed = 1.0;
+		Vector dir;
+		
+		public ArrowBombRainSkill(PlayerData playerData, double dmgMult, double spdMult)
+		{
+			super(playerData.getPlayer(), 4.0);
+			damage = skill.getModifier("damage", playerData.getSkillLevel(skill));
+			damage *= dmgMult;
+			targetDuration = skill.getModifier("duration", playerData.getSkillLevel(skill));
+			dir = frontLocation.getDirection().setY(0).normalize();
+			speed *= spdMult;
+		}
+		
+		@Override
+		public void whenCount() {
+			targetLocation.add(dir.clone().multiply(speed * 0.05));
+			
+			new Effect(targetLocation, Particle.FLAME)
+				.append2DCircle(radius)
+				.scaleVelocity(0)
+				.playEffect();
+			world.playSound(targetLocation, Sound.ENTITY_BLAZE_SHOOT, 2.0f, 1.5f);
+			for(int i = 0; i < 4; i++)
+			{
+				Location loc = targetLocation.clone().add(
+						-radius + Math.random() * radius * 2.0,
+						20.0,
+						-radius + Math.random() * radius * 2.0);
+				new Effect(loc, Particle.SMALL_FLAME)
+					.append2DLine(20.0, 3.0)
+					.rotate(90.0, 0, 0)
+					.setVelocity(0, -1, 0)
+					.scaleVelocity(1.0)
+					.playEffect();
+				loc.add(0, -20.0, 0);
+				world.spawnParticle(Particle.EXPLOSION_LARGE, loc, 1, 0, 0, 0);
+				world.spawnParticle(Particle.LAVA, loc, 10, 0, 0, 0);
+			}
+			world.playSound(targetLocation, Sound.ENTITY_ARROW_HIT, 1.5f, 1.5f);
+
+			if (durationCounter % 6 == 0) {
+				AttackUtil.attackCylinder(attacker,
+						targetLocation, radius, 20.0,
+						damage, null, true,
+						DamageType.PROJECTILE, DamageType.SKILL);
+			}
+		}
+
+		@Override
+		public void whenStart() {
+		}
+
+		@Override
+		public void whenEnd() {
+		}
 	}
 }
 
@@ -69,43 +135,21 @@ class Arrow_Bomb_Rain_Handler extends MalaLocationSkill implements Listener
 				"",
 				MsgTBL.PROJECTILE + MsgTBL.SKILL + MsgTBL.PHYSICAL,
 				"",
-				"&7폭렬화살비가 내릴 구역을 선택합니다.",
-				"&7이후 하늘을 향해 화살을 쏘면 폭렬화살비가 시작됩니다.",
-				"&7화살비가 내리는 구역에 있는 적들은",
-				"&70.3초마다 &e{damage}&7의 피해를 받습니다.",
-				"&7폭렬화살비는 &e{sec}&7초간 지속됩니다.",
+				"&7해당 지역에 폭렬화살비를 내립니다.",
+				"&7폭렬화살비는 천천히 나아가며, 해당 구역의 적들에게",
+				"&70.3초마다 &e{damage}&7의 피해를 줍니다.",
+				"&7폭렬화살비는 &e{duration}&7초간 지속됩니다.",
+				"&c활 또는 석궁을 들고 있어야 합니다.",
 				"",
 				MsgTBL.WEAPON_EFFECT,
 				MsgTBL.WEAPON_BOW + "피해량 30% 증가",
+				MsgTBL.WEAPON_CROSSBOW + "전진 속도 30% 증가",
 				"",
 				MsgTBL.Cooldown, MsgTBL.StaCost);
-		registerModifiers("count", "damage");
 
 		last_location = new HashMap<Player, Location>();
 		
 		Bukkit.getPluginManager().registerEvents(this, MalaMMO_Skill.plugin);
-	}
-	
-	@EventHandler
-	public void passive_arrow_rain_shoot(EntityShootBowEvent event)
-	{
-		if(!(event.getEntity() instanceof Player))
-			return;
-		if(!(event.getProjectile() instanceof Arrow))
-			return;
-		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get((Player)event.getEntity());
-		
-		// 스킬을 알고 있지 않으면 취소
-		if(!data.getProfess().hasSkill("ARROW_BOMB_RAIN"))
-			return;
-		
-		if(!data.getPlayer().hasMetadata("malammo.skill.arrow_bomb_rain.ready"))
-			return;
-
-		data.getPlayer().removeMetadata("malammo.skill.arrow_bomb_rain.ready", MalaMMO_Skill.plugin);
-		double duration = Arrow_Bomb_Rain.skill.getModifier("sec", data.getSkillLevel(Arrow_Rain.skill));
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Arrow_Bomb_Rain_Task(data.getPlayer(), (Arrow)event.getProjectile(), duration));
 	}
 	
 	@Override
@@ -118,6 +162,11 @@ class Arrow_Bomb_Rain_Handler extends MalaLocationSkill implements Listener
 			data.getPlayer().sendMessage(MsgTBL.You_Has_no_Skill);
 			return new LocationSkillResult(cast, 0.0);
 		}
+		if (!(Weapon_Identify.Hold_Bow(data.getPlayer()) || Weapon_Identify.Hold_Crossbow(data.getPlayer())))
+		{
+			data.getPlayer().sendMessage(MsgTBL.Equipment_Not_Correct);
+			return new LocationSkillResult(cast, 0.0);
+		}
 		return new LocationSkillResult(cast, range);
 	}
 
@@ -126,256 +175,12 @@ class Arrow_Bomb_Rain_Handler extends MalaLocationSkill implements Listener
 	{
 		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
 		Location loc = _data.getTarget().add(0, 1.1, 0);
+		
+		double dmgMult = Weapon_Identify.Hold_Bow(data.getPlayer()) ? 1.3 : 1.0;
+		double spdMult = Weapon_Identify.Hold_Crossbow(data.getPlayer()) ? 1.3 : 1.0;
+		
 		last_location.put(data.getPlayer(), loc);
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Arrow_Bomb_Rain_Ready_Task(data.getPlayer(), 10));
-	}
-}
-
-class Arrow_Bomb_Rain_Ready_Task implements Runnable
-{
-	Player player;
-	Location loc;
-	int time;
-	
-	public Arrow_Bomb_Rain_Ready_Task(Player _player, int _time)
-	{
-		player = _player;
-		loc = Arrow_Bomb_Rain_Handler.last_location.get(player);
-		time = _time;
-
-		player.sendMessage("§b[ 폭렬 화살비 준비 ]");
-		player.setMetadata("malammo.skill.arrow_bomb_rain.ready", new FixedMetadataValue(MalaMMO_Skill.plugin, true));
-	}
-	
-	public void run()
-	{
-		// 시간 다 되거나 메타값이 없거나 멀리 떨어진 경우
-		if(time-- <= 0)
-		{
-			player.removeMetadata("malammo.skill.arrow_bomb_rain.ready", MalaMMO_Skill.plugin);
-			player.sendMessage("§c[ 폭렬 화살비 해제 ]");
-			return;
-		}
-		if(!player.hasMetadata("malammo.skill.arrow_bomb_rain.ready"))
-			return;
-		if(loc.getWorld() != player.getWorld())
-		{
-			player.removeMetadata("malammo.skill.arrow_bomb_rain.ready", MalaMMO_Skill.plugin);
-			player.sendMessage("§c[ 폭렬 화살비 해제 ]");
-			return;
-		}
-		if(loc.distance(player.getLocation()) > 50)
-		{
-			player.removeMetadata("malammo.skill.arrow_bomb_rain.ready", MalaMMO_Skill.plugin);
-			player.sendMessage("§c[ 폭렬 화살비 해제 (너무 멉니다.) ]");
-			return;
-		}
-		
-		Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, this, 20);
-	}
-}
-
-class Arrow_Bomb_Rain_Task implements Runnable
-{
-	enum PHASE { FIRED, WAIT, RAINING, WAIT_2 }
-	
-	PHASE phase = PHASE.FIRED;
-	Player player;
-	Arrow arrow;
-	Location start_loc, end_loc;
-	double radius = 10.0;
-	
-	double highest_y = 0.0;
-	
-	int max_arrows = 0;
-	int shooted_arrows = 0;
-	int shooting_count = 1;
-	double damage = 0;
-	double duration = 4.0;
-	
-	int waiting_time = 30;
-	
-	World world;
-	
-	public Arrow_Bomb_Rain_Task(Player _player, Arrow _arrow, double _duration)
-	{
-		player = _player;
-		arrow = _arrow;
-		duration = _duration;
-		end_loc = Arrow_Bomb_Rain_Handler.last_location.get(player);
-		world = end_loc.getWorld();
-		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(player);
-		RegisteredSkill skill = MMOCore.plugin.skillManager.getSkill("ARROW_BOMB_RAIN");
-		int level = data.getSkillLevel(skill);
-
-		max_arrows = (int)skill.getModifier("count", level);
-		damage = skill.getModifier("damage", level);
-		shooting_count = Math.max(1, Math.min(3, max_arrows / 5));
-	}
-	
-	public void run()
-	{
-		boolean end_flag = false;
-		
-		switch(phase)
-		{
-		case FIRED: // 화살 올리는 상태
-			end_flag = !Fired();
-			break;
-		case WAIT: // 기다리는 상태
-			end_flag = !Wait();
-			break;
-		case RAINING: // 비내리는 상태
-			end_flag = !Rain();
-			break;
-		case WAIT_2:
-			end_flag = !Wait_2();
-			break;
-		}
-		if(end_flag)
-			return;
-		
-		Draw_Square();
-		Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, this, 1);
-	}
-	
-	boolean Fired()
-	{
-		if(highest_y < arrow.getLocation().getY()) // 화살이 상승중
-			highest_y = arrow.getLocation().getY();
-		else // 상승을 멈춘 경우
-		{
-			if(highest_y < end_loc.getY() + 10) // 화살이 충분히 상승하지 않은 경우
-			{
-				player.sendMessage("§c[ 폭렬 화살비 해제 (너무 낮게 쐈습니다.) ]");
-				return false;
-			}
-			
-			start_loc = end_loc.clone().add(0, 20, 0);
-			
-			arrow.remove();
-			phase = PHASE.WAIT;
-		}
-		return true;
-	}
-	
-	boolean Wait()
-	{
-		phase = PHASE.RAINING;
-		player.sendMessage("§b[ 폭렬화살비 발사 ]");
-
-		if (arrow.hasMetadata("malammo.skill.bow"))
-			damage *= 1.3;
-
-		return true;
-	}
-	
-	int count = 0;
-	boolean Rain()
-	{
-		count++;
-		duration -= 0.05;
-		world.playSound(start_loc, Sound.ENTITY_ARROW_SHOOT, 2.0f, 1.5f);
-		Vector _dir = new Vector(0, -1.0, 0);
-		for(int i = 0; i < shooting_count; i++)
-		{
-			Location loc = start_loc.clone().add(-radius + Math.random() * radius * 2.0, 0, -radius + Math.random() * radius * 2.0);
-			Location _end_loc = loc.clone().add(0, end_loc.getY() - loc.getY(), 0);
-			Particle_Drawer.Draw_Line(loc, _end_loc, Particle.FLAME, 0.2);
-			// world.playSound(_end_loc, Sound.ENTITY_ARROW_HIT, 2.0f, 1.5f);
-			world.spawnParticle(Particle.EXPLOSION_LARGE, _end_loc, 10, 3.0, 3.0, 3.0);
-			world.spawnParticle(Particle.LAVA, _end_loc, 100, 3.0, 3.0, 3.0);
-			world.playSound(_end_loc, Sound.ENTITY_GENERIC_EXPLODE, 2, 1);
-
-			/*
-			Location loc = start_loc.clone().add(-half_rad + Math.random() * radius, 0, -half_rad + Math.random() * radius);
-			RayTraceResult rtr = world.rayTrace(loc, _dir, 100.0, FluidCollisionMode.NEVER, true, 0.5, null);
-			if (rtr == null || rtr.getHitPosition() == null)
-				continue;
-			Location _end_loc = rtr.getHitPosition().toLocation(world);
-			Particle_Drawer.Draw_Line(loc, _end_loc, Particle.FLAME, 0.2);
-			world.playSound(_end_loc, Sound.ENTITY_ARROW_HIT, 2.0f, 1.5f);
-			
-			double temp_radius = 3;
-			for (double angle = 0; angle <= 360.0; angle += 20)
-			{
-				Location temp_loc = _end_loc.clone().add(Math.cos(Math.toRadians(angle)) * temp_radius, 0, Math.sin(Math.toRadians(angle)) * temp_radius);
-				world.spawnParticle(Particle.EXPLOSION_LARGE, temp_loc, 1, 0, 0, 0);
-				world.spawnParticle(Particle.LAVA, temp_loc, 1, 0, 0, 0);
-			}
-			world.playSound(_end_loc, Sound.ENTITY_GENERIC_EXPLODE, 2, 1);
-			
-			for(Entity e : world.getNearbyEntities(_end_loc, temp_radius, temp_radius, temp_radius))
-			{
-				if(!(e instanceof LivingEntity))
-					continue;
-				if((e instanceof Animals))
-					continue;
-				if (e == player)
-					continue;
-				LivingEntity c = (LivingEntity)e;
-				Damage.Attack(player, c, damage,
-						DamageType.PROJECTILE, DamageType.SKILL, DamageType.PHYSICAL);
-			}
-			*/
-		}
-		if (count % 6 == 0)
-		{
-			for (Entity e : end_loc.getWorld().getNearbyEntities(end_loc, radius, radius, radius))
-			{
-				if (Damage.Is_Possible(player, e) && e instanceof LivingEntity)
-				{
-					LivingEntity le = (LivingEntity)e;
-					Damage.Attack(player, le, damage,
-							DamageType.PROJECTILE, DamageType.SKILL);
-					le.setNoDamageTicks(5);
-				}
-			}
-		}
-		
-		shooted_arrows += shooting_count;
-		if(shooted_arrows >= max_arrows)
-		{
-			phase = PHASE.WAIT_2;
-		}
-		
-		return true;
-	}
-
-	boolean Wait_2()
-	{
-		waiting_time -= 1;
-		if(waiting_time <= 0)
-			return false;
-		return true;
-	}
-	
-	void Draw_Square()
-	{
-		/*
-		Vector[] vecs = new Vector[5];
-		vecs[0] = end_loc.toVector().add(new Vector(-half_rad, 0, -half_rad));
-		vecs[1] = end_loc.toVector().add(new Vector(half_rad, 0, -half_rad));
-		vecs[2] = end_loc.toVector().add(new Vector(half_rad, 0, half_rad));
-		vecs[3] = end_loc.toVector().add(new Vector(-half_rad, 0, half_rad));
-		vecs[4] = end_loc.toVector().add(new Vector(-half_rad, 0, -half_rad));
-		
-		for(int i = 0; i < vecs.length - 1; i++)
-		{
-			Vector lerp = vecs[i + 1].clone().subtract(vecs[i]);
-			double length = lerp.length();
-			lerp.normalize();
-			
-			Location loc = end_loc.clone();
-			for(double j = 0; j < length; j += 0.2)
-			{
-				loc.setX(vecs[i].getX() + lerp.getX() * j);
-				loc.setZ(vecs[i].getZ() + lerp.getZ() * j);
-				world.spawnParticle(Particle.CRIT, loc, 1, 0, 0, 0, 0);
-			}
-		}
-		*/
-		Particle_Drawer.Draw_Circle(end_loc, Particle.FLAME, radius);
+				new ArrowBombRainSkill(data, dmgMult, spdMult));
 	}
 }

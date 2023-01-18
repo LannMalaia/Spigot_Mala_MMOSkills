@@ -33,8 +33,8 @@ public class Icicle_Pierce extends RegisteredSkill
 		super(new Icicle_Pierce_Handler(), MalaMMO_Skill.plugin.getConfig());
 
 		addModifier("count", new LinearValue(3.3, 0.3));
-		addModifier("damage", new LinearValue(7, 1.0));
-		addModifier("cooldown", new LinearValue(5, -0.1, 1, 20));
+		addModifier("damage", new LinearValue(5.8, 0.8));
+		addModifier("cooldown", new LinearValue(4.95, -0.05, 1, 20));
 		addModifier("mana", new LinearValue(21.5, 1.5));
 	}
 }

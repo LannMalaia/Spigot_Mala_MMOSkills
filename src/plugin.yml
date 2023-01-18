@@ -19,8 +19,12 @@ commands:
       description: re allocate player stats
       usage: /MM_StatReAlloc
       default: true
-   MM_ImageTest:
-      description: just for test
-      usage: /MM_ImageTest
+   MM_ReduceMode:
+      description: reduce player skill particle
+      usage: /MM_ReduceMode
+      default: true
+   mm_xmasEffect:
+      description: reduce player skill particle
+      usage: /mm_xmasEffect
       default: true
 permissions:

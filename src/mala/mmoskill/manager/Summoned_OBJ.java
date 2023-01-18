@@ -28,6 +28,11 @@ public class Summoned_OBJ implements Listener
 		entity.setMetadata("summoned", new FixedMetadataValue(MalaMMO_Skill.plugin, true));
 		tick = _tick;
 		
+		entity.setInvulnerable(true);
+		Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, () -> {
+			entity.setInvulnerable(false);
+		}, 60);
+		
 		Bukkit.getPluginManager().registerEvents(this, MalaMMO_Skill.plugin);
 	}
 	

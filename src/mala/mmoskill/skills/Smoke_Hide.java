@@ -32,7 +32,7 @@ public class Smoke_Hide extends RegisteredSkill
 		super(new Smoke_Hide_Handler(), MalaMMO_Skill.plugin.getConfig());
 
 		addModifier("sta_heal", new LinearValue(4, 2));
-		addModifier("second", new LinearValue(21, 1));
+		addModifier("second", new LinearValue(3.2, 0.2));
 		addModifier("distance", new LinearValue(2, 0.5));
 		addModifier("cooldown", new LinearValue(5, 0));
 	}
@@ -95,7 +95,7 @@ class Smoke_Hide_Skill implements Runnable
 		loc.add(Math.cos(radius * 0.5 * Math.toRadians(cur_angle)), 0.7, Math.sin(radius * 0.5 * Math.toRadians(cur_angle)));
 		if (tick % 10 == 0)
 			world.playSound(loc, Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 1.0f);
-		world.spawnParticle(Particle.SMOKE_LARGE, loc, (int)(radius * 20), radius * 0.5, 0.7, radius * 0.5, 0);
+		world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, loc, (int)(radius * 7), radius * 0.5, 0.7, radius * 0.5, 0);
 		
 		for (Entity e : world.getNearbyEntities(start_loc, radius, radius, radius))
 		{

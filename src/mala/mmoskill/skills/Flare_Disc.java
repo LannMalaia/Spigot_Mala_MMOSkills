@@ -34,9 +34,9 @@ public class Flare_Disc extends RegisteredSkill
 		super(new Flare_Disc_Handler(), MalaMMO_Skill.plugin.getConfig());
 
 		addModifier("distance", new LinearValue(20, 1, 20, 80));
-		addModifier("damage", new LinearValue(65, 15));
-		addModifier("cooldown", new LinearValue(14, 0));
-		addModifier("mana", new LinearValue(42, 7));
+		addModifier("damage", new LinearValue(72.5, 17.5));
+		addModifier("cooldown", new LinearValue(17, 0));
+		addModifier("mana", new LinearValue(40, 5));
 	}
 }
 

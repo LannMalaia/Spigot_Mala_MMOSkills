@@ -29,7 +29,7 @@ public class Mastery_Bow extends RegisteredSkill
 	public Mastery_Bow()
 	{	
 		super(new Mastery_Bow_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("percent", new LinearValue(4, 4));
+		addModifier("percent", new LinearValue(3.5, 3.5));
 	}
 }
 
@@ -40,9 +40,8 @@ class Mastery_Bow_Handler extends MalaPassiveSkill implements Listener
 		super(	"MASTERY_BOW",
 				"보우 마스터리",
 				Material.KNOWLEDGE_BOOK,
-				"&7활을 사용한 공격&스킬이",
-				"&7추가로 &e{percent}&7%의 피해를 줍니다.",
-				"&c기본 무기에는 적용되지 않습니다.");
+				"&7활을 사용한 투사체 공격이",
+				"&7추가로 &e{percent}&7%의 피해를 줍니다.");
 		
 		Bukkit.getPluginManager().registerEvents(this, MalaMMO_Skill.plugin);
 	}
@@ -54,7 +53,7 @@ class Mastery_Bow_Handler extends MalaPassiveSkill implements Listener
 		PlayerData data = PlayerData.get(player);
 
 		// 공격 체크
-		if (!event.getDamage().hasType(DamageType.WEAPON))
+		if (!event.getDamage().hasType(DamageType.PROJECTILE))
 			return;
 		
 		// 스킬 체크

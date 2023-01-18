@@ -166,6 +166,7 @@ public class Effect
 	}
 	/**
 	 * 평면 원을 그립니다.
+	 * density가 낮을수록 그리는 밀도가 줄어듭니다.
 	 * @param radius 반지름
 	 */
 	public Effect append2DCircle(double radius)
@@ -183,6 +184,7 @@ public class Effect
 	}
 	/**
 	 * 평면 호를 그립니다.
+	 * density가 낮을수록 그리는 밀도가 줄어듭니다.
 	 * @param radius 반지름
 	 */
 	public Effect append2DArc(double angle, double radius)
@@ -200,6 +202,7 @@ public class Effect
 	}
 	/**
 	 * 평면 도형을 그립니다.
+	 * density가 높을수록 그리는 밀도가 줄어듭니다.
 	 * @param corners 각의 개수
 	 * @param radius 반지름
 	 */
@@ -241,6 +244,18 @@ public class Effect
 		for (double d = 0; d < length; d += 0.07 * density)
 		{
 			Vector v = new Vector(0, 0, d);
+			points.add(v);
+			velocities.add(v.clone());
+		}
+		return this;
+	}
+	public Effect append2DLine(Vector dir, double length)
+	{ return append2DLine(dir, length, 1.0); }
+	public Effect append2DLine(Vector dir, double length, double density)
+	{
+		for (double d = 0; d < length; d += 0.07 * density)
+		{
+			Vector v = dir.clone().multiply(d);
 			points.add(v);
 			velocities.add(v.clone());
 		}

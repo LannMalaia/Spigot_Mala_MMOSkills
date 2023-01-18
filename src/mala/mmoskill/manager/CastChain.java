@@ -27,8 +27,10 @@ import mala.mmoskill.skills.passive.Invoke_SummonFamiliar.SummonFamiliarSpell;
 import mala.mmoskill.skills.passive.Invoke_Thunder.ThunderSpell;
 import mala.mmoskill.skills.passive.Invoke_Tornado.TornadoSpell;
 import mala.mmoskill.skills.passive.Invoke_VaporBlast.VaporBlastSpell;
-import mala.mmoskill.util.MalaSpell;
+import mala.mmoskill.util.Effect;
+import mala.mmoskill.util.MalaSpellEffect;
 import mala.mmoskill.util.Particle_Drawer_EX;
+import mala.mmoskill.util.Skill_Util;
 import net.Indyuce.mmocore.MMOCore;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import net.Indyuce.mmocore.skill.RegisteredSkill;
@@ -84,7 +86,7 @@ public class CastChain
 	}
 
 	// 조합식에 맞는 스펠을 찾아 반환
-	public MalaSpell findSpell()
+	public MalaSpellEffect findSpell()
 	{
 		switch (chain.size())
 		{
@@ -92,6 +94,7 @@ public class CastChain
 			break;
 		case 3:
 			if (getElementCount(SpellChainType.FIRE) == 3)
+				//&& Skill_Util.Has_Skill(playerData, "INVOKE_METEOR", 1))
 				return new MeteorSpell(PlayerData.get(player));
 			if (getElementCount(SpellChainType.FIRE) == 2 && getElementCount(SpellChainType.ICE) == 1)
 				return new SoulZetSpell(PlayerData.get(player));
@@ -175,47 +178,77 @@ public class CastChain
 		Location loc = player.getLocation().add(0, 1.5, 0);
 		loc.add(loc.getDirection().multiply(2.0));
 		DustTransition dts = new DustTransition(Color.ORANGE, Color.YELLOW, 0.5f);
-		
-		switch (level)
-		{
-		case 0:
-			Particle_Drawer_EX.drawCircle(loc, Particle.SMALL_FLAME,
-					2.75, loc.getPitch() - 90.0, loc.getYaw(), 3, test * 2.0, 0.01);
-			Particle_Drawer_EX.drawCircle(loc, Particle.FLAME,
-					2.7, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0.0);
-//			Particle_Drawer_EX.drawSquare(loc, dts,
-//					2.7, loc.getPitch(), loc.getYaw() + 90, test * 1.5);
-//			Particle_Drawer_EX.drawSquare(loc, dts,
-//					2.7, loc.getPitch(), loc.getYaw() + 90, -test * 1.5);
-			Particle_Drawer_EX.drawTriangle(loc, dts,
-					3.4, loc.getPitch() - 90.0, loc.getYaw(), test);
-			break;
-		case 1:
-			//Particle_Drawer_EX.drawCircle(loc, Particle.FLAME,
-			//		1.7, loc.getPitch(), loc.getYaw() + 90, 0, test, 0.0);
-			Particle_Drawer_EX.drawCircle(loc, Particle.SMALL_FLAME,
-					1.75, loc.getPitch() - 90.0, loc.getYaw(), 3, test * -6.0, -0.01);
-//			Particle_Drawer_EX.drawCircle(loc, dts,
-//					2.2, loc.getPitch(), loc.getYaw() + 90, 0, test);
-			Particle_Drawer_EX.drawTriangle(loc, dts,
-					1.75, loc.getPitch() - 90.0, loc.getYaw(), -test);
-			Particle_Drawer_EX.drawTriangle(loc, dts,
-					1.75, loc.getPitch() - 90.0, loc.getYaw(), -test - 180.0);
-			break;
-		case 2:
-			Particle_Drawer_EX.drawCircle(loc, Particle.SOUL,
-					2.7, loc.getPitch() - 90.0, loc.getYaw(), 8, test, -0.04);
-			Particle_Drawer_EX.drawTriangle(loc, dts,
-					4.8, loc.getPitch() - 90.0, loc.getYaw(), test * 1.0);
-			Particle_Drawer_EX.drawTriangle(loc, dts,
-					4.8, loc.getPitch() - 90.0, loc.getYaw(), 180.0 + test * 1.0);
-			break;
-		case 3:
-			Particle_Drawer_EX.drawCircle(loc, Particle.SMOKE_NORMAL,
-					4.8, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0);
-			Particle_Drawer_EX.drawCircle(loc, Particle.SMOKE_NORMAL,
-					4.8, loc.getPitch() - 90.0, loc.getYaw(), 6, test, -0.04);
-			break;
+
+		if (Particle_Manager.isReduceMode(player)) {
+			switch (level)
+			{
+			case 0:
+				new Effect(loc, Particle.SMALL_FLAME)
+					.append2DCircle(1.0, 0.5)
+					.rotate(0, test * -2.0, 0)
+					.rotate(loc.getPitch() - 90.0, loc.getYaw(), 0)
+					.scaleVelocity(0.0)
+					.playEffect();
+				break;
+			case 1:
+				new Effect(loc, Particle.SMALL_FLAME)
+					.append2DCircle(1.5, 0.4)
+					.rotate(0, test * 2.0, 0)
+					.rotate(loc.getPitch() - 90.0, loc.getYaw(), 0)
+					.scaleVelocity(0.0)
+					.playEffect();
+				break;
+			case 2:
+				new Effect(loc, Particle.SMALL_FLAME)
+					.append2DCircle(2.0, 0.3)
+					.rotate(0, test * -2.0, 0)
+					.rotate(loc.getPitch() - 90.0, loc.getYaw(), 0)
+					.scaleVelocity(0.0)
+					.playEffect();
+				break;
+			case 3:
+				new Effect(loc, Particle.SMALL_FLAME)
+					.append2DCircle(2.5, 0.2)
+					.rotate(0, test * 2.0, 0)
+					.rotate(loc.getPitch() - 90.0, loc.getYaw(), 0)
+					.scaleVelocity(0.0)
+					.playEffect();
+				break;
+			}
+		} else {
+			switch (level)
+			{
+			case 0:
+				Particle_Drawer_EX.drawCircle(loc, Particle.SMALL_FLAME,
+						2.75, loc.getPitch() - 90.0, loc.getYaw(), 3, test * 2.0, 0.01);
+				Particle_Drawer_EX.drawCircle(loc, Particle.FLAME,
+						2.7, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0.0);
+				Particle_Drawer_EX.drawTriangle(loc, dts,
+						3.4, loc.getPitch() - 90.0, loc.getYaw(), test);
+				break;
+			case 1:
+				Particle_Drawer_EX.drawCircle(loc, Particle.SMALL_FLAME,
+						1.75, loc.getPitch() - 90.0, loc.getYaw(), 3, test * -6.0, -0.01);
+				Particle_Drawer_EX.drawTriangle(loc, dts,
+						1.75, loc.getPitch() - 90.0, loc.getYaw(), -test);
+				Particle_Drawer_EX.drawTriangle(loc, dts,
+						1.75, loc.getPitch() - 90.0, loc.getYaw(), -test - 180.0);
+				break;
+			case 2:
+				Particle_Drawer_EX.drawCircle(loc, Particle.SOUL,
+						2.7, loc.getPitch() - 90.0, loc.getYaw(), 8, test, -0.04);
+				Particle_Drawer_EX.drawTriangle(loc, dts,
+						4.8, loc.getPitch() - 90.0, loc.getYaw(), test * 1.0);
+				Particle_Drawer_EX.drawTriangle(loc, dts,
+						4.8, loc.getPitch() - 90.0, loc.getYaw(), 180.0 + test * 1.0);
+				break;
+			case 3:
+				Particle_Drawer_EX.drawCircle(loc, Particle.SMOKE_NORMAL,
+						4.8, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0);
+				Particle_Drawer_EX.drawCircle(loc, Particle.SMOKE_NORMAL,
+						4.8, loc.getPitch() - 90.0, loc.getYaw(), 6, test, -0.04);
+				break;
+			}
 		}
 	}
 	private void drawIce(int level)
@@ -224,42 +257,80 @@ public class CastChain
 		loc.add(loc.getDirection().multiply(2.0));
 		DustTransition dts = new DustTransition(Color.fromRGB(180, 180, 255), Color.WHITE, 0.5f);
 
-		switch (level)
-		{
-		case 0:
-			Particle_Drawer_EX.drawCircle(loc, Particle.WATER_WAKE,
-					2.75, loc.getPitch() - 90.0, loc.getYaw(), 3, test * 2.0, -0.01);
-			Particle_Drawer_EX.drawCircle(loc, Particle.SOUL_FIRE_FLAME,
-					2.7, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0.0);
-			Particle_Drawer_EX.drawSquare(loc, dts,
-					2.7, loc.getPitch() - 90.0, loc.getYaw(), test * 1.5);
-			break;
-		case 1:
+		if (Particle_Manager.isReduceMode(player)) {
+			switch (level)
+			{
+			case 0:
+				new Effect(loc, Particle.WATER_WAKE)
+					.append2DCircle(1.0, 0.5)
+					.rotate(0, test * -2.0, 0)
+					.rotate(loc.getPitch() - 90.0, loc.getYaw(), 0)
+					.scaleVelocity(0.0)
+					.playEffect();
+				break;
+			case 1:
+				new Effect(loc, Particle.WATER_WAKE)
+					.append2DCircle(1.5, 0.4)
+					.rotate(0, test * 2.0, 0)
+					.rotate(loc.getPitch() - 90.0, loc.getYaw(), 0)
+					.scaleVelocity(0.0)
+					.playEffect();
+				break;
+			case 2:
+				new Effect(loc, Particle.WATER_WAKE)
+					.append2DCircle(2.0, 0.3)
+					.rotate(0, test * -2.0, 0)
+					.rotate(loc.getPitch() - 90.0, loc.getYaw(), 0)
+					.scaleVelocity(0.0)
+					.playEffect();
+				break;
+			case 3:
+				new Effect(loc, Particle.WATER_WAKE)
+					.append2DCircle(2.5, 0.2)
+					.rotate(0, test * 2.0, 0)
+					.rotate(loc.getPitch() - 90.0, loc.getYaw(), 0)
+					.scaleVelocity(0.0)
+					.playEffect();
+				break;
+			}
+		} else {
+			switch (level)
+			{
+			case 0:
+				Particle_Drawer_EX.drawCircle(loc, Particle.WATER_WAKE,
+						2.75, loc.getPitch() - 90.0, loc.getYaw(), 3, test * 2.0, -0.01);
+				Particle_Drawer_EX.drawCircle(loc, Particle.SOUL_FIRE_FLAME,
+						2.7, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0.0);
+				Particle_Drawer_EX.drawSquare(loc, dts,
+						2.7, loc.getPitch() - 90.0, loc.getYaw(), test * 1.5);
+				break;
+			case 1:
 //			Particle_Drawer_EX.drawCircle(loc, dts,
 //					1.75, loc.getPitch() - 90.0, loc.getYaw(), 0, test);
-			Particle_Drawer_EX.drawCircle(loc, Particle.SOUL_FIRE_FLAME,
-					1.75, loc.getPitch() - 90.0, loc.getYaw(), 2, test * -4.0, -0.01);
-			Particle_Drawer_EX.drawCircle(loc, Particle.SOUL_FIRE_FLAME,
-					1.75, loc.getPitch() - 90.0, loc.getYaw(), 2, test * -4.0, 0.01);
-			Particle_Drawer_EX.drawSquare(loc, dts,
-					1.75, loc.getPitch() - 90.0, loc.getYaw(), -test);
-			Particle_Drawer_EX.drawSquare(loc, dts,
-					1.75, loc.getPitch() - 90.0, loc.getYaw(), -test - 45.0);
-			break;
-		case 2:
-			Particle_Drawer_EX.drawCircle(loc, Particle.CRIT,
-					2.7, loc.getPitch() - 90.0, loc.getYaw(), 4, test * 2.5, -0.25);
-			Particle_Drawer_EX.drawSquare(loc, dts,
-					3.8, loc.getPitch() - 90.0, loc.getYaw(), test * 1.0);
-			Particle_Drawer_EX.drawSquare(loc, dts,
-					3.8, loc.getPitch() - 90.0, loc.getYaw(), test * 1.0 + 45.0);
-			break;
-		case 3:
-			Particle_Drawer_EX.drawCircle(loc, Particle.SNOWFLAKE,
-					4.8, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0);
-			Particle_Drawer_EX.drawCircle(loc, Particle.SNOWFLAKE,
-					4.8, loc.getPitch() - 90.0, loc.getYaw(), 6, test, -0.05);
-			break;
+				Particle_Drawer_EX.drawCircle(loc, Particle.SOUL_FIRE_FLAME,
+						1.75, loc.getPitch() - 90.0, loc.getYaw(), 2, test * -4.0, -0.01);
+				Particle_Drawer_EX.drawCircle(loc, Particle.SOUL_FIRE_FLAME,
+						1.75, loc.getPitch() - 90.0, loc.getYaw(), 2, test * -4.0, 0.01);
+				Particle_Drawer_EX.drawSquare(loc, dts,
+						1.75, loc.getPitch() - 90.0, loc.getYaw(), -test);
+				Particle_Drawer_EX.drawSquare(loc, dts,
+						1.75, loc.getPitch() - 90.0, loc.getYaw(), -test - 45.0);
+				break;
+			case 2:
+				Particle_Drawer_EX.drawCircle(loc, Particle.CRIT,
+						2.7, loc.getPitch() - 90.0, loc.getYaw(), 4, test * 2.5, -0.25);
+				Particle_Drawer_EX.drawSquare(loc, dts,
+						3.8, loc.getPitch() - 90.0, loc.getYaw(), test * 1.0);
+				Particle_Drawer_EX.drawSquare(loc, dts,
+						3.8, loc.getPitch() - 90.0, loc.getYaw(), test * 1.0 + 45.0);
+				break;
+			case 3:
+				Particle_Drawer_EX.drawCircle(loc, Particle.SNOWFLAKE,
+						4.8, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0);
+				Particle_Drawer_EX.drawCircle(loc, Particle.SNOWFLAKE,
+						4.8, loc.getPitch() - 90.0, loc.getYaw(), 6, test, -0.05);
+				break;
+			}
 		}
 	}
 	private void drawLightning(int level)
@@ -268,34 +339,72 @@ public class CastChain
 		loc.add(loc.getDirection().multiply(2.0));
 		DustTransition dts = new DustTransition(Color.fromRGB(255, 255, 180), Color.YELLOW, 0.5f);
 
-		switch (level)
-		{
-		case 0:
-			Particle_Drawer_EX.drawCircle(loc, Particle.CRIT,
-					2.7, loc.getPitch() - 90.0, loc.getYaw(), 3, test * 6.0, 0.15);
-			Particle_Drawer_EX.drawCircle(loc, Particle.CRIT,
-					2.7, loc.getPitch() - 90.0, loc.getYaw(), 3, test * 6.0, -0.25);
-			Particle_Drawer_EX.drawCircle(loc, Particle.ELECTRIC_SPARK,
-					2.7, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0.0);
-			break;
-		case 1:
-			Particle_Drawer_EX.drawCircle(loc, dts,
-					1.75, loc.getPitch() - 90.0, loc.getYaw(), 0, test);
-			Particle_Drawer_EX.drawStar(loc, dts,
-					1.75, loc.getPitch() - 90.0, loc.getYaw(), test * -3.0);
-			break;
-		case 2:
-			Particle_Drawer_EX.drawCircle(loc, Particle.CRIT_MAGIC ,
-					2.7, loc.getPitch() - 90.0, loc.getYaw(), 4, test * 4.0, 0.7);
-			Particle_Drawer_EX.drawStar(loc, dts,
-					4.8, loc.getPitch() - 90.0, loc.getYaw(), test * 1.0);
-			break;
-		case 3:
-			Particle_Drawer_EX.drawCircle(loc, Particle.END_ROD,
-					4.8, loc.getPitch() - 90.0, loc.getYaw(), 5, test, -0.04);
-			Particle_Drawer_EX.drawCircle(loc, Particle.END_ROD,
-					4.8, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0);
-			break;
+		if (Particle_Manager.isReduceMode(player)) {
+			switch (level)
+			{
+			case 0:
+				new Effect(loc, Particle.CRIT)
+					.append2DCircle(1.0, 0.5)
+					.rotate(0, test * -2.0, 0)
+					.rotate(loc.getPitch() - 90.0, loc.getYaw(), 0)
+					.scaleVelocity(0.0)
+					.playEffect();
+				break;
+			case 1:
+				new Effect(loc, Particle.CRIT)
+					.append2DCircle(1.5, 0.4)
+					.rotate(0, test * 2.0, 0)
+					.rotate(loc.getPitch() - 90.0, loc.getYaw(), 0)
+					.scaleVelocity(0.0)
+					.playEffect();
+				break;
+			case 2:
+				new Effect(loc, Particle.CRIT)
+					.append2DCircle(2.0, 0.3)
+					.rotate(0, test * -2.0, 0)
+					.rotate(loc.getPitch() - 90.0, loc.getYaw(), 0)
+					.scaleVelocity(0.0)
+					.playEffect();
+				break;
+			case 3:
+				new Effect(loc, Particle.CRIT)
+					.append2DCircle(2.5, 0.2)
+					.rotate(0, test * 2.0, 0)
+					.rotate(loc.getPitch() - 90.0, loc.getYaw(), 0)
+					.scaleVelocity(0.0)
+					.playEffect();
+				break;
+			}
+		} else {
+			switch (level)
+			{
+			case 0:
+				Particle_Drawer_EX.drawCircle(loc, Particle.CRIT,
+						2.7, loc.getPitch() - 90.0, loc.getYaw(), 3, test * 6.0, 0.15);
+				Particle_Drawer_EX.drawCircle(loc, Particle.CRIT,
+						2.7, loc.getPitch() - 90.0, loc.getYaw(), 3, test * 6.0, -0.25);
+				Particle_Drawer_EX.drawCircle(loc, Particle.ELECTRIC_SPARK,
+						2.7, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0.0);
+				break;
+			case 1:
+				Particle_Drawer_EX.drawCircle(loc, dts,
+						1.75, loc.getPitch() - 90.0, loc.getYaw(), 0, test);
+				Particle_Drawer_EX.drawStar(loc, dts,
+						1.75, loc.getPitch() - 90.0, loc.getYaw(), test * -3.0);
+				break;
+			case 2:
+				Particle_Drawer_EX.drawCircle(loc, Particle.CRIT_MAGIC ,
+						2.7, loc.getPitch() - 90.0, loc.getYaw(), 4, test * 4.0, 0.7);
+				Particle_Drawer_EX.drawStar(loc, dts,
+						4.8, loc.getPitch() - 90.0, loc.getYaw(), test * 1.0);
+				break;
+			case 3:
+				Particle_Drawer_EX.drawCircle(loc, Particle.END_ROD,
+						4.8, loc.getPitch() - 90.0, loc.getYaw(), 5, test, -0.04);
+				Particle_Drawer_EX.drawCircle(loc, Particle.END_ROD,
+						4.8, loc.getPitch() - 90.0, loc.getYaw(), 0, test, 0);
+				break;
+			}
 		}
 	}
 

@@ -14,26 +14,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
+import io.lumine.mythic.lib.damage.DamageType;
+import io.lumine.mythic.lib.skill.SkillMetadata;
+import io.lumine.mythic.lib.skill.result.def.LocationSkillResult;
 import mala.mmoskill.skills.passive.Mastery_Fire;
 import mala.mmoskill.skills.passive.Mastery_Ice;
 import mala.mmoskill.skills.passive.Mastery_Lightning;
+import mala.mmoskill.util.AttackUtil;
 import mala.mmoskill.util.CooldownFixer;
 import mala.mmoskill.util.MalaLocationSkill;
-import mala.mmoskill.util.MalaSkill;
+import mala.mmoskill.util.Skill_Util;
 import mala.mmoskill.util.TRS;
 import mala_mmoskill.main.MalaMMO_Skill;
 import mala_mmoskill.main.MsgTBL;
 import net.Indyuce.mmocore.MMOCore;
 import net.Indyuce.mmocore.api.player.PlayerData;
-import net.Indyuce.mmocore.skill.ClassSkill;
-import net.Indyuce.mmocore.skill.RegisteredSkill;
 import net.Indyuce.mmocore.api.util.math.formula.LinearValue;
-import io.lumine.mythic.lib.damage.DamageType;
-import io.lumine.mythic.lib.player.cooldown.CooldownInfo;
-import io.lumine.mythic.lib.skill.SkillMetadata;
-import io.lumine.mythic.lib.skill.result.def.LocationSkillResult;
-import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
-import laylia_core.main.Damage;
+import net.Indyuce.mmocore.skill.RegisteredSkill;
 
 public class Ancient extends RegisteredSkill
 {
@@ -42,11 +39,11 @@ public class Ancient extends RegisteredSkill
 	{	
 		super(new Ancient_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("damage", new LinearValue(22, 2));
+		addModifier("damage", new LinearValue(23, 3));
 		addModifier("radius", new LinearValue(15, 0));
 		//addModifier("cooldown", new LinearValue(2, 0));
 		//addModifier("cooldown", new LinearValue(120, -2));
-		addModifier("cooldown", new LinearValue(180, 0));
+		addModifier("cooldown", new LinearValue(240, 0));
 		addModifier("mana", new LinearValue(500, 0));
 		
 		skill = this;
@@ -60,18 +57,37 @@ class Ancient_Handler extends MalaLocationSkill implements Listener
 		super(	"ANCIENT",
 				"에인션트",
 				Material.KNOWLEDGE_BOOK,
+				MsgTBL.NeedSkills,
+				"&e 헬파이어 - lv.5",
+				"&e 퍼펙트 프리즈 - lv.5",
+				"&e 플라즈마 블래스트 - lv.5",
+				"",
 				MsgTBL.SKILL + MsgTBL.MAGIC_FIRE + MsgTBL.MAGIC_LIGHTNING + MsgTBL.MAGIC_ICE + MsgTBL.MAGIC,
 				"",
 				"&7지정한 위치에 화염, 전격, 빙결 마법을 순서대로 영창합니다.",
 				"&7각 마법의 피해는 아래 스킬의 영향을 받습니다.",
 				"&c&l화염 &7- &c&l헬파이어&7의 레벨 * &c{damage}",
-				"&e&l전격 &7- &e&l플라즈마 블래스트&7의 레벨 * &e{damage}",
 				"&b&l빙결 &7- &b&l퍼펙트 프리즈&7의 레벨 * &b{damage}",
+				"&e&l전격 &7- &e&l플라즈마 블래스트&7의 레벨 * &e{damage}",
 				"&c각 마법에 맞춰 마스터리 보정이 적용됩니다.",
 				"", MsgTBL.Cooldown_Fixed, MsgTBL.ManaCost);
 		registerModifiers("damage", "radius");
 	}
 
+	@Override
+	public LocationSkillResult getResult(SkillMetadata cast)
+	{
+		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
+		if(!Skill_Util.Has_Skill(data, "HELLFIRE", 5)
+			|| !Skill_Util.Has_Skill(data, "PERFECT_FREEZE", 5)
+			|| !Skill_Util.Has_Skill(data, "MASTER_SPARK_ONCE", 5))
+		{
+			data.getPlayer().sendMessage(MsgTBL.You_Has_no_Skill);
+			return null;
+		}
+		return super.getResult(cast);
+	}
+	
 	@Override
 	public void whenCast(LocationSkillResult _data, SkillMetadata cast)
 	{
@@ -321,17 +337,8 @@ class Ancient_Skill implements Runnable
 		Lightning_Bolt.Draw_Lightning_Line(temp_loc, dst, Particle.SOUL_FIRE_FLAME);
 
 		// 피해
-		for(Entity e : world.getNearbyEntities(dst, dmg_rad, dmg_rad, dmg_rad))
-		{
-			if(!(e instanceof LivingEntity))
-				continue;
-			if(e == player)
-				continue;
-			
-			LivingEntity target = (LivingEntity)e;
-			Damage.Attack(player, target, dmg,
-					DamageType.MAGIC, DamageType.SKILL);
-		}
+		AttackUtil.attackSphere(player, dst, dmg_rad, dmg, null, 
+				DamageType.MAGIC, DamageType.SKILL);
 		
 		world.playSound(dst, Sound.ENTITY_GENERIC_EXPLODE, 2, 1);
 		world.playSound(dst, Sound.ITEM_TOTEM_USE, 2f, 1.1f);
@@ -441,18 +448,10 @@ class Ancient_Skill implements Runnable
 		
 
 		// 피해
-		for(Entity e : dst.getWorld().getNearbyEntities(dst, 5, 10, 5))
-		{
-			if(!(e instanceof LivingEntity))
-				continue;
-			if(e == player)
-				continue;
-			
-			LivingEntity target = (LivingEntity)e;
-			Damage.Attack(player, target, dmg,
-					DamageType.MAGIC, DamageType.SKILL);
-		}
-		
+		AttackUtil.attackCylinder(player,
+				dst, 5.0, 10.0,
+				dmg, null, 
+				DamageType.MAGIC, DamageType.SKILL);
 		
 		dst.getWorld().playSound(fixed_loc, Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 1.0f);
 		dst.getWorld().playSound(fixed_loc, Sound.BLOCK_GLASS_BREAK, 2.0f, 1.0f);
@@ -532,21 +531,10 @@ class Small_Meteor implements Runnable
 		
 		if(detected)
 		{
-			for(Entity e : current_loc.getWorld().getNearbyEntities(current_loc, 4, 4, 4))
-			{
-				if (!(e instanceof LivingEntity))
-					continue;
-				if (e.isDead())
-					continue;
-				if (e == player)
-					continue;
-				
-				LivingEntity target = (LivingEntity)e;
 
-				Damage.Attack(player, target, damage,
-						DamageType.MAGIC, DamageType.PROJECTILE, DamageType.SKILL);
+			AttackUtil.attackSphere(player, current_loc, 4.0, damage, (target) -> {
 				target.setFireTicks(100);
-			}
+			}, DamageType.MAGIC, DamageType.SKILL, DamageType.PROJECTILE);
 
 			current_loc.getWorld().playSound(current_loc, Sound.ENTITY_GENERIC_EXPLODE, 2, 1);
 			current_loc.getWorld().playSound(current_loc, Sound.ITEM_TOTEM_USE, 2, 1);

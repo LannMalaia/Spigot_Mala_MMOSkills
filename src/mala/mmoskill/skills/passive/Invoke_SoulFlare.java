@@ -12,7 +12,7 @@ import org.bukkit.Particle.DustTransition;
 import mala.mmoskill.util.Effect;
 import mala.mmoskill.util.Effect.RANDOMIZE_TYPE;
 import mala.mmoskill.util.MalaPassiveSkill;
-import mala.mmoskill.util.MalaSpell;
+import mala.mmoskill.util.MalaSpellEffect;
 import mala.mmoskill.util.Particle_Drawer;
 import mala.mmoskill.util.Particle_Drawer_EX;
 import mala.mmoskill.util.Particle_Drawer_Expand;
@@ -28,24 +28,24 @@ public class Invoke_SoulFlare extends RegisteredSkill
 		super(new Invoke_SoulFlare_Handler(), MalaMMO_Skill.plugin.getConfig());
 	}
 
-	public static class SoulFlareSpell extends MalaSpell
+	public static class SoulFlareSpell extends MalaSpellEffect
 	{
 		public SoulFlareSpell(PlayerData playerData)
 		{
-			super(playerData, 5.0);
+			super(playerData.getPlayer(), 5.0);
 		}
 
 		@Override
 		public void whenStart() {
 			world.playSound(targetLocation, Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 0.8f);
 			
-			Particle_Drawer_EX.drawCircleUpRandomize(playerCenterLocation, Particle.SOUL_FIRE_FLAME, 5.0,
+			Particle_Drawer_EX.drawCircleUpRandomize(centerLocation, Particle.SOUL_FIRE_FLAME, 5.0,
 					0.0, 0.0,
 					0, this.durationCounter * 0.3, 0.5);
-			Particle_Drawer_EX.drawSquare(playerCenterLocation, Particle.SOUL_FIRE_FLAME, 5.0,
+			Particle_Drawer_EX.drawSquare(centerLocation, Particle.SOUL_FIRE_FLAME, 5.0,
 					0.0, 0.0,
 					this.durationCounter * 0.3, 0.0);
-			Particle_Drawer_EX.drawSquare(playerCenterLocation, Particle.SOUL_FIRE_FLAME, 5.0,
+			Particle_Drawer_EX.drawSquare(centerLocation, Particle.SOUL_FIRE_FLAME, 5.0,
 					0.0, 45.0,
 					this.durationCounter * 0.3, 0.0);
 		}
@@ -55,7 +55,7 @@ public class Invoke_SoulFlare extends RegisteredSkill
 			if (durationCounter % 3 == 0) {
 				for (int i = 0; i < 1; i++) {
 					Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Runnable() {
-						Location loc = playerCenterLocation.clone();
+						Location loc = centerLocation.clone();
 						Vector dir = new Vector(-1.0 + Math.random() * 2.0, 0.0, -1.0 + Math.random() * 2.0).normalize();
 						double size = 0.3;
 						double speed = 1.0;

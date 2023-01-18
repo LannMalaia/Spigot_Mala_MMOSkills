@@ -36,7 +36,7 @@ public class HellFire extends RegisteredSkill
 	{	
 		super(new HellFire_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("damage", new LinearValue(0.45, 0.15));
+		addModifier("damage", new LinearValue(0.7, 0.2));
 		addModifier("cooldown", new LinearValue(120, 0));
 		addModifier("mana", new LinearValue(10, 0));
 	}

@@ -41,9 +41,9 @@ public class HackSlash_Blood extends RegisteredSkill
 		addModifier("last_dmg", new LinearValue(87, 12));
 		//addModifier("power", new LinearValue(20, 2.0));
 		//addModifier("last_dmg", new LinearValue(200, 20));
-		addModifier("count", new LinearValue(15, 1));
+		addModifier("count", new LinearValue(11, 1));
 		addModifier("cooldown", new LinearValue(25, 0));
-		addModifier("stamina", new LinearValue(30, 1.5));
+		addModifier("stamina", new LinearValue(26.75, 1.75));
 		
 		skill = this;
 	}
