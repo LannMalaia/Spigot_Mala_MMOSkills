@@ -105,12 +105,14 @@ class Slash_Ice_Handler extends MalaSkill implements Listener
 			distance *= 1.5;
 		
 		data.getPlayer().swingMainHand();
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Slash_Ice_Skill(data.getPlayer(), distance, damage));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
+				new Slash_Ice_Skill(cast, data.getPlayer(), distance, damage));
 	}
 
 	// 검술 베어가르기  효과
 	class Slash_Ice_Skill implements Runnable
 	{
+		SkillMetadata cast;
 		Player player;
 		double damage;
 		double distance;
@@ -121,8 +123,9 @@ class Slash_Ice_Handler extends MalaSkill implements Listener
 		double angle = 200;
 		IceMagicEvent ime;
 		
-		public Slash_Ice_Skill(Player p, double _distance, double _damage)
+		public Slash_Ice_Skill(SkillMetadata cast, Player p, double _distance, double _damage)
 		{
+			this.cast = cast;
 			player = p;
 			distance = _distance;
 			damage = _damage;
@@ -200,7 +203,7 @@ class Slash_Ice_Handler extends MalaSkill implements Listener
 	
 					if (Damage.Is_Possible(player, en))
 					{
-						Damage.Attack(player, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL, DamageType.MAGIC);
+						Damage.SkillAttack(cast, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL, DamageType.MAGIC);
 						Ice_Bolt_Handler.Slow_Target((LivingEntity)en, 1, 100, ime.getSuperSlow());
 					}
 				}

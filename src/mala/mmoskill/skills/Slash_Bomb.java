@@ -101,12 +101,13 @@ class Slash_Bomb_Handler extends MalaSkill implements Listener
 			damage *= 1.5;
 		
 		data.getPlayer().swingMainHand();
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Slash_Bomb_Skill(data.getPlayer(), distance, damage));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Slash_Bomb_Skill(cast, data.getPlayer(), distance, damage));
 	}
 
 	// 검술 베어가르기  효과
 	class Slash_Bomb_Skill implements Runnable
 	{
+		SkillMetadata cast;
 		Player player;
 		double damage;
 		double distance;
@@ -116,8 +117,9 @@ class Slash_Bomb_Handler extends MalaSkill implements Listener
 		Location loc;
 		double angle = 200;
 		
-		public Slash_Bomb_Skill(Player p, double _distance, double _damage)
+		public Slash_Bomb_Skill(SkillMetadata cast, Player p, double _distance, double _damage)
 		{
+			this.cast = cast;
 			player = p;
 			distance = _distance;
 			damage = _damage;
@@ -192,7 +194,7 @@ class Slash_Bomb_Handler extends MalaSkill implements Listener
 	
 					if (Damage.Is_Possible(player, en))
 					{
-						Damage.Attack(player, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL);
+						Damage.SkillAttack(cast, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL);
 					}
 				}
 			}
@@ -222,7 +224,7 @@ class Slash_Bomb_Handler extends MalaSkill implements Listener
 						if (Damage.Is_Possible(player, en))
 						{
 							LivingEntity le = (LivingEntity)en;
-							Damage.Attack(player, le, damage, DamageType.WEAPON, DamageType.SKILL);
+							Damage.SkillAttack(cast, le, damage, DamageType.WEAPON, DamageType.SKILL);
 							le.setNoDamageTicks(0);
 						}
 					}

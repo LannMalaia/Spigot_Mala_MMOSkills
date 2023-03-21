@@ -49,8 +49,8 @@ class Flare_Disc_Handler extends MalaSkill implements Listener
 				Material.SUNFLOWER,
 				MsgTBL.PROJECTILE + MsgTBL.SKILL + MsgTBL.MAGIC_FIRE + MsgTBL.MAGIC,
 				"",
-				"&8{distance}&7 거리까지 나아가는 원반을 발사합니다.",
-				"&7원반은 터질 시 주변에 &8{damage}의 피해를 줍니다.",
+				"&e{distance}&7 거리까지 나아가는 원반을 발사합니다.",
+				"&7원반은 터질 시 주변에 &e{damage}&7의 피해를 줍니다.",
 				"&7맞은 적은 발화 상태에 걸립니다.",
 				"",
 				MsgTBL.Cooldown, MsgTBL.ManaCost);
@@ -71,13 +71,21 @@ class Flare_Disc_Handler extends MalaSkill implements Listener
 		damage = ar.getDamage();
 		
 		data.getPlayer().getWorld().playSound(data.getPlayer().getEyeLocation(), Sound.ENTITY_BLAZE_SHOOT, 1, 1);
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Flare_Disc_Disc(data.getPlayer().getEyeLocation().subtract(0, 0.3, 0), data.getPlayer(), dir, damage, 0.2, distance, 0.0));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
+				new Flare_Disc_Disc(cast,
+						data.getPlayer().getEyeLocation().subtract(0, 0.3, 0),
+						data.getPlayer(),
+						dir,
+						damage, 0.2,
+						distance,
+						0.0));
 		
 	}
 }
 
 class Flare_Disc_Disc implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	double damage;
 	double max_distance;
@@ -89,8 +97,9 @@ class Flare_Disc_Disc implements Runnable
 	Location before_loc, current_loc;
 	Vector[] vecs;
 	
-	public Flare_Disc_Disc(Location _start_loc, Player _player, Vector _dir, double _damage, double _speed, double _max_distance, double _roll)
+	public Flare_Disc_Disc(SkillMetadata cast, Location _start_loc, Player _player, Vector _dir, double _damage, double _speed, double _max_distance, double _roll)
 	{
+		this.cast = cast;
 		start_loc = _start_loc;
 		player = _player;
 		dir = _dir;
@@ -177,7 +186,7 @@ class Flare_Disc_Disc implements Runnable
 				LivingEntity target = (LivingEntity)e;
 				if (Damage.Is_Possible(player, target))
 				{
-					Damage.Attack(player, target, damage, 
+					Damage.SkillAttack(cast, target, damage, 
 						DamageType.MAGIC, DamageType.PROJECTILE, DamageType.SKILL);
 					target.setFireTicks(100);
 				}

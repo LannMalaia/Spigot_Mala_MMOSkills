@@ -9,7 +9,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.damage.DamageType;
+import io.lumine.mythic.lib.skill.SkillMetadata;
 import laylia_core.main.Damage;
 
 /**
@@ -30,7 +32,36 @@ public class AttackUtil
 				return;
 			LivingEntity target = (LivingEntity)entity;
 			if (Damage.Is_Possible(attacker, target)) {
-				Damage.Attack(player, target, damage, _types);
+				Damage.NormalAttack(player, target, damage, _types);
+				if (whenHit != null)
+					whenHit.run(target);
+			}
+		}
+		else {
+			// 다른 엔티티의 공격
+			if (!(entity instanceof LivingEntity) || entity == attacker)
+				return;
+			LivingEntity target = (LivingEntity)entity;
+			target.damage(damage, attacker);
+			if (whenHit != null)
+				whenHit.run(target);
+		}
+	}
+	
+	/**
+	 * 대상을 공격
+	 */
+	public static void skillAttack(SkillMetadata cast, LivingEntity attacker, Entity entity,
+			double damage, WhenHit whenHit, DamageType... _types)
+	{
+		if (attacker instanceof Player) {
+			// 플레이어의 공격
+			Player player = (Player)attacker;
+			if (!(entity instanceof LivingEntity))
+				return;
+			LivingEntity target = (LivingEntity)entity;
+			if (Damage.Is_Possible(attacker, target)) {
+				Damage.SkillAttack(cast, target, damage, _types);
 				if (whenHit != null)
 					whenHit.run(target);
 			}
@@ -61,7 +92,7 @@ public class AttackUtil
 					continue;
 				LivingEntity target = (LivingEntity)entity;
 				if (Damage.Is_Possible(attacker, target)) {
-					Damage.Attack(player, target, damage, _types);
+					Damage.NormalAttack(player, target, damage, _types);
 					if (whenHit != null)
 						whenHit.run(target);
 				}
@@ -102,7 +133,7 @@ public class AttackUtil
 				if (ignoreNodamage)
 					target.setNoDamageTicks(0);
 				if (Damage.Is_Possible(attacker, target)) {
-					Damage.Attack(player, target, damage, _types);
+					Damage.NormalAttack(player, target, damage, _types);
 					if (whenHit != null)
 						whenHit.run(target);
 				}
@@ -142,7 +173,7 @@ public class AttackUtil
 					continue;
 				LivingEntity target = (LivingEntity)entity;
 				if (Damage.Is_Possible(attacker, target)) {
-					Damage.Attack(player, target, damage, _types);
+					Damage.NormalAttack(player, target, damage, _types);
 					if (whenHit != null)
 						whenHit.run(target);
 				}

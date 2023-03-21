@@ -112,7 +112,7 @@ class Aerial_Slash_Fire_Handler extends MalaSkill implements Listener
 			size *= 2.0;
 		
 		data.getPlayer().swingMainHand();
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Aerial_Slash_Fire_Skill(data, damage, size, explode_damage));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Aerial_Slash_Fire_Skill(cast, data, damage, size, explode_damage));
 	}
 
 	class Aerial_Slash_Fire_Skill implements Runnable
@@ -120,6 +120,7 @@ class Aerial_Slash_Fire_Handler extends MalaSkill implements Listener
 		PlayerData player;
 		Location pos;
 		Vector dir;
+		SkillMetadata cast;
 		
 		List<Entity> entities;
 		double damage, explode_damage;
@@ -133,8 +134,9 @@ class Aerial_Slash_Fire_Handler extends MalaSkill implements Listener
 		double correct_angle = 0.0;
 		double correct_Zangle = 0.0;
 		
-		public Aerial_Slash_Fire_Skill(PlayerData p, double _damage, double _size, double _explode_damage)
+		public Aerial_Slash_Fire_Skill(SkillMetadata _cast, PlayerData p, double _damage, double _size, double _explode_damage)
 		{
+			cast = _cast;
 			player = p;
 			damage = _damage;
 			explode_damage = _explode_damage;
@@ -215,7 +217,7 @@ class Aerial_Slash_Fire_Handler extends MalaSkill implements Listener
 						continue;
 					
 					LivingEntity temp2 = (LivingEntity)temp;
-					Damage.Attack(player.getPlayer(), temp2, explode_damage,
+					Damage.SkillAttack(cast, temp2, explode_damage,
 							DamageType.PROJECTILE, DamageType.SKILL, DamageType.MAGIC);
 					temp2.setFireTicks(100);
 				}
@@ -237,7 +239,7 @@ class Aerial_Slash_Fire_Handler extends MalaSkill implements Listener
 					LivingEntity temp2 = (LivingEntity)temp;
 					//if (temp2.getNoDamageTicks() == 0)
 					//{
-						Damage.Attack(player.getPlayer(), temp2, damage,
+						Damage.SkillAttack(cast, temp2, damage,
 								DamageType.PROJECTILE, DamageType.SKILL, DamageType.MAGIC);
 						temp2.setFireTicks(100);
 						temp2.setNoDamageTicks(10);

@@ -48,7 +48,7 @@ public class Canon extends RegisteredSkill
 		skill = this;
 	}
 
-	public static void Attack(Player player, Location loc, double radius, double damage, boolean finalAttack)
+	public static void Attack(SkillMetadata cast, Player player, Location loc, double radius, double damage, boolean finalAttack)
 	{
 		double rad = radius * (finalAttack ? 1.5 : 1.0);
 		double dmg = damage * (finalAttack ? 1.5 : 1.0);
@@ -79,7 +79,7 @@ public class Canon extends RegisteredSkill
 			LivingEntity le = (LivingEntity)en;
 			if (Damage.Is_Possible(player, le))
 			{
-				Damage.Attack(player, le, dmg, DamageType.WEAPON, DamageType.PHYSICAL, DamageType.SKILL);
+				Damage.SkillAttack(cast, le, dmg, DamageType.WEAPON, DamageType.PHYSICAL, DamageType.SKILL);
 				le.setNoDamageTicks(0);
 			}
 		}
@@ -164,11 +164,12 @@ class Canon_Handler extends MalaSkill implements Listener
 		int level = data.getSkillLevel(Canon.skill);
 		
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Canon_Skill(data.getPlayer(), final_attacked.get(data.getPlayer()), rad, damage, count));
+				new Canon_Skill(cast, data.getPlayer(), final_attacked.get(data.getPlayer()), rad, damage, count));
 	}
 
 	class Canon_Skill implements Runnable
 	{
+		SkillMetadata cast;
 		Player player;
 		PlayerData data;
 		LivingEntity target;
@@ -180,8 +181,9 @@ class Canon_Handler extends MalaSkill implements Listener
 		
 		List<Location> recordedLoc = new ArrayList<>();
 		
-		public Canon_Skill(Player _player, LivingEntity _target, double _radius, double _damage, int _count)
+		public Canon_Skill(SkillMetadata cast, Player _player, LivingEntity _target, double _radius, double _damage, int _count)
 		{
+			this.cast = cast;
 			player = _player; target = _target; radius = _radius;
 			damage = _damage; count = _count;
 			
@@ -207,13 +209,13 @@ class Canon_Handler extends MalaSkill implements Listener
 				|| target.getLocation().distance(player.getLocation()) < 1.0)
 			{
 				player.setVelocity(new Vector());
-				Canon.Attack(player, player.getLocation(), radius, damage, data.getSkillLevel(Canon.skill) >= 20);
+				Canon.Attack(cast, player, player.getLocation(), radius, damage, data.getSkillLevel(Canon.skill) >= 20);
 				Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, 
-						new Canon_Recorded_Skill(player, player.getLocation(), new ArrayList<Location>(recordedLoc), radius, damage, count - 1));
+						new Canon_Recorded_Skill(cast, player, player.getLocation(), new ArrayList<Location>(recordedLoc), radius, damage, count - 1));
 				return;
 			}
 			else
-				Canon.Attack(player, player.getLocation(), radius, damage, false);
+				Canon.Attack(cast, player, player.getLocation(), radius, damage, false);
 			
 			Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, this, 1);
 		}
@@ -221,6 +223,7 @@ class Canon_Handler extends MalaSkill implements Listener
 
 	class Canon_Recorded_Skill implements Runnable
 	{
+		SkillMetadata cast;
 		Player player;
 		PlayerData data;
 		double radius, damage;
@@ -231,8 +234,9 @@ class Canon_Handler extends MalaSkill implements Listener
 		Location loc, startLoc;
 		List<Location> recordedLoc = new ArrayList<>();
 		
-		public Canon_Recorded_Skill(Player _player, Location _startLoc, List<Location> _recordedLoc, double _radius, double _damage, int _count)
+		public Canon_Recorded_Skill(SkillMetadata cast, Player _player, Location _startLoc, List<Location> _recordedLoc, double _radius, double _damage, int _count)
 		{
+			this.cast = cast;
 			player = _player; radius = _radius; damage = _damage;
 			startLoc = loc = _startLoc; recordedLoc = _recordedLoc; count = _count;
 			
@@ -251,16 +255,16 @@ class Canon_Handler extends MalaSkill implements Listener
 			
 			if (index < recordedLoc.size())
 			{
-				Canon.Attack(player, loc, radius, damage, false);
+				Canon.Attack(cast, player, loc, radius, damage, false);
 				Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, this, 1);
 			}
 			else
-				Canon.Attack(player, loc, radius, damage, data.getSkillLevel(Canon.skill) >= 20);
+				Canon.Attack(cast, player, loc, radius, damage, data.getSkillLevel(Canon.skill) >= 20);
 			
 			if (index == recordedLoc.size() && count > 0)
 			{
 				Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, 
-						new Canon_Recorded_Skill(player, startLoc, new ArrayList<Location>(recordedLoc), radius, damage, count - 1));
+						new Canon_Recorded_Skill(cast, player, startLoc, new ArrayList<Location>(recordedLoc), radius, damage, count - 1));
 			}
 		}
 	}

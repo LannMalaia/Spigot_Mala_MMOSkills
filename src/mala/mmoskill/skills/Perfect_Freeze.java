@@ -84,12 +84,14 @@ class Perfect_Freeze_Handler extends MalaSkill implements Listener
 		
 		double radius = cast.getModifier("radius");
 		
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Perfect_Freeze_Skill(data.getPlayer(), area_damage, frost_damage, radius));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
+				new Perfect_Freeze_Skill(cast, data.getPlayer(), area_damage, frost_damage, radius));
 	}
 }
 
 class Perfect_Freeze_Skill implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	double area_damage, frost_damage;
 	Location fixed_loc;
@@ -106,8 +108,9 @@ class Perfect_Freeze_Skill implements Runnable
 	
 	IceMagicEvent ime;
 	
-	public Perfect_Freeze_Skill(Player _player, double _area_damage, double _frost_damage, double _radius)
+	public Perfect_Freeze_Skill(SkillMetadata cast, Player _player, double _area_damage, double _frost_damage, double _radius)
 	{
+		this.cast = cast;
 		player = _player;
 		fixed_loc = _player.getLocation();
 		
@@ -181,7 +184,7 @@ class Perfect_Freeze_Skill implements Runnable
 			{
 				if (Damage.Is_Possible(player, le))
 				{
-					Damage.Attack(player, le, area_damage, DamageType.MAGIC, DamageType.SKILL);
+					Damage.SkillAttack(cast, le, area_damage, DamageType.MAGIC, DamageType.SKILL);
 					Buff_Manager.Increase_Buff(le, PotionEffectType.SLOW, 0, 100, PotionEffectType.SPEED,10);
 					le.setNoDamageTicks(10);
 				}
@@ -191,7 +194,7 @@ class Perfect_Freeze_Skill implements Runnable
 		if(timer <= 1.0 && waved == false)
 		{
 			waved = true;
-			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Perfect_Freeze_Wave(player, area_damage, frost_damage, max_radius));
+			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Perfect_Freeze_Wave(cast, player, area_damage, frost_damage, max_radius));
 		}
 			
 		// 마무리 전 이걸 계속 해야하나 체크
@@ -211,6 +214,7 @@ class Perfect_Freeze_Skill implements Runnable
 
 class Perfect_Freeze_Wave implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	double area_damage;
 	double frost_damage;
@@ -221,8 +225,9 @@ class Perfect_Freeze_Wave implements Runnable
 	double max_radius = 0.0;
 	double radius = 3.0;
 	
-	public Perfect_Freeze_Wave(Player _player, double _area_damage, double _frost_damage, double _radius)
+	public Perfect_Freeze_Wave(SkillMetadata cast, Player _player, double _area_damage, double _frost_damage, double _radius)
 	{
+		this.cast = cast;
 		player = _player;
 		fixed_loc = _player.getLocation();
 		
@@ -322,7 +327,7 @@ class Perfect_Freeze_Wave implements Runnable
 							Buff_Manager.Remove_Buff(le, PotionEffectType.SLOW);
 						}
 						
-						Damage.Attack(player, le, area_damage + frost_damage * amp, DamageType.MAGIC, DamageType.SKILL);
+						Damage.SkillAttack(cast, le, area_damage + frost_damage * amp, DamageType.MAGIC, DamageType.SKILL);
 					}
 				}
 				for (int n = 0; n < 8; n++)

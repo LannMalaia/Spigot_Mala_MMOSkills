@@ -110,14 +110,14 @@ class Cakram_Throw_Handler extends MalaSkill implements Listener
 			wallSize *= 1.3;
 		}
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, 
-				new Cakram_Throw_Skill(data.getPlayer().getEyeLocation(), data.getPlayer(),
+				new Cakram_Throw_Skill(cast, data.getPlayer().getEyeLocation(), data.getPlayer(),
 				data.getPlayer().getLocation().getDirection(), flyDamage, wallDamage, duration, wallSize));
-		
 	}
 }
 
 class Cakram_Throw_Skill implements Runnable
 {
+	SkillMetadata cast;
 	World world;
 	Player player;
 	double damageFly;
@@ -137,9 +137,10 @@ class Cakram_Throw_Skill implements Runnable
 	Location before_loc, current_loc;
 	Vector[] vecs;
 	
-	public Cakram_Throw_Skill(Location _start_loc, Player _player, Vector _dir,
+	public Cakram_Throw_Skill(SkillMetadata cast, Location _start_loc, Player _player, Vector _dir,
 			double _damageFly, double _damageWall, double _duration, double _wallSize)
 	{
+		this.cast = cast;
 		start_loc = _start_loc;
 		player = _player;
 		dir = _dir;
@@ -220,7 +221,7 @@ class Cakram_Throw_Skill implements Runnable
 					new ArrayList<Entity>(world.getNearbyEntities(before_loc, targetSpeed, targetSpeed, targetSpeed)));
 			for (Entity entity : entities)
 				if (Damage.Is_Possible(player, entity) && entity instanceof LivingEntity)
-					Damage.Attack(player, (LivingEntity)entity, damageFly, DamageType.WEAPON, DamageType.PROJECTILE);
+					Damage.SkillAttack(cast, (LivingEntity)entity, damageFly, DamageType.WEAPON, DamageType.PROJECTILE);
 		}
 		else // ºÎµúÈû
 		{
@@ -243,7 +244,7 @@ class Cakram_Throw_Skill implements Runnable
 			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new WallEffect(start_loc, current_loc, size, wallSize));
 			for (Entity entity : world.getNearbyEntities(current_loc, wallSize, wallSize, wallSize))
 				if (Damage.Is_Possible(player, entity) && entity instanceof LivingEntity)
-					Damage.Attack(player, (LivingEntity)entity, damageFly, DamageType.WEAPON, DamageType.PROJECTILE);
+					Damage.SkillAttack(cast, (LivingEntity)entity, damageFly, DamageType.WEAPON, DamageType.PROJECTILE);
 		}
 	}
 }

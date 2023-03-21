@@ -75,7 +75,7 @@ class Whip_Bounce_Handler extends MalaPassiveSkill implements Listener
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void attack_whipbounce(PlayerAttackEvent event)
 	{
-		Player player = event.getPlayer();
+		Player player = event.getAttacker().getPlayer();
 		PlayerData data = PlayerData.get(player);
 
 		if (event.getDamage().hasType(DamageType.MAGIC)
@@ -171,7 +171,7 @@ class Whip_Bounce_Chain implements Runnable
 			// 타겟에게 피해 줄 것
 			Whip_Bounce.Draw_Whip_Line(line_start_pos, line_end_pos);
 			if (Damage.Is_Possible(player, target))
-				Damage.Attack(player, target, damage, DamageType.PHYSICAL, DamageType.SKILL);
+				Damage.NormalAttack(player, target, damage, DamageType.PHYSICAL, DamageType.MAGIC, DamageType.SKILL);
 			
 			// 소리
 			World world = target.getWorld();

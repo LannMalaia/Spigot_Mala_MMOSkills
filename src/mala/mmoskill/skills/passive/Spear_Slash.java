@@ -44,8 +44,8 @@ class Spear_Slash_Handler extends MalaPassiveSkill implements Listener
 		super(	"SPEAR_SLASH",
 				"창날파",
 				Material.GOLDEN_HOE,
-				"&7창을 들고 적을 공격했을 때,",
-				"&7미미한 검기가 나아가며 &e{damage}&7의 물리 스킬 피해를 줍니다.");
+				"&7창을 든 상태에서 적에게 무기 공격을 시도했을 때,",
+				"&7앞으로 미미한 검기가 나아가며 &e{damage}&7의 물리 스킬 피해를 줍니다.");
 
 		Bukkit.getPluginManager().registerEvents(this, MalaMMO_Skill.plugin);
 	}
@@ -53,12 +53,10 @@ class Spear_Slash_Handler extends MalaPassiveSkill implements Listener
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void attack_spearslash(PlayerAttackEvent event)
 	{
-		Player player = event.getPlayer();
+		Player player = event.getAttacker().getPlayer();
 		PlayerData data = PlayerData.get(player);
 		
-		if (event.getDamage().hasType(DamageType.PROJECTILE)
-			|| event.getDamage().hasType(DamageType.SKILL)
-			|| event.getDamage().hasType(DamageType.MAGIC))
+		if (!event.getDamage().hasType(DamageType.WEAPON))
 			return;
 		
 		// 스킬 체크
@@ -138,7 +136,7 @@ class Spear_Slash_Handler extends MalaPassiveSkill implements Listener
 					LivingEntity temp2 = (LivingEntity)temp;
 					
 					temp2.setNoDamageTicks(0);
-					Damage.Attack(player, temp2, damage, DamageType.SKILL, DamageType.PHYSICAL);
+					Damage.NormalAttack(player, temp2, damage, DamageType.SKILL, DamageType.MAGIC, DamageType.PHYSICAL);
 				}
 			}
 			

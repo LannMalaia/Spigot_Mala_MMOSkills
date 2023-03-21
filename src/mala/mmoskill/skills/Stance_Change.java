@@ -155,7 +155,7 @@ public class Stance_Change extends RegisteredSkill
 						// 고정 피해
 						data.giveStamina(-sta_deal, UpdateReason.SKILL_COST);
 						// 스태미나 체크후 부족하면 강제 취소
-						if (data.getStamina() < data.getStats().getStat(StatType.MAX_STAMINA) * 0.1)
+						if (data.getStamina() < data.getStats().getStat("MAX_STAMINA") * 0.1)
 						{
 							player.sendMessage("§7§l[ 스탠스 유지를 위한 스태미나가 부족합니다. ]");
 							Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Stance_Effect(data.getPlayer(), Stance_Change.Stance_Type.NORMAL));

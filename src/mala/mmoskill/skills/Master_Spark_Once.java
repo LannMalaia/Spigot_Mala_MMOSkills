@@ -78,11 +78,12 @@ class Master_Spark_Once_Handler extends MalaSkill implements Listener
 		damage = ar.getDamage();
 		
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Master_Spark_Once_Skill(data.getPlayer(), damage, radius, 60.0));
+				new Master_Spark_Once_Skill(cast, data.getPlayer(), damage, radius, 60.0));
 	}
 }
 class Master_Spark_Once_Skill implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	double damage;
 	double max_distance;
@@ -99,8 +100,9 @@ class Master_Spark_Once_Skill implements Runnable
 	
 	int m_Stack = -1; // 얼마나 모았나
 	
-	public Master_Spark_Once_Skill(Player _player, double _damage, double _radius, double _max_distance)
+	public Master_Spark_Once_Skill(SkillMetadata cast, Player _player, double _damage, double _radius, double _max_distance)
 	{
+		this.cast = cast;
 		player = _player;
 		memorized_loc = _player.getLocation();
 		fixed_loc = _player.getLocation().add(0.0, 1.0, 0.0).add(_player.getLocation().getDirection().multiply(2.0));
@@ -333,7 +335,7 @@ class Master_Spark_Once_Skill implements Runnable
 
 			LivingEntity le = (LivingEntity)en;
 			le.setNoDamageTicks(0);
-			Damage.Attack(player, le, damage * (1 + m_Stack * 0.4), DamageType.MAGIC, DamageType.SKILL);
+			Damage.SkillAttack(cast, le, damage * (1 + m_Stack * 0.4), DamageType.MAGIC, DamageType.SKILL);
 		}
 	}
 }

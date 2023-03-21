@@ -104,7 +104,7 @@ class Call_Hunting_Dog_Handler extends MalaSkill implements Listener
 		double def = cast.getModifier("def");
 		double atk = cast.getModifier("atk");
 		double speed = cast.getModifier("speed");
-		double skill_per = 1.0 + data.getStats().getStat(StatType.SKILL_DAMAGE) * 0.01;
+		double skill_per = 1.0 + data.getStats().getStat("SKILL_DAMAGE") * 0.01;
 		
 		// data.getPlayer().sendMessage("skill per = " + skill_per);
 		// data.getPlayer().sendMessage("speed = " + wolf.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue());

@@ -69,7 +69,7 @@ class Burning_Zone_Handler extends MalaLocationSkill implements Listener
 		double radius = cast.getModifier("radius");
 
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Burning_Zone_Task(data.getPlayer(), _data.getTarget().add(0, 1.5, 0), damage, radius));
+				new Burning_Zone_Task(cast, data.getPlayer(), _data.getTarget().add(0, 1.5, 0), damage, radius));
 
 	}
 
@@ -77,6 +77,7 @@ class Burning_Zone_Handler extends MalaLocationSkill implements Listener
 
 class Burning_Zone_Task implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	double damage;
 	Location loc;
@@ -87,8 +88,9 @@ class Burning_Zone_Task implements Runnable
 	int counter = 0;
 	World world;
 	
-	public Burning_Zone_Task(Player _player, Location _loc, double _damage, double _radius)
+	public Burning_Zone_Task(SkillMetadata cast, Player _player, Location _loc, double _damage, double _radius)
 	{
+		this.cast = cast;
 		player = _player;
 		loc = _loc;
 		damage = _damage;
@@ -162,7 +164,7 @@ class Burning_Zone_Task implements Runnable
 				LivingEntity target = (LivingEntity)e;
 				if (target.getNoDamageTicks() == 0)
 				{
-					Damage.Attack(player, target, damage,
+					Damage.SkillAttack(cast, target, damage,
 							DamageType.SKILL, DamageType.MAGIC);
 				}
 				target.setFireTicks(100);

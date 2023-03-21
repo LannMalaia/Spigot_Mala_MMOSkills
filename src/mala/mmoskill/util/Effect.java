@@ -97,7 +97,7 @@ public class Effect
 	// 소리 설정
 	public Effect addSound(Sound sound)
 	{ return addSound(sound, 1.0, 1.0); }
-	public Effect addSound(Sound sound, double pitch, double volume)
+	public Effect addSound(Sound sound, double volume, double pitch)
 	{
 		sounds.add(new SoundData(sound, pitch, volume));
 		return this;
@@ -179,6 +179,33 @@ public class Effect
 			Vector v = new Vector(Math.cos(r) * radius, 0.0, Math.sin(r) * radius);
 			points.add(v);
 			velocities.add(v.clone());
+		}
+		return this;
+	}
+	/**
+	 * 평면 십자 별을 그립니다.
+	 * density가 낮을수록 그리는 밀도가 줄어듭니다.
+	 * @param radius 반지름
+	 */
+	public Effect append2DCrossedStar(double radius)
+	{ return append2DCrossedStar(radius, 1.0); }
+	public Effect append2DCrossedStar(double radius, double density)
+	{
+		double radianGap = (Math.PI * 2.0) / (25.0 * radius * density);
+		Vector[] starPoints = { 
+				new Vector(-radius, 0, -radius),
+				new Vector(radius, 0, -radius),
+				new Vector(radius, 0, radius),
+				new Vector(-radius, 0, radius) };
+		for (int i = 0; i < 4; i++) {
+			for (double r = 0.0; r <= Math.PI * 0.5; r += radianGap)
+			{
+				double correction = Math.PI * 0.5 * (double)i;
+				Vector v = new Vector(Math.cos(correction + r) * radius, 0.0, Math.sin(correction + r) * radius);
+				v.add(starPoints[i]);
+				points.add(v);
+				velocities.add(v.clone());
+			}
 		}
 		return this;
 	}

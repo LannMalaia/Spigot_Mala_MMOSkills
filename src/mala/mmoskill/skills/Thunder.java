@@ -98,13 +98,14 @@ class Thunder_Handler extends MalaLocationSkill implements Listener
 		damage = ar.getDamage();
 		
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Thunder_Task(data.getPlayer(), target_loc, damage));
+				new Thunder_Task(cast, data.getPlayer(), target_loc, damage));
 	}
 
 }
 
 class Thunder_Task implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	double damage;
 	Location loc;
@@ -114,8 +115,9 @@ class Thunder_Task implements Runnable
 	long interval = 20;
 	World world;
 	
-	public Thunder_Task(Player _player, Location _loc, double _damage)
+	public Thunder_Task(SkillMetadata cast, Player _player, Location _loc, double _damage)
 	{
+		this.cast = cast;
 		player = _player;
 		loc = _loc;
 		damage = _damage;
@@ -179,7 +181,7 @@ class Thunder_Task implements Runnable
 					continue;
 				
 				LivingEntity target = (LivingEntity)e;
-				Damage.Attack(player, target,damage, DamageType.MAGIC, DamageType.SKILL);
+				Damage.SkillAttack(cast, target,damage, DamageType.MAGIC, DamageType.SKILL);
 			}
 
 			world.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 2, 1);

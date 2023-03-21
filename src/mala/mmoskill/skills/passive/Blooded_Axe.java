@@ -35,7 +35,7 @@ class Blooded_Axe_Handler extends MalaPassiveSkill implements Listener
 				"피의 도끼날",
 				Material.GOLDEN_AXE,
 				"&7도끼로 적을 쓰러트렸을 때,",
-				"&7적 최대체력의 {per}%만큼 회복합니다.");
+				"&7적 최대 생명력의 &e{per}%&7만큼 회복합니다.");
 		
 		Bukkit.getPluginManager().registerEvents(this, MalaMMO_Skill.plugin);
 	}

@@ -91,7 +91,8 @@ class Haste_Handler extends MalaSkill implements Listener
 		Buff_Manager.Add_Buff(_target, PotionEffectType.SPEED, _amp, _ticks, PotionEffectType.SLOW);
 		Buff_Manager.Add_Buff(_target, PotionEffectType.FAST_DIGGING, _amp, _ticks, PotionEffectType.SLOW_DIGGING);
 		
-		_target.getWorld().playSound(_target.getEyeLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
+//		_target.getWorld().playSound(_target.getEyeLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
+		_target.getWorld().playSound(_target.getEyeLocation(), "mala_sound:skill.reinforce4", 1, 1);
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new HasteEffect(_target, 10));
 		
 		return true;

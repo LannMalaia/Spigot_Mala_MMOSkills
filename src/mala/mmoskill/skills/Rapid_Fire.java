@@ -38,7 +38,7 @@ public class Rapid_Fire extends RegisteredSkill
 	{	
 		super(new Rapid_Fire_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("stamina_cost", new LinearValue(3.9, -0.1, 0.5, 5.0));
+		addModifier("stamina_cost", new LinearValue(5.4, -0.1, 1.0, 6.0));
 		addModifier("cooldown", new LinearValue(1.0, 0.0));
 		addModifier("stamina", new LinearValue(0, 0));
 		

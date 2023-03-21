@@ -26,7 +26,7 @@ public class Nomad extends RegisteredSkill
 	public Nomad()
 	{	
 		super(new Nomad_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("percent", new LinearValue(2.0, 2.0));
+		addModifier("percent", new LinearValue(30.0, 0.0));
 		skill = this;
 	}
 }

@@ -75,7 +75,7 @@ class Chase_Cut_Handler extends MalaSkill implements Listener
 	@EventHandler
 	public void chase_cut_attack(PlayerAttackEvent event)
 	{
-		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(event.getPlayer());
+		PlayerData data = PlayerData.get(event.getAttacker().getPlayer());
 		// 스킬을 알고 있지 않으면 취소
 		if(!data.getProfess().hasSkill("CHASE_CUT"))
 			return;
@@ -118,11 +118,12 @@ class Chase_Cut_Handler extends MalaSkill implements Listener
 		int level = data.getSkillLevel(Chase_Cut.skill);
 		
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Chase_Cut_Skill(data.getPlayer(), final_attacked.get(data.getPlayer()), rad, damage, level >= 10));
+				new Chase_Cut_Skill(cast, data.getPlayer(), final_attacked.get(data.getPlayer()), rad, damage, level >= 10));
 	}
 
 	class Chase_Cut_Skill implements Runnable
 	{
+		SkillMetadata cast;
 		Player player;
 		LivingEntity target;
 		double radius, damage;
@@ -133,8 +134,9 @@ class Chase_Cut_Handler extends MalaSkill implements Listener
 		double velocity = 1.3;
 		
 		
-		public Chase_Cut_Skill(Player _player, LivingEntity _target, double _radius, double _damage, boolean _marking)
+		public Chase_Cut_Skill(SkillMetadata cast, Player _player, LivingEntity _target, double _radius, double _damage, boolean _marking)
 		{
+			this.cast = cast;
 			player = _player;
 			target = _target;
 			radius = _radius;
@@ -163,7 +165,7 @@ class Chase_Cut_Handler extends MalaSkill implements Listener
 				LivingEntity le = (LivingEntity)en;
 				if (Damage.Is_Possible(player, le) && le.getNoDamageTicks() == 0)
 				{
-					Damage.Attack(player, le, damage, DamageType.WEAPON, DamageType.PHYSICAL, DamageType.SKILL);
+					Damage.SkillAttack(cast, le, damage, DamageType.WEAPON, DamageType.PHYSICAL, DamageType.SKILL);
 					if (marking)
 						Target_Mark.Mark_Enemy(player, le);
 				}

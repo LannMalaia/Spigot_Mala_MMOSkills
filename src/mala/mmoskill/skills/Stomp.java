@@ -62,13 +62,14 @@ class Stomp_Handler extends MalaSkill implements Listener
 		double damage = cast.getModifier("damage"); // 공격력
 		double distance = cast.getModifier("distance"); // 거리
 
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Stomp_Skill(data.getPlayer(), distance, damage));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Stomp_Skill(cast, data.getPlayer(), distance, damage));
 	}
 	
 	class Stomp_Skill implements Runnable
 	{
 		ArrayList<LivingEntity> damaged_entities = new ArrayList<LivingEntity>();
-		
+	
+		SkillMetadata cast;
 		Player player;
 		double damage;
 		double range = 20.0;
@@ -77,8 +78,9 @@ class Stomp_Handler extends MalaSkill implements Listener
 		double cur_range = 0.0;
 		double range_speed = 0.3;
 		
-		public Stomp_Skill(Player _player, double _range, double _dmg)
+		public Stomp_Skill(SkillMetadata cast, Player _player, double _range, double _dmg)
 		{
+			this.cast = cast;
 			player = _player;
 			range = _range;
 			damage = _dmg;
@@ -111,7 +113,7 @@ class Stomp_Handler extends MalaSkill implements Listener
 				le.setNoDamageTicks(0);
 				double hp = le.getHealth();
 
-				Damage.Attack(player, le, damage, DamageType.SKILL, DamageType.PHYSICAL);
+				Damage.SkillAttack(cast, le, damage, DamageType.SKILL, DamageType.PHYSICAL);
 				
 				if (hp != le.getHealth())
 				{

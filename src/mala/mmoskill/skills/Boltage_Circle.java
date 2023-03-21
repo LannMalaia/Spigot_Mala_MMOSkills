@@ -95,13 +95,14 @@ class Boltage_Circle_Handler extends MalaSkill implements Listener
 			radius *= 1.5;
 
 		data.getPlayer().swingMainHand();
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Boltage_Circle_Skill(data, damage, radius));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Boltage_Circle_Skill(cast, data, damage, radius));
 		
 	}
 
 	// 검술 베어가르기  효과
 	class Boltage_Circle_Skill implements Runnable
 	{
+		SkillMetadata cast;
 		PlayerData data;
 		Player player;
 		Location pos;
@@ -118,8 +119,9 @@ class Boltage_Circle_Handler extends MalaSkill implements Listener
 		int count;
 		double reduce;
 		
-		public Boltage_Circle_Skill(PlayerData p, double _damage, double _radius)
+		public Boltage_Circle_Skill(SkillMetadata cast, PlayerData p, double _damage, double _radius)
 		{
+			this.cast = cast;
 			data = p;
 			player = p.getPlayer();
 			damage = _damage;
@@ -207,7 +209,7 @@ class Boltage_Circle_Handler extends MalaSkill implements Listener
 					LivingEntity temp2 = (LivingEntity)temp;
 					
 					Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-							new Lightning_Bolt_Chain(data.getPlayer(), temp2, damage, count, reduce, true));
+							new Lightning_Bolt_Chain(cast, data.getPlayer(), temp2, damage, count, reduce, true));
 				}
 			}
 		}

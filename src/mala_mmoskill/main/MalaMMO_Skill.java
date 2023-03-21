@@ -1,56 +1,31 @@
 package mala_mmoskill.main;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Particle.DustTransition;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import io.lumine.mythic.lib.MythicLib;
-import io.lumine.mythic.lib.skill.handler.SkillHandler;
-import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import mala.mmoskill.manager.ArrowSkill_Manager;
-import mala.mmoskill.manager.ArrowTip;
 import mala.mmoskill.manager.CastSpellSkill_Manager;
-import mala.mmoskill.manager.Not_Skill;
 import mala.mmoskill.manager.Summon_Manager;
 import mala.mmoskill.util.AntiCheat_Ignore;
 import mala.mmoskill.util.Buff_Manager;
-import mala.mmoskill.util.ImageReader;
-import mala.mmoskill.util.MalaPassiveSkill;
-import mala.mmoskill.util.Skill_Animal_Ignore;
-import mala.mmoskill.xmas.Chain_Snowball;
 import mala.mmoskill.xmas.SnowCircle;
 import mala.mmoskill.xmas.Xmas_ExRange;
-import mala_mmoskill.class_version.Manager_April;
 import mala_mmoskill.class_version.Manager_Version;
-import me.blackvein.quests.libs.mysql.cj.x.protobuf.MysqlxCrud.Collection;
 import net.Indyuce.mmocore.MMOCore;
-import net.Indyuce.mmocore.api.ConfigFile;
 import net.Indyuce.mmocore.api.player.PlayerData;
-import net.Indyuce.mmocore.api.util.MMOCoreUtils;
 import net.Indyuce.mmocore.skill.ClassSkill;
 import net.Indyuce.mmocore.skill.RegisteredSkill;
 import net.milkbowl.vault.economy.Economy;
@@ -87,7 +62,7 @@ public class MalaMMO_Skill extends JavaPlugin
 		
 		Bukkit.getPluginManager().registerEvents(new Master_Event(), MalaMMO_Skill.plugin);
 		Bukkit.getPluginManager().registerEvents(new AntiCheat_Ignore(), MalaMMO_Skill.plugin);
-		Bukkit.getPluginManager().registerEvents(new Skill_Animal_Ignore(), MalaMMO_Skill.plugin);
+//		Bukkit.getPluginManager().registerEvents(new Skill_Animal_Ignore(), MalaMMO_Skill.plugin);
 		Bukkit.getPluginManager().registerEvents(new Manager_Version(), MalaMMO_Skill.plugin);
 		
 		/*

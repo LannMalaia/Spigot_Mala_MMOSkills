@@ -2,14 +2,18 @@ package mala.mmoskill.manager;
 
 import org.bukkit.entity.Player;
 
+import io.lumine.mythic.lib.skill.SkillMetadata;
+
 public class ArrowTip
 {
+	protected SkillMetadata cast;
 	protected String name;
 	protected Player player;
 	protected double duration;
 	
-	public ArrowTip(String _name, Player _player, double _duration)
+	public ArrowTip(SkillMetadata _cast, String _name, Player _player, double _duration)
 	{
+		cast = _cast;
 		name = _name;
 		player = _player;
 		duration = _duration;

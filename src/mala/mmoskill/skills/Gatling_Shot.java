@@ -91,7 +91,7 @@ class Gatling_Shot_Handler extends MalaSkill implements Listener
 		double damage = cast.getModifier("damage");
 		
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Gatling_Shot_Task(data.getPlayer(), count, damage));
+				new Gatling_Shot_Task(cast, data.getPlayer(), count, damage));
 	}
 }
 
@@ -101,9 +101,11 @@ class Gatling_Shot_Task implements Runnable
 	Location loc;
 	int count;
 	double damage;
+	SkillMetadata cast;
 	
-	public Gatling_Shot_Task(Player _player, int _count, double _damage)
+	public Gatling_Shot_Task(SkillMetadata _cast, Player _player, int _count, double _damage)
 	{
+		cast = _cast;
 		player = _player;
 		count = _count;
 		damage = _damage;
@@ -126,9 +128,7 @@ class Gatling_Shot_Task implements Runnable
 			.playEffect();
 		for (LivingEntity target : RayUtil.getLivingEntities(player, dir, 25.0)) {
 			target.setNoDamageTicks(0);
-			AttackUtil.attack(player, target, 
-					damage, null,
-					DamageType.WEAPON, DamageType.PHYSICAL, DamageType.PROJECTILE, DamageType.SKILL);
+			cast.attack(target, damage, DamageType.WEAPON, DamageType.PHYSICAL, DamageType.PROJECTILE, DamageType.SKILL);
 		}
 		
 		Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, this, 1);

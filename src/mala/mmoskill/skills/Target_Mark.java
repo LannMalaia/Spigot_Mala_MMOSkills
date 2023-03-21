@@ -52,7 +52,8 @@ public class Target_Mark extends RegisteredSkill
 		double dam_per = 1.0 + skill.getModifier("dam_per", level) * 0.01; // 피해 증가치
 
 		// 효과
-		target.getWorld().playSound(target.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 1, 2);
+		player.getWorld().playSound(player.getEyeLocation(), "mala_sound:skill.weak1", 1, 1);
+//		target.getWorld().playSound(target.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 1, 2);
 		target.getWorld().spawnParticle(Particle.GLOW_SQUID_INK, target.getLocation().add(0, target.getHeight() + 0.5, 0), 1, 0, 0, 0, 0);
 		Particle_Drawer.Draw_Circle(target.getEyeLocation(), Particle.SOUL, 1.5, Math.random() * 20.0, Math.random() * 360.0);
 		target.sendMessage("§c§l[ " + data.getPlayer().getDisplayName() + "§c§l님의 표적이 되었습니다! ]");

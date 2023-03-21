@@ -13,7 +13,6 @@ import org.bukkit.util.Vector;
 
 import io.lumine.mythic.lib.api.event.PlayerAttackEvent;
 import io.lumine.mythic.lib.damage.DamageType;
-import laylia_core.main.Damage;
 import mala.mmoskill.util.MalaPassiveSkill;
 import mala_mmoskill.main.MalaMMO_Skill;
 import net.Indyuce.mmocore.MMOCore;
@@ -26,7 +25,7 @@ public class Double_Attack extends RegisteredSkill
 	public Double_Attack()
 	{	
 		super(new Double_Attack_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("per", new LinearValue(10, 2, 10, 40));
+		addModifier("per", new LinearValue(2, 2));
 	}
 }
 
@@ -35,10 +34,9 @@ class Double_Attack_Handler extends MalaPassiveSkill implements Listener
 	public Double_Attack_Handler()
 	{
 		super(	"DOUBLE_ATTACK",
-				"이중 공격",
+				"치명타 공격",
 				Material.GOLDEN_SWORD,
-				"&7{per}%의 확률로 두 번 공격합니다.",
-				"&7두번째 공격은 스킬 피해로 취급됩니다.");
+				"&7무기 공격이 &7{per}%의 확률로 &e1.3&7배의 피해를 줍니다.");
 		
 		Bukkit.getPluginManager().registerEvents(this, MalaMMO_Skill.plugin);
 	}
@@ -46,15 +44,11 @@ class Double_Attack_Handler extends MalaPassiveSkill implements Listener
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void passive_double_attack(PlayerAttackEvent event)
 	{
-		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(event.getPlayer());
+		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(event.getAttacker().getPlayer());
 		RegisteredSkill skill = MMOCore.plugin.skillManager.getSkill("DOUBLE_ATTACK");
 		
 		// 무기 공격이 아니거나 스킬을 알고 있지 않으면 취소
 		if(!event.getDamage().hasType(DamageType.WEAPON) || !data.getProfess().hasSkill(skill))
-			return;
-		
-		// 마법, 스킬은 취소
-		if(event.getDamage().hasType(DamageType.MAGIC) || event.getDamage().hasType(DamageType.SKILL) || event.getDamage().hasType(DamageType.PROJECTILE))
 			return;
 
 		int level = data.getSkillLevel(skill);
@@ -64,40 +58,9 @@ class Double_Attack_Handler extends MalaPassiveSkill implements Listener
 		double per = skill.getModifier("per", level) * 0.01d;
 		if(Math.random() > per)
 			return;
-		
-		Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, new DA(event.getPlayer(), event.getEntity(), event.getAttack().getDamage().getDamage()), 4);
-	}
-	
-	class DA implements Runnable
-	{
-		Player player;
-		LivingEntity entity;
-		double damage;
-		
-		public DA(Player _p, LivingEntity _e, double _d)
-		{
-			player = _p;
-			entity = _e;
-			damage = _d;
-		}
-		
-		@Override
-		public void run()
-		{
-			if(entity.isDead())
-			{
-				return;
-			}
 
-			player.sendTitle("", "§f§l[ 더블 어택 ]", 0, 40, 0);
-			
-			entity.setNoDamageTicks(0);
-			player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 2, 2);
-			player.getWorld().spawnParticle(Particle.SWEEP_ATTACK, player.getEyeLocation(), 1);
-			entity.setVelocity(new Vector(0d, 0d, 0d));
-			Damage.Attack(player, entity, damage, DamageType.SKILL, DamageType.PHYSICAL);
-		}
-		
+		data.getPlayer().getWorld().playSound(data.getPlayer().getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 2, 2);
+		data.getPlayer().getWorld().spawnParticle(Particle.SWEEP_ATTACK, data.getPlayer().getEyeLocation(), 1);
+		event.getDamage().multiplicativeModifier(1.3, DamageType.WEAPON);
 	}
-
 }

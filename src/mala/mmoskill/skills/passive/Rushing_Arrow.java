@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.ProjectileHitEvent;
 
 import io.lumine.mythic.lib.damage.DamageType;
 import mala.mmoskill.util.MalaPassiveSkill;
@@ -32,7 +33,7 @@ class Rushing_Arrow_Handler extends MalaPassiveSkill implements Listener
 		super(	"RUSHING_ARROW",
 				"쇄도하는 화살",
 				Material.TARGET,
-				"&7모든 투사체 공격이 적의 무적 시간을 무시합니다.",
+				"&7적이 투사체 공격을 받았을 때, 무적 시간이 캔슬됩니다.",
 				"&eLv.20&7에서 발동합니다.");
 
 		Bukkit.getPluginManager().registerEvents(this, MalaMMO_Skill.plugin);
@@ -41,7 +42,7 @@ class Rushing_Arrow_Handler extends MalaPassiveSkill implements Listener
 	@EventHandler (priority = EventPriority.LOWEST)
 	public void attack_rushing_arrow(PlayerAttackEvent event)
 	{
-		Player player = event.getPlayer();
+		Player player = event.getAttacker().getPlayer();
 		PlayerData data = PlayerData.get(player);
 
 		// 공격 체크
@@ -54,8 +55,11 @@ class Rushing_Arrow_Handler extends MalaPassiveSkill implements Listener
 			return;
 		if (level < 20)
 			return;
-		
+
 		event.getEntity().setNoDamageTicks(0);
+		Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, () -> {
+			event.getEntity().setNoDamageTicks(0);
+		}, 1);
 	}
 	
 	/*

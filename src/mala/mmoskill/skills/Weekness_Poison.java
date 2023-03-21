@@ -63,6 +63,7 @@ class Weekness_Poison_Handler extends MalaTargetSkill implements Listener
 		
 		double per = event.getEntity().getMetadata("malammo.skill.weakness_poison").get(0).asInt() * 0.01d;
 		Location loc = event.getEntity().getEyeLocation();
+		loc.getWorld().playSound(loc, "mala_sound:skill.weak1", 1, 1);
 		loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EAT, 1, 2);
 		event.getDamage().multiplicativeModifier(1.0 + per);
 	}

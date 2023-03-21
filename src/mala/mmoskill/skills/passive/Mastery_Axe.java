@@ -29,7 +29,7 @@ public class Mastery_Axe extends RegisteredSkill
 	public Mastery_Axe()
 	{	
 		super(new Mastery_Axe_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("percent", new LinearValue(2, 2));
+		addModifier("percent", new LinearValue(1.25, 1.25));
 	}
 }
 

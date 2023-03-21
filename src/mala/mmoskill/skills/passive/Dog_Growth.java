@@ -29,7 +29,7 @@ public class Dog_Growth extends RegisteredSkill
 	public Dog_Growth()
 	{	
 		super(new Dog_Growth_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("damage", new LinearValue(1.15, 0.15));
+		addModifier("damage", new LinearValue(0.6, 0.1));
 		skill = this;
 	}
 	

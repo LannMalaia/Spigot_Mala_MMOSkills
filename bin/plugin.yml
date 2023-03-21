@@ -1,7 +1,7 @@
 name: Mala_MMOSkills
 main: mala_mmoskill.main.MalaMMO_Skill
-version: 1.18.1
-api-version: 1.18
+version: 1.19.3
+api-version: 1.19
 author: Malaia_Garnet
 description: Adds some mmocore skills
 depend: [Laylia_Core_API, LibsDisguises, MythicMobs, MMOCore]

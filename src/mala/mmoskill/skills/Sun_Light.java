@@ -72,12 +72,13 @@ class Sun_Light_Handler extends MalaSkill implements Listener
 		double radius = cast.getModifier("radius");
 		
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Sun_Light_Task(data.getPlayer().getLocation(), data.getPlayer(), damage, radius));
+				new Sun_Light_Task(cast, data.getPlayer().getLocation(), data.getPlayer(), damage, radius));
 	}
 }
 
 class Sun_Light_Task implements Runnable
 {
+	SkillMetadata cast;
 	Location pos;
 	Player player;
 	double damage;
@@ -95,8 +96,9 @@ class Sun_Light_Task implements Runnable
 	
 	Vector[] vecs;
 	
-	public Sun_Light_Task(Location _pos, Player _player, double _damage, double _beam_max_radius)
+	public Sun_Light_Task(SkillMetadata cast, Location _pos, Player _player, double _damage, double _beam_max_radius)
 	{
+		this.cast = cast;
 		pos = _pos;
 		player = _player;
 		damage = _damage;
@@ -192,7 +194,7 @@ class Sun_Light_Task implements Runnable
 				Location end = target.getEyeLocation();
 				Particle_Drawer.Draw_Line(start, end, Particle.END_ROD, 0.15);
 				pos.getWorld().playSound(target.getEyeLocation(), Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 2.0f, 0.5f);
-				Damage.Attack(player, target, damage * mult, DamageType.MAGIC, DamageType.SKILL);
+				Damage.SkillAttack(cast, target, damage * mult, DamageType.MAGIC, DamageType.SKILL);
 			}
 		}
 		

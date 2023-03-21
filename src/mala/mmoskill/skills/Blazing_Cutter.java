@@ -73,12 +73,14 @@ class Blazing_Cutter_Handler extends MalaSkill implements Listener
 		
 		for (double angle = 0.0; angle <= 360; angle += 180.0)
 		{
-			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Blazing_Cutter_Skill(data.getPlayer(), damage, size, angle));
+			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
+					new Blazing_Cutter_Skill(cast, data.getPlayer(), damage, size, angle));
 		}
 	}
 
 	class Blazing_Cutter_Skill implements Runnable
 	{
+		SkillMetadata cast;
 		Player player;
 		Location pos;
 		Vector dir;
@@ -93,8 +95,9 @@ class Blazing_Cutter_Handler extends MalaSkill implements Listener
 		double correction_angle = 0.0;
 		double duration = 10.0;
 		
-		public Blazing_Cutter_Skill(Player p, double _damage, double _size, double _angle)
+		public Blazing_Cutter_Skill(SkillMetadata cast, Player p, double _damage, double _size, double _angle)
 		{
+			this.cast = cast;
 			player = p;
 			damage = _damage;
 			size = _size;
@@ -153,7 +156,7 @@ class Blazing_Cutter_Handler extends MalaSkill implements Listener
 				{
 					if (Damage.Is_Possible(player, temp2))
 					{
-						Damage.Attack(player, temp2, damage,
+						Damage.SkillAttack(cast, temp2, damage,
 								DamageType.SKILL, DamageType.MAGIC);
 						
 						temp2.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, temp2.getEyeLocation(), 15, 0.4, 0.4, 0.4, 0);

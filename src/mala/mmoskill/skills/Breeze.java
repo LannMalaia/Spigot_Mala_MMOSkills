@@ -42,7 +42,8 @@ class Breeze_Handler extends MalaSkill implements Listener
 	{
 		super(	"BREEZE",
 				"브리즈",
-				Material.FEATHER,
+				Material.PAPER,
+				10155,
 				"&7{duration}초간 전방으로 움직입니다.",
 				"&7공중으로의 이동도 가능합니다.",
 				"&7웅크려서 취소할 수 있습니다.",

@@ -113,7 +113,7 @@ class BindUp_Handler extends MalaTargetSkill implements Listener
 			loc.getWorld().spawnParticle(Particle.WAX_ON, loc, 64, 2.0d, 2.0d, 2.0d, 0d);
 			
 			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-					new BindUp_Skill(data.getPlayer(), _data.getTarget(), damage, sec));
+					new BindUp_Skill(cast, data.getPlayer(), _data.getTarget(), damage, sec));
 		}
 		else
 		{
@@ -132,6 +132,7 @@ class BindUp_Handler extends MalaTargetSkill implements Listener
 
 class BindUp_Skill implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	LivingEntity target;
 	List<LivingEntity> targets = new ArrayList<LivingEntity>();
@@ -141,8 +142,9 @@ class BindUp_Skill implements Runnable
 	Particle particle = Particle.WAX_ON;
 	Location loc;
 	
-	public BindUp_Skill(Player _player, LivingEntity _target, double _damage, double _duration)
+	public BindUp_Skill(SkillMetadata cast, Player _player, LivingEntity _target, double _damage, double _duration)
 	{
+		this.cast = cast;
 		player = _player; target = _target; damage = _damage; duration = _duration;
 		loc = target.getLocation();
 		
@@ -182,11 +184,11 @@ class BindUp_Skill implements Runnable
 		
 		target.teleport(loc);
 		if (counter % 10 == 0)
-			Damage.Attack(player, target, damage, DamageType.PHYSICAL, DamageType.SKILL);
+			Damage.SkillAttack(cast, target, damage, DamageType.PHYSICAL, DamageType.SKILL);
 		for (LivingEntity le : targets)
 		{
 			if (counter % 10 == 0)
-				Damage.Attack(player, le, damage, DamageType.PHYSICAL, DamageType.SKILL);
+				Damage.SkillAttack(cast, le, damage, DamageType.PHYSICAL, DamageType.SKILL);
 			le.teleport(loc);
 		}
 		

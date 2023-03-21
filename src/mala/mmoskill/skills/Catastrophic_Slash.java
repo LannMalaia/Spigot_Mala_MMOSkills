@@ -120,12 +120,13 @@ class Catastrophic_Slash_Handler extends MalaSkill implements Listener
 		for (int i = 0; i < 10; i++)
 		{
 			Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin,
-				new Catastrophic_Slash_Skill(data.getPlayer(), distance, damage, wither_add, wither_max, i == 9), i * 5);
+				new Catastrophic_Slash_Skill(cast, data.getPlayer(), distance, damage, wither_add, wither_max, i == 9), i * 5);
 		}
 	}
 	
 	class Catastrophic_Slash_Skill implements Runnable
 	{
+		SkillMetadata cast;
 		double slash_size = 5.0;
 		double speed = 2.0;
 		
@@ -140,8 +141,9 @@ class Catastrophic_Slash_Handler extends MalaSkill implements Listener
 		List<Entity> damaged_entities = new ArrayList<Entity>();
 		List<Entity> entities;
 		
-		public Catastrophic_Slash_Skill(Player p, double _distance, double _damage, int _wither, int _wither_max, boolean _is_big)
+		public Catastrophic_Slash_Skill(SkillMetadata cast, Player p, double _distance, double _damage, int _wither, int _wither_max, boolean _is_big)
 		{
+			this.cast = cast;
 			player = p;
 			distance = _distance;
 			damage = _damage;
@@ -227,7 +229,7 @@ class Catastrophic_Slash_Handler extends MalaSkill implements Listener
 						{
 							if (Damage.Is_Possible(player, temp2))
 							{
-								Damage.Attack(player, temp2, damage, DamageType.WEAPON, DamageType.PHYSICAL, DamageType.SKILL, DamageType.PROJECTILE);
+								Damage.SkillAttack(cast, temp2, damage, DamageType.WEAPON, DamageType.PHYSICAL, DamageType.SKILL, DamageType.PROJECTILE);
 								Buff_Manager.Increase_Buff(temp2, PotionEffectType.WITHER, wither_level - 1, 200, null, wither_max - 1);
 							}
 							damaged_entities.add(temp2);

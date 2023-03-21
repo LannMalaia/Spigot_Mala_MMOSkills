@@ -25,7 +25,6 @@ import mala_mmoskill.main.MalaMMO_Skill;
 import mala_mmoskill.main.MsgTBL;
 import net.Indyuce.mmocore.MMOCore;
 import net.Indyuce.mmocore.api.player.PlayerData;
-import net.Indyuce.mmocore.api.player.stats.StatType;
 import net.Indyuce.mmocore.api.util.math.formula.LinearValue;
 import net.Indyuce.mmocore.skill.RegisteredSkill;
 
@@ -153,8 +152,8 @@ class Aura_Recover_Handler extends MalaSkill implements Listener
 				try
 				{
 					PlayerData pd = PlayerData.get(p);
-					double max_mana = pd.getStats().getStat(StatType.MAX_MANA);
-					double max_stamina = pd.getStats().getStat(StatType.MAX_STAMINA);
+					double max_mana = pd.getStats().getStat("MAX_MANA");
+					double max_stamina = pd.getStats().getStat("MAX_STAMINA");
 					pd.setMana(Math.min(max_mana, pd.getMana() + manaheal));
 					pd.setStamina(Math.min(max_stamina, pd.getStamina() + staheal));
 					

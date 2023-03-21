@@ -35,9 +35,9 @@ class Mastery_Spear_Handler extends MalaPassiveSkill implements Listener
 		super(	"MASTERY_SPEAR",
 				"스피어 마스터리",
 				Material.KNOWLEDGE_BOOK,
-				"&7창을 사용한 공격이",
+				"&7창을 사용한 스킬이 아닌 공격이",
 				"&7추가로 &e{percent}&7%의 피해를 줍니다.",
-				"&7창을 사용한 스킬은",
+				"&7창을 사용한 스킬 공격은",
 				"&7추가로 &e{percent_2}&7%의 피해를 줍니다.");
 
 		Bukkit.getPluginManager().registerEvents(this, MalaMMO_Skill.plugin);

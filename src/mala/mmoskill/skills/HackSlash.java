@@ -19,6 +19,7 @@ import org.bukkit.util.Vector;
 import mala.mmoskill.events.PhysicalSkillEvent;
 import mala.mmoskill.manager.Summon_Manager;
 import mala.mmoskill.manager.Summoned_OBJ;
+import mala.mmoskill.util.AttackUtil;
 import mala.mmoskill.util.MalaSkill;
 import mala.mmoskill.util.TRS;
 import mala_mmoskill.main.MalaMMO_Skill;
@@ -144,7 +145,8 @@ class HackSlash_Handler extends MalaSkill implements Listener
 					LivingEntity temp2 = (LivingEntity)temp;
 					
 					temp2.setNoDamageTicks(0);
-					Damage.Attack(player, temp2, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
+					AttackUtil.attack(player, temp2, damage, null,
+							DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
 				}
 			}
 			
@@ -225,7 +227,8 @@ class HackSlash_Handler extends MalaSkill implements Listener
 					LivingEntity temp2 = (LivingEntity)temp;
 					
 					temp2.setNoDamageTicks(0);
-					Damage.Attack(player, temp2, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
+					AttackUtil.attack(player, temp2, damage, null,
+							DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
 				}
 			}
 			

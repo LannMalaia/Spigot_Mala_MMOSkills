@@ -73,7 +73,8 @@ class Parry_Handler extends MalaPassiveSkill implements Listener
 			player = _player;
 			player.sendMessage("§c§l[ 쳐내기 발동 ]");
 			player.setMetadata("malammo.skill.parry", new FixedMetadataValue(MalaMMO_Skill.plugin, _second));
-			player.getWorld().playSound(player.getEyeLocation(), Sound.BLOCK_ANVIL_LAND, 1f, 2f);
+			player.getWorld().playSound(player.getEyeLocation(), "mala_sound:skill.parry1", 1f, 1f);
+//			player.getWorld().playSound(player.getEyeLocation(), Sound.BLOCK_ANVIL_LAND, 1f, 2f);
 		}
 		
 		public void run()

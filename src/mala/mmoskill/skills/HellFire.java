@@ -36,8 +36,8 @@ public class HellFire extends RegisteredSkill
 	{	
 		super(new HellFire_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("damage", new LinearValue(0.7, 0.2));
-		addModifier("cooldown", new LinearValue(120, 0));
+		addModifier("damage", new LinearValue(1.3, 0.3));
+		addModifier("cooldown", new LinearValue(60, 0));
 		addModifier("mana", new LinearValue(10, 0));
 	}
 }
@@ -76,12 +76,13 @@ class HellFire_Handler extends MalaTargetSkill implements Listener
 		damage = dm.getDamage();
 		
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Hell_Fire_Task(data, _data.getTarget(), damage));
+				new Hell_Fire_Task(cast, data, _data.getTarget(), damage));
 	}
 }
 
 class Hell_Fire_Task implements Runnable
 {
+	SkillMetadata cast;
 	PlayerData player;
 	LivingEntity target;
 	double damage;
@@ -92,8 +93,9 @@ class Hell_Fire_Task implements Runnable
 	int counter = 0;
 	World world;
 	
-	public Hell_Fire_Task(PlayerData _player, LivingEntity _target, double _damage)
+	public Hell_Fire_Task(SkillMetadata cast, PlayerData _player, LivingEntity _target, double _damage)
 	{
+		this.cast = cast;
 		player = _player;
 		target = _target;
 		damage = _damage;
@@ -127,7 +129,7 @@ class Hell_Fire_Task implements Runnable
 				world.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 1.0f);
 				world.playSound(loc, Sound.ENTITY_BLAZE_DEATH, 2.0f, 1.2f);
 				
-				Damage.Attack(player.getPlayer(), target, damage, DamageType.SKILL, DamageType.MAGIC);
+				Damage.SkillAttack(cast, target, damage, DamageType.SKILL, DamageType.MAGIC);
 			}
 			else
 			{

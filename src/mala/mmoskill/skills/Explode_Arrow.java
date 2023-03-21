@@ -74,17 +74,18 @@ class Explode_Arrow_Handler extends MalaSkill implements Listener
 		Player player = data.getPlayer();
 		
 		// È¿°ú
-		player.getWorld().playSound(player.getEyeLocation(), Sound.BLOCK_LEVER_CLICK, 1, 1);
-		ArrowSkill_Manager.Get_Instance().Register_ArrowSkill(player, new ArrowTip_Explode(player, second, damage));
+		player.getWorld().playSound(player, "mala_sound:skill.bow2", 1, 1);
+//		player.getWorld().playSound(player.getEyeLocation(), Sound.BLOCK_LEVER_CLICK, 1, 1);
+		ArrowSkill_Manager.Get_Instance().Register_ArrowSkill(player, new ArrowTip_Explode(cast, player, second, damage));
 	}
 }
 
 class ArrowTip_Explode extends ArrowTip implements Not_Skill
 {
 	double damage;
-	public ArrowTip_Explode(Player _player, double _duration, double _damage)
+	public ArrowTip_Explode(SkillMetadata cast, Player _player, double _duration, double _damage)
 	{
-		super("ÆøÅº È­»ì", _player, _duration);
+		super(cast, "ÆøÅº È­»ì", _player, _duration);
 		damage = _damage;
 	}
 	
@@ -100,20 +101,22 @@ class ArrowTip_Explode extends ArrowTip implements Not_Skill
 			return;
 		Location end_point = rtr.getHitPosition().toLocation(loc.getWorld());
 		Particle_Drawer.Draw_Line(loc, end_point, Particle.FIREWORKS_SPARK, 0.5);
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new ArrowTip_Explode_Skill(player, damage, end_point));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new ArrowTip_Explode_Skill(cast, player, damage, end_point));
 	}
 }
 
 class ArrowTip_Explode_Skill implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	double damage;
 	Location loc;
 	
 	int counter = 0;
 	
-	public ArrowTip_Explode_Skill(Player _player, double _damage, Location _location)
+	public ArrowTip_Explode_Skill(SkillMetadata _cast, Player _player, double _damage, Location _location)
 	{
+		cast = _cast;
 		player = _player; damage = _damage; loc = _location;
 	}
 	
@@ -139,7 +142,7 @@ class ArrowTip_Explode_Skill implements Runnable
 				if(e == player)
 					continue;
 				LivingEntity target = (LivingEntity)e;
-				Damage.Attack(player, target, damage,
+				Damage.SkillAttack(cast, target, damage,
 						DamageType.PROJECTILE, DamageType.SKILL, DamageType.PHYSICAL);
 			}
 		}

@@ -1,5 +1,8 @@
 package mala.mmoskill.skills;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,7 +16,9 @@ import org.bukkit.util.Vector;
 
 import mala.mmoskill.events.FireMagicEvent;
 import mala.mmoskill.skills.passive.Mastery_Fire;
+import mala.mmoskill.util.Effect;
 import mala.mmoskill.util.MalaSkill;
+import mala.mmoskill.util.MalaTargetSkill;
 import mala_mmoskill.main.MalaMMO_Skill;
 import mala_mmoskill.main.MsgTBL;
 import net.Indyuce.mmocore.MMOCore;
@@ -21,10 +26,12 @@ import net.Indyuce.mmocore.api.player.PlayerData;
 import net.Indyuce.mmocore.skill.RegisteredSkill;
 import net.Indyuce.mmocore.api.util.math.formula.LinearValue;
 import io.lumine.mythic.lib.MythicLib;
+import io.lumine.mythic.lib.comp.target.InteractionType;
 import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
+import io.lumine.mythic.lib.skill.result.def.TargetSkillResult;
 import laylia_core.main.Damage;
 
 public class Fire_Bolt extends RegisteredSkill
@@ -33,14 +40,14 @@ public class Fire_Bolt extends RegisteredSkill
 	{	
 		super(new Fire_Bolt_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("distance", new LinearValue(10, 0.25));
-		addModifier("damage", new LinearValue(5, 5));
-		addModifier("cooldown", new LinearValue(7, 0));
-		addModifier("mana", new LinearValue(3, 0.7));
+		addModifier("bolt_count", new LinearValue(1.2, 0.2));
+		addModifier("damage", new LinearValue(10, 10));
+		addModifier("cooldown", new LinearValue(5.25, 0.25));
+		addModifier("mana", new LinearValue(5, 1));
 	}
 }
 
-class Fire_Bolt_Handler extends MalaSkill implements Listener
+class Fire_Bolt_Handler extends MalaTargetSkill implements Listener
 {
 	public Fire_Bolt_Handler()
 	{
@@ -49,106 +56,108 @@ class Fire_Bolt_Handler extends MalaSkill implements Listener
 				Material.BLAZE_POWDER,
 				MsgTBL.PROJECTILE + MsgTBL.SKILL + MsgTBL.MAGIC_FIRE + MsgTBL.MAGIC,
 				"",
-				"&8{distance}&7 거리까지 나아가는 화염탄을 발사합니다.",
-				"&7화염탄은 &8{damage}의 피해를 줍니다.",
+				"&7적에게 &e{bolt_count}&7개의 화염탄을 한번에 발사합니다.",
+				"&7화염탄은 &e{damage}&7의 피해를 줍니다.",
 				"&7맞은 적은 발화 상태에 걸립니다.",
 				"",
 				MsgTBL.Cooldown, MsgTBL.ManaCost);
 	}
 
 	@Override
-	public void whenCast(SimpleSkillResult _data, SkillMetadata cast)
+	public TargetSkillResult getResult(SkillMetadata cast)
+	{
+		TargetSkillResult tsr = new TargetSkillResult(cast, 35.0, InteractionType.OFFENSE_SKILL);
+		if (tsr.isSuccessful(cast))
+			return tsr;
+		return new TargetSkillResult(cast, 0.0, InteractionType.OFFENSE_SKILL);
+	}
+	
+	@Override
+	public void whenCast(TargetSkillResult _data, SkillMetadata cast)
 	{
 		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
 		
-		double distance = cast.getModifier("distance");
 		double damage = cast.getModifier("damage");
 		damage *= Mastery_Fire.Get_Mult(data.getPlayer());
-		Vector dir = data.getPlayer().getLocation().getDirection();
 
 		DamageMetadata ar = new DamageMetadata(damage);
 		Bukkit.getPluginManager().callEvent(new FireMagicEvent(data.getPlayer(), ar));
 		damage = ar.getDamage();
 		
 		data.getPlayer().getWorld().playSound(data.getPlayer().getEyeLocation(), Sound.ENTITY_BLAZE_SHOOT, 1, 1);
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new FireBolt_Bolt(data.getPlayer().getEyeLocation().subtract(0, 0.2, 0), data.getPlayer(), dir, damage, 1.2, distance));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
+				new FireBolt_Bolt(
+						cast,
+						data.getPlayer(),
+						_data.getTarget(),
+						(int)cast.getModifier("bolt_count"),
+						damage));
 	}
 }
 
 class FireBolt_Bolt implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
+	LivingEntity target;
 	double damage;
-	double max_distance;
-	double speed;
-	Location start_loc;
-	Vector dir;
 
-	double current_distance = 0;
-	Location before_loc, current_loc;
+	long lastTicks = 20;
+	Location location;
+	List<Vector> boltTargetLocations = new ArrayList<>();
+	List<Vector> boltCurrentLocations = new ArrayList<>();
 	
-	public FireBolt_Bolt(Location _start_loc, Player _player, Vector _dir, double _damage, double _speed, double _max_distance)
+	public FireBolt_Bolt(SkillMetadata cast, Player _player, LivingEntity _target, int _boltCount, double _damage)
 	{
-		start_loc = _start_loc;
+		this.cast = cast;
 		player = _player;
-		dir = _dir;
+		target = _target;
 		damage = _damage;
-		speed = _speed;
-		max_distance = _max_distance;
 
-		current_loc = start_loc.clone();
-		before_loc = start_loc.clone();
-		player.getWorld().getChunkAt(player.getLocation()).getEntities();
+		location = player.getEyeLocation();
+		new Effect(location, Particle.FLASH)
+			.addSound(Sound.ENTITY_BLAZE_SHOOT)
+			.playEffect();
+		for (int i = 0; i < _boltCount; i++) {
+			boltTargetLocations.add(new Vector(
+					-1.0 + Math.random() * 2.0,
+					-0.3 + Math.random() * 0.6,
+					-1.0 + Math.random() * 2.0).multiply(4.0));
+			boltCurrentLocations.add(new Vector());
+		}
 	}
 	
 	public void run()
 	{
-		current_distance += speed;
-		if(max_distance < current_distance)
-			speed = max_distance - current_distance;
-		current_loc.add(dir.clone().multiply(speed));
-		
-		// 라인 그리기
-		Vector gap = current_loc.clone().subtract(before_loc).toVector();
-		if(gap.length() <= 0.01)
-			return;
-		
-		for(double i = 0; i < gap.length(); i += 0.1)
-		{
-			Location loc = before_loc.clone().add(gap.clone().normalize().multiply(i));
-			current_loc.getWorld().spawnParticle(Particle.FLAME, loc, 1, 0, 0, 0, 0);
-		}
-
-		
-		// 주변 적 찾기
-		for(double i = 0; i <= gap.length(); i += 1)
-		{
-			Location loc = before_loc.clone().add(gap.clone().normalize().multiply(i));
-			for(Entity e : loc.getWorld().getNearbyEntities(loc, 1, 1, 1))
-			{
-				if(!(e instanceof LivingEntity))
-					continue;
-				if(e == player)
-					continue;
-				
-				// 찾은 경우 피해 주고 그냥 끝냄
-				LivingEntity target = (LivingEntity)e;
-				Damage.Attack(player, target, damage,
-						DamageType.MAGIC, DamageType.PROJECTILE, DamageType.SKILL);
-				loc.getWorld().playSound(current_loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
-				current_loc.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, loc, 1, 0, 0, 0, 0);
-				current_loc.getWorld().spawnParticle(Particle.LAVA, loc, 20, 0, 0, 0, 0);
-				target.setFireTicks(100);
-				return;
+		if (lastTicks > 0) {
+			lastTicks -= 1;
+			for (int i = 0; i < boltCurrentLocations.size(); i++) {
+				Vector target = boltTargetLocations.get(i).clone();
+				Vector curr = boltCurrentLocations.get(i);
+				curr.add(target.subtract(curr).multiply(0.1));
+				Location loc = location.clone().add(curr.toLocation(location.getWorld()));
+				location.getWorld().spawnParticle(Particle.FLAME, loc, 1, 0, 0, 0, 0);
 			}
+			Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, this, 1);
+		} else {
+			for (int i = 0; i < boltCurrentLocations.size(); i++) {
+				Location loc = location.clone().add(boltCurrentLocations.get(i));
+				Vector dir = target.getEyeLocation().subtract(loc).toVector();
+				double length = dir.length();
+				new Effect(loc, Particle.SMALL_FLAME)
+					.append2DLine(dir.normalize(), length)
+					.scaleVelocity(0.0)
+					.playEffect();
+			}
+			new Effect(target.getEyeLocation(), Particle.CRIT)
+				.addSound(Sound.ENTITY_GENERIC_EXPLODE, 1.5, 1.5)
+				.append2DCircle(2.0)
+				.rotate(Math.random() * 360.0, Math.random() * 360.0, Math.random() * 360.0)
+				.scaleVelocity(0.5)
+				.playEffect();
+			Damage.SkillAttack(cast, target, damage,
+					DamageType.MAGIC, DamageType.PROJECTILE, DamageType.SKILL);
+			target.setFireTicks(100);
 		}
-		
-		// 마무리 전 이걸 계속 해야하나 체크
-		if(current_distance > max_distance)
-			return;
-					
-		// 마무리
-		before_loc = current_loc.clone();
-		Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, this, 1);
 	}
 }

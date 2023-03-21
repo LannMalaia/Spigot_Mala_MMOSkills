@@ -65,12 +65,13 @@ class Icicle_Pierce_Handler extends MalaSkill implements Listener
 		damage *= Mastery_Ice.Get_Mult(data.getPlayer());
 		
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Icicle_Pierce_Task(data.getPlayer(), damage, count));
+				new Icicle_Pierce_Task(cast, data.getPlayer(), damage, count));
 	}
 }
 
 class Icicle_Pierce_Task implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	double damage;
 	int repeat = 0;
@@ -84,8 +85,9 @@ class Icicle_Pierce_Task implements Runnable
 	
 	double damage_angle = 60;
 	
-	public Icicle_Pierce_Task(Player _player, double _damage, int _repeat)
+	public Icicle_Pierce_Task(SkillMetadata cast, Player _player, double _damage, int _repeat)
 	{
+		this.cast = cast;
 		player = _player;
 		loc = player.getEyeLocation().add(_player.getLocation().getDirection().multiply(1.5)).subtract(0, 0.4, 0);
 		damage = _damage;
@@ -177,7 +179,7 @@ class Icicle_Pierce_Task implements Runnable
 			{
 				LivingEntity target = (LivingEntity)e;
 				target.setNoDamageTicks(0);
-				Damage.Attack(player, target, damage, DamageType.MAGIC, DamageType.SKILL);
+				Damage.SkillAttack(cast, target, damage, DamageType.MAGIC, DamageType.SKILL);
 			}
 		}
 		

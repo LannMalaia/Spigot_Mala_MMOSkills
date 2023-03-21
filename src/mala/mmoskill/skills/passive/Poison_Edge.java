@@ -35,7 +35,7 @@ class Poison_Edge_Handler extends MalaPassiveSkill implements Listener
 		super(	"POISON_EDGE",
 				"독살의 일격",
 				Material.BAMBOO,
-				"&7기본 공격 시 {per}%의 확률로 독을 겁니다.");
+				"&7무기 공격이 {per}%의 확률로 독을 겁니다.");
 		
 		Bukkit.getPluginManager().registerEvents(this, MalaMMO_Skill.plugin);
 	}
@@ -50,10 +50,6 @@ class Poison_Edge_Handler extends MalaPassiveSkill implements Listener
 		if(!event.getDamage().hasType(DamageType.WEAPON) || !data.getProfess().hasSkill(skill))
 			return;
 		
-		// 마법, 스킬은 취소
-		if(event.getDamage().hasType(DamageType.MAGIC) || event.getDamage().hasType(DamageType.SKILL) || event.getDamage().hasType(DamageType.PROJECTILE))
-			return;
-
 		int level = data.getSkillLevel(skill);
 		
 		double per = skill.getModifier("per", level) * 0.01d;

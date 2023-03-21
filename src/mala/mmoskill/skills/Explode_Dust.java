@@ -85,12 +85,13 @@ class Explode_Dust_Handler extends MalaSkill implements Listener
 		double damage = cast.getModifier("damage");
 		boolean isNormal = data.getSkillLevel(Explode_Dust.skill) >= 20;
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Explode_Dust_Skill(data.getPlayer(), data.getPlayer().getEyeLocation(), damage, isNormal));
+				new Explode_Dust_Skill(cast, data.getPlayer(), data.getPlayer().getEyeLocation(), damage, isNormal));
 	}
 }
 
 class Explode_Dust_Skill implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	Location skillLoc;
 	double damage;
@@ -101,8 +102,9 @@ class Explode_Dust_Skill implements Runnable
 	List<Location> curLocations;
 	List<Location> targetLocations;
 	
-	public Explode_Dust_Skill(Player _player, Location _skillLoc, double _damage, boolean _isNormal)
+	public Explode_Dust_Skill(SkillMetadata cast, Player _player, Location _skillLoc, double _damage, boolean _isNormal)
 	{
+		this.cast = cast;
 		player = _player; skillLoc = _skillLoc; damage = _damage; isNormal = _isNormal;
 
 		curLocations = new ArrayList<>();
@@ -151,9 +153,9 @@ class Explode_Dust_Skill implements Runnable
 				if (Damage.Is_Possible(player, entity) && entity instanceof LivingEntity)
 				{
 					if (isNormal)
-						Damage.Attack(player, (LivingEntity)entity, damage, DamageType.PHYSICAL, DamageType.WEAPON);
+						Damage.SkillAttack(cast, (LivingEntity)entity, damage, DamageType.PHYSICAL, DamageType.WEAPON);
 					else
-						Damage.Attack(player, (LivingEntity)entity, damage, DamageType.PHYSICAL, DamageType.SKILL);
+						Damage.SkillAttack(cast, (LivingEntity)entity, damage, DamageType.PHYSICAL, DamageType.SKILL);
 					Buff_Manager.Increase_Buff((LivingEntity)entity, PotionEffectType.BLINDNESS, 0, 100, null, 0);
 				}
 			}

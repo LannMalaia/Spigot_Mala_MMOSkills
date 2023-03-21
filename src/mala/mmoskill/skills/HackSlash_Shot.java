@@ -58,9 +58,9 @@ class HackSlash_Shot_Handler extends MalaSkill implements Listener
 				"",
 				MsgTBL.PROJECTILE + MsgTBL.PHYSICAL + MsgTBL.SKILL,
 				"",
-				"&7칼날 화살을 장전합니다.",
+				"&7칼날 화살을 쏩니다.",
 				"&7칼날 화살은 전방 5방향으로 나아가며 &e{damage}&7의 피해를 줍니다.", 
-				"&c다른 화살과 함께 사용할 수 없습니다.",
+				"&c활이 없어도 사용할 수 있습니다.",
 				"",
 				MsgTBL.Cooldown,
 				MsgTBL.StaCost);
@@ -90,46 +90,19 @@ class HackSlash_Shot_Handler extends MalaSkill implements Listener
 		Player player = data.getPlayer();
 		
 		// 효과
-		player.getWorld().playSound(player.getEyeLocation(), Sound.BLOCK_LEVER_CLICK, 1, 1);
+		player.getWorld().playSound(player, "mala_sound:skill.bow1", 1, 1);
 
-		player.sendMessage("§c§l[ 칼날 화살 장전 ]");
-		player.setMetadata("malammo.skill.hackslash_arrow_count", new FixedMetadataValue(MalaMMO_Skill.plugin, 1));
-		player.setMetadata("malammo.skill.hackslash_arrow", new FixedMetadataValue(MalaMMO_Skill.plugin, damage));
-		player.setMetadata("malammo.skill.current_arrow", new FixedMetadataValue(MalaMMO_Skill.plugin, "hackslash_arrow"));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new HackSlash_Arrow_Skill(cast, player, 15, damage, -80.0, false));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new HackSlash_Arrow_Skill(cast, player, 20, damage, -40.0, false));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new HackSlash_Arrow_Skill(cast, player, 25, damage, 0.0, false));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new HackSlash_Arrow_Skill(cast, player, 20, damage, 40.0, false));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new HackSlash_Arrow_Skill(cast, player, 15, damage, 80.0, false));
 	}
 
-	@EventHandler
-	public void explode_arrow(EntityShootBowEvent event)
-	{
-		if(!(event.getEntity() instanceof Player))
-			return;
-		if(!(event.getProjectile() instanceof Arrow))
-			return;
-		if(!(event.getBow().getType() == Material.BOW || event.getBow().getType() == Material.CROSSBOW))
-			return;
-		if(!event.getEntity().hasMetadata("malammo.skill.current_arrow"))
-			return;
-		if(!event.getEntity().getMetadata("malammo.skill.current_arrow").get(0).asString().equals("hackslash_arrow"))
-			return;
-			
-		Player player = (Player)event.getEntity();
-		int damage = player.getMetadata("malammo.skill.hackslash_arrow").get(0).asInt();
-		
-		player.removeMetadata("malammo.skill.hackslash_arrow", MalaMMO_Skill.plugin);
-		player.removeMetadata("malammo.skill.current_arrow", MalaMMO_Skill.plugin);
-		
-		Arrow arrow = (Arrow)event.getProjectile();
-		arrow.remove();
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new HackSlash_Arrow_Skill(player, 15, damage, -80.0, false));
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new HackSlash_Arrow_Skill(player, 20, damage, -40.0, false));
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new HackSlash_Arrow_Skill(player, 25, damage, 0.0, false));
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new HackSlash_Arrow_Skill(player, 20, damage, 40.0, false));
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new HackSlash_Arrow_Skill(player, 15, damage, 80.0, false));
-	}
-	
 	// 칼날 화살 효과
 	class HackSlash_Arrow_Skill implements Runnable
 	{
+		SkillMetadata cast;
 		Player player;
 		double damage;
 		double distance;
@@ -145,12 +118,13 @@ class HackSlash_Shot_Handler extends MalaSkill implements Listener
 		
 		Vector[] vecs;
 
-		public HackSlash_Arrow_Skill(Player _p, double _distance, double _damage)
+		public HackSlash_Arrow_Skill(SkillMetadata cast, Player _p, double _distance, double _damage)
 		{
-			this(_p, _distance, _damage, 0.0, false);
+			this(cast, _p, _distance, _damage, 0.0, false);
 		}
-		public HackSlash_Arrow_Skill(Player _p, double _distance, double _damage, double _angle_correct, boolean _special)
+		public HackSlash_Arrow_Skill(SkillMetadata cast, Player _p, double _distance, double _damage, double _angle_correct, boolean _special)
 		{
+			this.cast = cast;
 			player = _p;
 			distance = _distance;
 			damage = _damage;
@@ -207,7 +181,7 @@ class HackSlash_Shot_Handler extends MalaSkill implements Listener
 					// en.getWorld().spawnParticle(Particle.FLAME, en.getLocation().add(0, 2, 0), 1, 0d, 0d, 0d, 0d);
 	
 					((LivingEntity)en).setNoDamageTicks(0);
-					Damage.Attack(player, (LivingEntity)en, damage, DamageType.PROJECTILE, DamageType.SKILL, DamageType.PHYSICAL);
+					Damage.SkillAttack(cast, (LivingEntity)en, damage, DamageType.PROJECTILE, DamageType.SKILL, DamageType.PHYSICAL);
 				}
 			}
 			distance -= speed;

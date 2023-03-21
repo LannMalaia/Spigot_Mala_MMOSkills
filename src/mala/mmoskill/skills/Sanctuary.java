@@ -118,7 +118,8 @@ class Sanctuary_Task implements Runnable
 		world = loc.getWorld();
 
 		Make_Vec();
-		world.playSound(loc, Sound.ENTITY_PLAYER_LEVELUP, 1.5f, 1.5f);
+		world.playSound(loc, "mala_sound:skill.starlight", 1.5f, 1.0f);
+//		world.playSound(loc, Sound.ENTITY_PLAYER_LEVELUP, 1.5f, 1.5f);
 	}
 	void Make_Vec()
 	{

@@ -22,6 +22,7 @@ import org.bukkit.util.Vector;
 
 import mala.mmoskill.events.PhysicalSkillEvent;
 import mala.mmoskill.skills.Stance_Change.Stance_Type;
+import mala.mmoskill.util.AttackUtil;
 import mala.mmoskill.util.BOX;
 import mala.mmoskill.util.Hitbox;
 import mala.mmoskill.util.MalaSkill;
@@ -278,7 +279,8 @@ class Sakurakagetsu_Handler extends MalaSkill implements Listener
 					continue;
 				
 				Sakurakagetsu.Draw_Entity_Effect((LivingEntity)en);
-				Damage.Attack(player, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
+				AttackUtil.attack(player, (LivingEntity)en, damage, null,
+						DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
 			}
 		}
 		
@@ -442,7 +444,8 @@ class Sakurakagetsu_Handler extends MalaSkill implements Listener
 					continue;
 				
 				Sakurakagetsu.Draw_Entity_Effect((LivingEntity)en);
-				Damage.Attack(player, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
+				AttackUtil.attack(player, (LivingEntity)en, damage, null,
+						DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
 			}
 		}
 	}

@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -28,7 +29,7 @@ public class Bash extends RegisteredSkill
 		
 		addModifier("dam_per", new LinearValue(43, 3, 0, 300));
 		addModifier("stamina", new LinearValue(10, 2));
-		addModifier("cooldown", new LinearValue(17.8, -0.2, 10.0, 20.0));
+		addModifier("cooldown", new LinearValue(19.8, -0.2, 12.0, 24.0));
 	}
 }
 
@@ -39,7 +40,7 @@ class Bash_Handler extends MalaSkill implements Listener
 		super(	"BASH",
 				"강격",
 				Material.NETHER_BRICK,
-				"&7다음 기본 공격이 {dam_per}%의 추가 피해를 줍니다.",
+				"&7다음 3초간 가하는 물리 공격이 {dam_per}%의 추가 피해를 줍니다.",
 				"",
 				MsgTBL.Cooldown,
 				MsgTBL.StaCost);
@@ -50,18 +51,17 @@ class Bash_Handler extends MalaSkill implements Listener
 	@EventHandler
 	public void bash_attack(PlayerAttackEvent event)
 	{
-		if(!event.getPlayer().hasMetadata("malammo.skill.bash"))
+		Player player = event.getAttacker().getPlayer();
+		if(!player.hasMetadata("malammo.skill.bash"))
 			return;
 
 		// 마법, 스킬은 취소
-		if(event.getAttack().getDamage().hasType(DamageType.MAGIC) || event.getAttack().getDamage().hasType(DamageType.SKILL))
+		if(!event.getAttack().getDamage().hasType(DamageType.PHYSICAL))
 			return;
 
-		event.getPlayer().sendMessage("§c§l[ 강격 발동 ]");
-		double per = event.getPlayer().getMetadata("malammo.skill.bash").get(0).asDouble() * 0.01d;
+		double per = player.getMetadata("malammo.skill.bash").get(0).asDouble() * 0.01d;
 		event.getAttack().getDamage().multiplicativeModifier(1.0 + per, DamageType.PHYSICAL);
-		event.getPlayer().getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1, 1);
-		event.getPlayer().removeMetadata("malammo.skill.bash", MalaMMO_Skill.plugin);
+		player.getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1, 1);
 	}
 	
 	@Override
@@ -76,5 +76,9 @@ class Bash_Handler extends MalaSkill implements Listener
 		data.getPlayer().getWorld().spawnParticle(Particle.LAVA, data.getPlayer().getLocation().add(0, data.getPlayer().getHeight() / 2, 0), 20, 0, 0, 0, 0);
 		
 		data.getPlayer().setMetadata("malammo.skill.bash", new FixedMetadataValue(MalaMMO_Skill.plugin, dam_per));
+		Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, () -> {
+			data.getPlayer().sendMessage("§c§l[ 강격 해제 ]");
+			data.getPlayer().removeMetadata("malammo.skill.bash", MalaMMO_Skill.plugin);
+		}, 60);
 	}
 }

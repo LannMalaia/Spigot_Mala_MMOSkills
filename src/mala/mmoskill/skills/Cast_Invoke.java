@@ -81,7 +81,7 @@ class Cast_Invoke_Handler extends MalaSkill implements Listener
 		else
 		{
 			// 술식 성공
-			player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_BLAZE_BURN, 1, 2.0f);
+			player.getWorld().playSound(player.getEyeLocation(), "mala_sound:skill.reinforce1", 1.5f, 1.2f);
 			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, spell);
 		}
 		

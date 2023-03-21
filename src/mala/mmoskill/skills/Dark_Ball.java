@@ -62,13 +62,14 @@ class Dark_Ball_Handler extends MalaSkill implements Listener
 		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
 		double damage = cast.getModifier("damage");
 		
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Dark_Ball_Skill(data, damage));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Dark_Ball_Skill(cast, data, damage));
 	}
 }
 
 
 class Dark_Ball_Skill implements Runnable
 {
+	SkillMetadata cast;
 	Location pos;
 	Vector dir;
 	PlayerData playerdata;
@@ -85,8 +86,9 @@ class Dark_Ball_Skill implements Runnable
 	double angle_correct = 0.0;
 	Vector[] vecs;
 		
-	public Dark_Ball_Skill(PlayerData _playerdata, double _damage)
+	public Dark_Ball_Skill(SkillMetadata cast, PlayerData _playerdata, double _damage)
 	{
+		this.cast = cast;
 		playerdata = _playerdata;
 		player = playerdata.getPlayer();
 		
@@ -163,7 +165,7 @@ class Dark_Ball_Skill implements Runnable
 				
 				LivingEntity target = (LivingEntity)entity;
 				target.setNoDamageTicks(0);
-				Damage.Attack(player, target, damage, DamageType.MAGIC, DamageType.SKILL);
+				Damage.SkillAttack(cast, target, damage, DamageType.MAGIC, DamageType.SKILL);
 			}
 			mult = Math.max(0.5, mult - 0.1);
 			radius = Math.max(2.5, radius - 0.3);

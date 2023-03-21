@@ -14,12 +14,8 @@ import net.Indyuce.mmocore.MMOCore;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import net.Indyuce.mmocore.skill.RegisteredSkill;
 import net.Indyuce.mmocore.api.util.math.formula.LinearValue;
-import net.Indyuce.mmoitems.MMOItems;
-import net.Indyuce.mmoitems.api.Type;
-import net.Indyuce.mmoitems.api.player.inventory.EquippedItem;
 import io.lumine.mythic.lib.api.event.PlayerAttackEvent;
 import io.lumine.mythic.lib.damage.DamageType;
-import io.lumine.mythic.utils.particles.Particle;
 import mala.mmoskill.util.MalaPassiveSkill;
 import mala.mmoskill.util.Weapon_Identify;
 
@@ -28,7 +24,7 @@ public class Mastery_Whip extends RegisteredSkill
 	public Mastery_Whip()
 	{	
 		super(new Mastery_Whip_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("percent", new LinearValue(5, 5));
+		addModifier("percent", new LinearValue(8, 8));
 	}
 }
 
@@ -48,7 +44,7 @@ class Mastery_Whip_Handler extends MalaPassiveSkill implements Listener
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void attack_whipmastery(PlayerAttackEvent event)
 	{
-		Player player = event.getPlayer();
+		Player player = event.getAttacker().getPlayer();
 		PlayerData data = PlayerData.get(player);
 		
 		// 타입 체크

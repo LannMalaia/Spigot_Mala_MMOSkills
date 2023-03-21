@@ -71,13 +71,14 @@ class Darkness_Strike_Handler extends MalaSkill implements Listener
 		double range = cast.getModifier("range"); // 공격력
 		double damage = cast.getModifier("damage"); // 공격력
 		
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Darkness_Strike_Skill(data.getPlayer(), range, damage));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Darkness_Strike_Skill(cast, data.getPlayer(), range, damage));
 	}
 	
 	class Darkness_Strike_Skill implements Runnable
 	{
 		ArrayList<LivingEntity> damaged_entities = new ArrayList<LivingEntity>();
 		
+		SkillMetadata cast;
 		Player player;
 		double damage;
 		double range = 10.0;
@@ -90,8 +91,9 @@ class Darkness_Strike_Handler extends MalaSkill implements Listener
 		Location loc;
 		Vector dir;
 		
-		public Darkness_Strike_Skill(Player _player, double _range, double _dmg)
+		public Darkness_Strike_Skill(SkillMetadata cast, Player _player, double _range, double _dmg)
 		{
+			this.cast = cast;
 			player = _player;
 			range = _range;
 			damage = _dmg;
@@ -150,7 +152,7 @@ class Darkness_Strike_Handler extends MalaSkill implements Listener
 				
 				le.setNoDamageTicks(0);
 				double hp = le.getHealth();
-				Damage.Attack(player, le, damage, DamageType.SKILL, DamageType.WEAPON);
+				Damage.SkillAttack(cast, le, damage, DamageType.SKILL, DamageType.WEAPON);
 				if (hp != le.getHealth())
 				{
 					Vector vel = le.getVelocity();

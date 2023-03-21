@@ -91,11 +91,13 @@ class Spear_Circle_Handler extends MalaSkill implements Listener
 		double second = (int)cast.getModifier("second");
 		
 		data.getPlayer().swingMainHand();
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Spear_Circle_Skill(data, damage, radius, second));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
+				new Spear_Circle_Skill(cast, data, damage, radius, second));
 	}
 	
 	class Spear_Circle_Skill implements Runnable
 	{
+		SkillMetadata cast;
 		PlayerData data;
 		Player player;
 		Location pos;
@@ -110,8 +112,9 @@ class Spear_Circle_Handler extends MalaSkill implements Listener
 		
 		boolean is_attack = false;
 		
-		public Spear_Circle_Skill(PlayerData p, double _damage, double _radius, double _time)
+		public Spear_Circle_Skill(SkillMetadata cast, PlayerData p, double _damage, double _radius, double _time)
 		{
+			this.cast = cast;
 			data = p;
 			player = p.getPlayer();
 			damage = _damage;
@@ -176,7 +179,7 @@ class Spear_Circle_Handler extends MalaSkill implements Listener
 				
 				if (Damage.Is_Possible(player, le))					
 				{
-					Damage.Attack(player, le, damage, DamageType.SKILL, DamageType.PHYSICAL);
+					Damage.SkillAttack(cast, le, damage, DamageType.SKILL, DamageType.PHYSICAL);
 					le.getWorld().spawnParticle(Particle.SWEEP_ATTACK, le.getEyeLocation(), 15, 0.4, 0.4, 0.4, 0);
 					le.getWorld().playSound(le.getEyeLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 2.0f, 1.3f);
 					Vector dir = le.getLocation().subtract(pos).toVector().normalize();

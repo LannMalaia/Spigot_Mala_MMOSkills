@@ -21,6 +21,11 @@ public abstract class MalaSkill extends SkillHandler<SimpleSkillResult> implemen
 		super(makeConfig(str, material, str2), id);
 		Registering(str2);
 	}
+	public MalaSkill(String id, String str, Material material, int customModelData, String... str2)
+	{
+		super(makeConfig(str, material, customModelData, str2), id);
+		Registering(str2);
+	}
 	
 	@Override
 	public SimpleSkillResult getResult(SkillMetadata cast)
@@ -52,6 +57,17 @@ public abstract class MalaSkill extends SkillHandler<SimpleSkillResult> implemen
 		ConfigurationSection cs = MalaMMO_Skill.plugin.getConfig();
 		cs.set("name", str);
 		cs.set("material", material.toString());
+		List<String> lores = new ArrayList<String>();
+		for (String st : str2)
+			lores.add(st);
+		cs.set("lore", lores);
+		return cs;
+	}
+	public static ConfigurationSection makeConfig(String str, Material material, int customModelData, String... str2)
+	{
+		ConfigurationSection cs = MalaMMO_Skill.plugin.getConfig();
+		cs.set("name", str);
+		cs.set("material", material.toString() + ":" + customModelData);
 		List<String> lores = new ArrayList<String>();
 		for (String st : str2)
 			lores.add(st);

@@ -60,13 +60,14 @@ class Vacuum_Slash_Handler extends MalaSkill implements Listener
 	{
 		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
 		double damage = cast.getModifier("damage"); // °ø°Ý·Â
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Vacuum_Slash_Skill(data.getPlayer(), 20.0, damage));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Vacuum_Slash_Skill(cast, data.getPlayer(), 20.0, damage));
 	}
 	
 	class Vacuum_Slash_Skill implements Runnable
 	{
 		ArrayList<LivingEntity> damaged_entities = new ArrayList<LivingEntity>();
 		
+		SkillMetadata cast;
 		Player player;
 		double damage;
 		double range = 20.0;
@@ -76,8 +77,9 @@ class Vacuum_Slash_Handler extends MalaSkill implements Listener
 		Location before_loc, cur_loc;
 		Vector dir;
 		
-		public Vacuum_Slash_Skill(Player _player, double _range, double _dmg)
+		public Vacuum_Slash_Skill(SkillMetadata cast, Player _player, double _range, double _dmg)
 		{
+			this.cast = cast;
 			player = _player;
 			range = _range;
 			damage = _dmg;
@@ -134,7 +136,7 @@ class Vacuum_Slash_Handler extends MalaSkill implements Listener
 					
 					le.setNoDamageTicks(0);
 					double hp = le.getHealth();
-					Damage.Attack(player, le, damage, DamageType.SKILL, DamageType.PHYSICAL);
+					Damage.SkillAttack(cast, le, damage, DamageType.SKILL, DamageType.PHYSICAL);
 					if (hp != le.getHealth())
 					{
 						Vector vel = le.getVelocity();

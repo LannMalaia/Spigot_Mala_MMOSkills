@@ -109,15 +109,15 @@ class Spiral_Shoot_Handler extends MalaSkill implements Listener
 		double distance = cast.getModifier("distance");
 		double fall_damage = cast.getModifier("fall_damage");
 		if (data.getPlayer().isOnGround())
-			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Spiral_Aerial(data.getPlayer(), sec, dash_damage));
+			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Spiral_Aerial(cast, data.getPlayer(), sec, dash_damage));
 		else
-			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Spiral_Fall(data.getPlayer(), distance, dash_damage, fall_damage));
+			Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Spiral_Fall(cast, data.getPlayer(), distance, dash_damage, fall_damage));
 		
 	}
 	
 	class Spiral_Aerial implements Runnable
 	{
-		
+		SkillMetadata cast;
 		Player player;
 		double sec;
 		double damage;
@@ -129,8 +129,9 @@ class Spiral_Shoot_Handler extends MalaSkill implements Listener
 		
 		Vector[] vecs;
 		
-		public Spiral_Aerial(Player _player, double _sec, double _damage)
+		public Spiral_Aerial(SkillMetadata cast, Player _player, double _sec, double _damage)
 		{
+			this.cast = cast;
 			player = _player;
 			sec = _sec;
 			damage = _damage;
@@ -226,7 +227,7 @@ class Spiral_Shoot_Handler extends MalaSkill implements Listener
 				
 				if (Damage.Is_Possible(player, en))
 				{
-					Damage.Attack(player, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
+					Damage.SkillAttack(cast, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
 					Location loc = en.getLocation().add(0.0, en.getHeight() * 0.5, 0.0);
 					player.getWorld().spawnParticle(Particle.SWEEP_ATTACK, loc, 3, 0.4, 0.4, 0.4, 0.0);
 					player.getWorld().playSound(en.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1.0f, 1.5f);
@@ -241,6 +242,7 @@ class Spiral_Shoot_Handler extends MalaSkill implements Listener
 	{
 		public DustTransition dtr = new DustTransition(Color.fromRGB(128, 192, 255), Color.WHITE, 3);
 
+		SkillMetadata cast;
 		Player player;
 		double radius;
 		double damage;
@@ -253,8 +255,9 @@ class Spiral_Shoot_Handler extends MalaSkill implements Listener
 		double max_sec = 10.0;
 		Vector[] vecs;
 		
-		public Spiral_Fall(Player _player, double _radius, double _damage, double _fall_damage)
+		public Spiral_Fall(SkillMetadata cast, Player _player, double _radius, double _damage, double _fall_damage)
 		{
+			this.cast = cast;
 			player = _player;
 			radius = _radius;
 			damage = _damage;
@@ -317,13 +320,13 @@ class Spiral_Shoot_Handler extends MalaSkill implements Listener
 				
 				if (Damage.Is_Possible(player, en))
 				{
-					Damage.Attack(player, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
+					Damage.SkillAttack(cast, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
 					Location loc = en.getLocation().add(0.0, en.getHeight() * 0.5, 0.0);
 					player.getWorld().spawnParticle(Particle.SWEEP_ATTACK, loc, 3, 0.4, 0.4, 0.4, 0.0);
 					player.getWorld().playSound(en.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1.0f, 1.5f);
 				}
 			}
-			if (player.isOnGround())
+			if (((LivingEntity)player).isOnGround())
 			{
 				Location temp_loc = player.getLocation().add(0, 0.5, 0);
 				double y_gap = start_y - player.getLocation().getY();
@@ -359,7 +362,7 @@ class Spiral_Shoot_Handler extends MalaSkill implements Listener
 					
 					if (Damage.Is_Possible(player, en))
 					{
-						Damage.Attack(player, (LivingEntity)en, dam, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
+						Damage.SkillAttack(cast, (LivingEntity)en, dam, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
 						Location loc = en.getLocation().add(0.0, en.getHeight() * 0.5, 0.0);
 						player.getWorld().spawnParticle(Particle.SWEEP_ATTACK, loc, 3, 0.4, 0.4, 0.4, 0.0);
 						player.getWorld().playSound(en.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1.0f, 1.5f);

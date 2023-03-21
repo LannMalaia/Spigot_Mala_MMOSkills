@@ -202,6 +202,16 @@ public class Weapon_Identify
 		default:
 			break;
 		}
+
+		NBTItem nbt = NBTItem.get(main_hand);
+		if (nbt == null)
+			return false;
+		if (!nbt.hasType())
+			return false;
+		
+		if (nbt.getType().equals(Type.CROSSBOW.getId()))
+			return true;
+
 		return false;
 	}
 	// 이게 활이여?

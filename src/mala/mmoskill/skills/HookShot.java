@@ -133,7 +133,7 @@ class HookShot_Handler extends MalaSkill implements Listener
 			// data.getPlayer().sendMessage("entity hit - " + rtr.getHitEntity().getType());
 			if (Damage.Is_Possible(data.getPlayer(), rtr.getHitEntity()) && rtr.getHitEntity() instanceof LivingEntity)
 			{
-				Damage.Attack(data.getPlayer(), (LivingEntity)rtr.getHitEntity(), damage, DamageType.PHYSICAL, DamageType.SKILL);
+				Damage.SkillAttack(cast, (LivingEntity)rtr.getHitEntity(), damage, DamageType.PHYSICAL, DamageType.SKILL);
 				Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
 						new HookShot_Skill_Entity(data.getPlayer(),
 								(LivingEntity)rtr.getHitEntity(),

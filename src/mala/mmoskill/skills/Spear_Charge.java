@@ -101,7 +101,7 @@ class Spear_Charge_Handler extends MalaSkill implements Listener
 		// Charge(data.getPlayer(), distance, damage);
 		
 		double sec = cast.getModifier("sec");
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Spear_Charge_Skill2(data.getPlayer(), sec, damage));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Spear_Charge_Skill2(cast, data.getPlayer(), sec, damage));
 	}
 	
 	/*
@@ -218,6 +218,7 @@ class Spear_Charge_Handler extends MalaSkill implements Listener
 
 	class Spear_Charge_Skill2 implements Runnable
 	{
+		SkillMetadata cast;
 		Player player;
 		double sec;
 		double damage;
@@ -228,8 +229,9 @@ class Spear_Charge_Handler extends MalaSkill implements Listener
 		
 		Vector[] vecs;
 		
-		public Spear_Charge_Skill2(Player _player, double _sec, double _damage)
+		public Spear_Charge_Skill2(SkillMetadata cast, Player _player, double _sec, double _damage)
 		{
+			this.cast = cast;
 			player = _player;
 			sec = _sec;
 			damage = _damage;
@@ -355,7 +357,7 @@ class Spear_Charge_Handler extends MalaSkill implements Listener
 				
 				if (Damage.Is_Possible(player, en))
 				{
-					Damage.Attack(player, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
+					Damage.SkillAttack(cast, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
 					Location loc = en.getLocation().add(0.0, en.getHeight() * 0.5, 0.0);
 					player.getWorld().spawnParticle(Particle.SWEEP_ATTACK, loc, 3, 0.4, 0.4, 0.4, 0.0);
 					player.getWorld().playSound(en.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1.0f, 1.5f);

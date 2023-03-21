@@ -100,13 +100,15 @@ class Aerial_Slash_Handler extends SkillHandler<SimpleSkillResult> implements Li
 			size *= 2.0;
 		
 		data.getPlayer().swingMainHand();
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Aerial_SlashSkill(data.getPlayer(), damage, size));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
+				new Aerial_SlashSkill(cast, data.getPlayer(), damage, size));
 	}
 }
 
 // 검술 베어가르기  효과
 class Aerial_SlashSkill implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	Location pos;
 	Vector dir;
@@ -123,8 +125,9 @@ class Aerial_SlashSkill implements Runnable
 	double correct_angle = 0.0;
 	double correct_Zangle = 0.0;
 	
-	public Aerial_SlashSkill(Player p, double _damage, double _size)
+	public Aerial_SlashSkill(SkillMetadata cast, Player p, double _damage, double _size)
 	{
+		this.cast = cast;
 		player = p;
 		damage = _damage;
 		size = _size;
@@ -181,7 +184,7 @@ class Aerial_SlashSkill implements Runnable
 			LivingEntity temp2 = (LivingEntity)temp;
 			if (Damage.Is_Possible(player, temp2))
 			{
-				Damage.Attack(player, temp2, damage,
+				Damage.SkillAttack(cast, temp2, damage,
 						DamageType.PROJECTILE, DamageType.SKILL);
 				temp2.setNoDamageTicks(10);
 			}

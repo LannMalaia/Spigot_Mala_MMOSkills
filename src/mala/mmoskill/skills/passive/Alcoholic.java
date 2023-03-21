@@ -28,7 +28,7 @@ public class Alcoholic extends RegisteredSkill
 	public Alcoholic()
 	{	
 		super(new Alcoholic_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("percent", new LinearValue(2.0, 2.0));
+		addModifier("percent", new LinearValue(3.5, 3.5));
 	}
 }
 

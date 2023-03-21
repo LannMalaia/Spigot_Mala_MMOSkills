@@ -77,18 +77,20 @@ class Doppelganger_Blast_Handler extends MalaSkill implements Listener
 		
 		double damage = cast.getModifier("damage");
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Doppel_Blast_Task(data.getPlayer(), damage));
+				new Doppel_Blast_Task(cast, data.getPlayer(), damage));
 	}
 }
 
 class Doppel_Blast_Task implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	double damage;
 	double radius = 2;
 	
-	public Doppel_Blast_Task(Player _player, double _damage)
+	public Doppel_Blast_Task(SkillMetadata cast, Player _player, double _damage)
 	{
+		this.cast = cast;
 		player = _player;
 		damage = _damage;
 	}
@@ -112,7 +114,7 @@ class Doppel_Blast_Task implements Runnable
 			
 			LivingEntity le = (LivingEntity)e;
 			le.setNoDamageTicks(0);
-			Damage.Attack(player, le, damage, DamageType.PHYSICAL, DamageType.SKILL);
+			Damage.SkillAttack(cast, le, damage, DamageType.PHYSICAL, DamageType.SKILL);
 		}
 		
 		so.Remove();

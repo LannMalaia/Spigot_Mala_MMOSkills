@@ -94,12 +94,14 @@ class Energy_Bullet_Handler extends MalaSkill implements Listener
 		Vector dir = data.getPlayer().getLocation().getDirection();
 		
 		data.getPlayer().getWorld().playSound(data.getPlayer().getEyeLocation(), Sound.ENTITY_BLAZE_SHOOT, 1, 1.5f);
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Energy_Bullet_Bolt(data.getPlayer().getEyeLocation().subtract(0, 0.2, 0), data.getPlayer(), dir, damage, 1.4, distance));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
+				new Energy_Bullet_Bolt(cast, data.getPlayer().getEyeLocation().subtract(0, 0.2, 0), data.getPlayer(), dir, damage, 1.4, distance));
 	}
 }
 
 class Energy_Bullet_Bolt implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	double damage;
 	double max_distance;
@@ -112,8 +114,9 @@ class Energy_Bullet_Bolt implements Runnable
 	double current_distance = 0;
 	Location before_loc, current_loc;
 	
-	public Energy_Bullet_Bolt(Location _start_loc, Player _player, Vector _dir, double _damage, double _speed, double _max_distance)
+	public Energy_Bullet_Bolt(SkillMetadata cast, Location _start_loc, Player _player, Vector _dir, double _damage, double _speed, double _max_distance)
 	{
+		this.cast = cast;
 		start_loc = _start_loc;
 		player = _player;
 		dir = _dir;
@@ -185,7 +188,7 @@ class Energy_Bullet_Bolt implements Runnable
 				
 				// 찾은 경우 피해 주고 그냥 끝냄
 				LivingEntity target = (LivingEntity)e2;
-				Damage.Attack(player, target, damage,
+				Damage.SkillAttack(cast, target, damage,
 						DamageType.UNARMED, DamageType.PROJECTILE);
 			}
 			current_loc.getWorld().playSound(current_loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);

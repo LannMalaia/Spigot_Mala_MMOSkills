@@ -38,11 +38,11 @@ public class Lightning_Bolt extends RegisteredSkill
 	{	
 		super(new Lightning_Bolt_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("distance", new LinearValue(10, 0.25));
-		addModifier("min_damage", new LinearValue(2, 2));
-		addModifier("max_damage", new LinearValue(6.5, 6.5));
-		addModifier("cooldown", new LinearValue(7, 0));
-		addModifier("mana", new LinearValue(3, 0.7));
+		addModifier("distance", new LinearValue(20.5, 0.5));
+		addModifier("min_damage", new LinearValue(3, 3));
+		addModifier("max_damage", new LinearValue(6, 6));
+		addModifier("cooldown", new LinearValue(6, 0));
+		addModifier("mana", new LinearValue(5, 1));
 	}
 	public static void Draw_Lightning_Line(Location _start, Location _end)
 	{
@@ -134,15 +134,17 @@ class Lightning_Bolt_Handler extends MalaTargetSkill implements Listener
 		DamageMetadata ar = new DamageMetadata(damage);
 		Bukkit.getPluginManager().callEvent(new LightningMagicEvent(data.getPlayer(), ar));
 		damage = ar.getDamage();
+
 		
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Lightning_Bolt_Chain(data.getPlayer(), _data.getTarget(), damage, count, reduce));
+				new Lightning_Bolt_Chain(cast, data.getPlayer(), _data.getTarget(), damage, count, reduce));
 	}
 
 }
 
 class Lightning_Bolt_Chain implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	LivingEntity target;
 	double damage;
@@ -155,12 +157,13 @@ class Lightning_Bolt_Chain implements Runnable
 	Location line_start_pos;
 	Location line_end_pos;
 	
-	public Lightning_Bolt_Chain(Player _player, LivingEntity _start, double _damage, int _count, double _reduce)
+	public Lightning_Bolt_Chain(SkillMetadata cast, Player _player, LivingEntity _start, double _damage, int _count, double _reduce)
 	{
-		this(_player, _start, _damage, _count, _reduce, false);
+		this(cast, _player, _start, _damage, _count, _reduce, false);
 	}
-	public Lightning_Bolt_Chain(Player _player, LivingEntity _start, double _damage, int _count, double _reduce, boolean _is_weapon)
+	public Lightning_Bolt_Chain(SkillMetadata cast, Player _player, LivingEntity _start, double _damage, int _count, double _reduce, boolean _is_weapon)
 	{
+		this.cast = cast;
 		player = _player;
 		target = _start;
 		damage = _damage;
@@ -181,9 +184,9 @@ class Lightning_Bolt_Chain implements Runnable
 		if (Damage.Is_Possible(player, target))
 		{
 			if (is_weapon)
-				Damage.Attack(player, target, damage, DamageType.WEAPON, DamageType.MAGIC, DamageType.PROJECTILE, DamageType.SKILL);
+				Damage.SkillAttack(cast, target, damage, DamageType.WEAPON, DamageType.MAGIC, DamageType.PROJECTILE, DamageType.SKILL);
 			else
-				Damage.Attack(player, target, damage, DamageType.MAGIC, DamageType.PROJECTILE, DamageType.SKILL);
+				Damage.SkillAttack(cast, target, damage, DamageType.MAGIC, DamageType.PROJECTILE, DamageType.SKILL);
 		}
 		double random_range = 4;
 		Vector new_vec = new Vector(
@@ -192,9 +195,10 @@ class Lightning_Bolt_Chain implements Runnable
 				random_range * -0.5 + Math.random() * random_range);
 		Location loc = line_start_pos.clone().add(new_vec).add(line_start_pos.clone().subtract(line_end_pos).multiply(0.5));
 		World world = line_end_pos.getWorld();
-		world.playSound(loc, Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1, 1.5f);
-		world.playSound(loc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 1.5f);
-		world.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 2);
+		world.playSound(loc, "mala_sound:skill.thunder2", 1, 1.2f);
+		world.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 2f);
+//		world.playSound(loc, Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1, 1.5f);
+//		world.playSound(loc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 1.5f);
 		
 		// 이거 튕겨야 하는지 체크
 		if(chain_count > 0)

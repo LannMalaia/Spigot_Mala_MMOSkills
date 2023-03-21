@@ -112,11 +112,12 @@ class Electric_Tackle_Handler extends MalaSkill implements Listener
 			dash_damage *= 1.4;
 		if (Weapon_Identify.Hold_Spear(data.getPlayer()) || Weapon_Identify.Hold_MMO_Spear(data.getPlayer()))
 			radius *= 1.5;
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Electric_Tackle_Aerial(data.getPlayer(), sec, dash_damage, radius));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Electric_Tackle_Aerial(cast, data.getPlayer(), sec, dash_damage, radius));
 	}
 	
 	class Electric_Tackle_Aerial implements Runnable
 	{
+		SkillMetadata cast;
 		Player player;
 		double sec;
 		double damage;
@@ -132,8 +133,9 @@ class Electric_Tackle_Handler extends MalaSkill implements Listener
 		int lightning_count;
 		double reduce;
 		
-		public Electric_Tackle_Aerial(Player _player, double _sec, double _damage, double _radius)
+		public Electric_Tackle_Aerial(SkillMetadata cast, Player _player, double _sec, double _damage, double _radius)
 		{
+			this.cast = cast;
 			player = _player;
 			sec = _sec;
 			damage = _damage;
@@ -245,7 +247,7 @@ class Electric_Tackle_Handler extends MalaSkill implements Listener
 				if (Damage.Is_Possible(player, le) && le.getNoDamageTicks() == 0)
 				{
 					Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-							new Lightning_Bolt_Chain(player, (LivingEntity)en, damage, count, reduce, true));
+							new Lightning_Bolt_Chain(cast, player, (LivingEntity)en, damage, count, reduce, true));
 				}
 //				if (Damage.Is_Possible(player, en))
 //				{

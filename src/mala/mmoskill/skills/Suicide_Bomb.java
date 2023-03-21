@@ -46,7 +46,7 @@ class Suicide_Bomb_Handler extends MalaSkill implements Listener
 				MsgTBL.SKILL,
 				"",
 				"&75초 후, &8{distance}&7m 내 자신을 포함한 주변 모두에게",
-				"&8자신의 최대 HP&7만큼의 &f고정 피해&7를 줍니다.",
+				"&8자신의 최대 HP의 2배&7만큼의 &f고정 피해&7를 줍니다.",
 				"&7자신 또한 같은 피해를 입기 때문에 죽지만,",
 				"&730%의 확률로 1의 HP를 유지하며 살아남을 수 있습니다.",
 				"&7한 번 시전하면 죽지 않는 한 취소가 불가능합니다.",
@@ -61,7 +61,7 @@ class Suicide_Bomb_Handler extends MalaSkill implements Listener
 		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
 		
 		double distance = cast.getModifier("distance");
-		double damage = data.getStats().getStat(StatType.MAX_HEALTH);		
+		double damage = data.getStats().getStat("MAX_HEALTH") * 2.0;
 		double sec = 5.0;
 		
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Suicide_Bomb_Skill(data.getPlayer(), damage, distance, sec));

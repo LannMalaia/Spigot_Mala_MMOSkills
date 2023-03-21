@@ -25,6 +25,7 @@ import mala.mmoskill.events.FireMagicEvent;
 import mala.mmoskill.events.IceMagicEvent;
 import mala.mmoskill.events.LightningMagicEvent;
 import mala.mmoskill.events.PhysicalSkillEvent;
+import mala.mmoskill.util.AttackUtil;
 import mala.mmoskill.util.CooldownFixer;
 import mala.mmoskill.util.Hitbox;
 import mala.mmoskill.util.MalaSkill;
@@ -166,7 +167,7 @@ class Elemental_Blade_Handler extends MalaSkill implements Listener
 				if (en == player)
 					continue;
 				
-				laylia_core.main.Damage.Attack(player, (LivingEntity)en, damage,
+				AttackUtil.attack(player, (LivingEntity)en, damage, null,
 						DamageType.SKILL, DamageType.PHYSICAL, DamageType.MAGIC);
 			}
 		}
@@ -293,8 +294,8 @@ class Elemental_Blade_Handler extends MalaSkill implements Listener
 					continue;
 				if (en == player)
 					continue;
-				
-				Damage.Attack(player, (LivingEntity)en, damage,
+
+				AttackUtil.attack(player, (LivingEntity)en, damage, null,
 						DamageType.PROJECTILE, DamageType.SKILL, DamageType.MAGIC);
 			}
 			
@@ -398,7 +399,7 @@ class Elemental_Blade_Handler extends MalaSkill implements Listener
 
 				if (Damage.Is_Possible(player, entity))
 				{
-					Damage.Attack(player, (LivingEntity)entity, damage, DamageType.SKILL);
+					AttackUtil.attack(player, (LivingEntity)entity, damage, null, DamageType.SKILL);
 					Vector vec = entity.getLocation().subtract(player.getLocation()).toVector().normalize();
 					entity.setVelocity(vec.add(new Vector(0.0, 0.4, 0.0)).multiply(2.0));
 				}

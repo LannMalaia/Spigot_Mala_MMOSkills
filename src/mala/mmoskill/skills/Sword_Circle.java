@@ -132,7 +132,7 @@ class Sword_Circle_Handler extends MalaSkill implements Listener
 			data.getPlayer().swingMainHand();
 			for (int i = 0; i < attack_count; i++)
 			{
-				Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, new Sword_Circle_Aerial(data, damage, size, sec), 10 * i);
+				Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, new Sword_Circle_Aerial(cast, data, damage, size, sec), 10 * i);
 			}
 		}
 		else
@@ -142,13 +142,14 @@ class Sword_Circle_Handler extends MalaSkill implements Listener
 			double angle = 360.0 / attack_count;
 			for (int i = 0; i < attack_count; i++)
 			{
-				Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, new Sword_Circle_Turn(data.getPlayer(), damage, size, angle * i, sec), 0);
+				Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, new Sword_Circle_Turn(cast, data.getPlayer(), damage, size, angle * i, sec), 0);
 			}
 		}
 	}
 
 	class Sword_Circle_Aerial implements Runnable
 	{
+		SkillMetadata cast;
 		PlayerData player;
 		Location pos;
 		Vector dir;
@@ -165,8 +166,9 @@ class Sword_Circle_Handler extends MalaSkill implements Listener
 		
 		double yaw, pitch;
 		
-		public Sword_Circle_Aerial(PlayerData p, double _damage, double _size, double _sec)
+		public Sword_Circle_Aerial(SkillMetadata cast, PlayerData p, double _damage, double _size, double _sec)
 		{
+			this.cast = cast;
 			player = p;
 			damage = _damage;
 			size = _size;
@@ -251,7 +253,7 @@ class Sword_Circle_Handler extends MalaSkill implements Listener
 				LivingEntity temp2 = (LivingEntity)temp;
 				if (temp2.getNoDamageTicks() == 0)
 				{
-					Damage.Attack(player.getPlayer(), temp2, damage,
+					Damage.SkillAttack(cast, temp2, damage,
 							DamageType.PROJECTILE, DamageType.SKILL, DamageType.PHYSICAL);
 					temp2.setNoDamageTicks(10);
 				}
@@ -276,6 +278,7 @@ class Sword_Circle_Handler extends MalaSkill implements Listener
 
 	class Sword_Circle_Turn implements Runnable
 	{
+		SkillMetadata cast;
 		Player player;
 		Location origin_pos;
 		Vector dir;
@@ -290,8 +293,9 @@ class Sword_Circle_Handler extends MalaSkill implements Listener
 		double correction_angle = 0.0;
 		double duration = 15.0;
 		
-		public Sword_Circle_Turn(Player p, double _damage, double _size, double _angle, double _duration)
+		public Sword_Circle_Turn(SkillMetadata cast, Player p, double _damage, double _size, double _angle, double _duration)
 		{
+			this.cast = cast;
 			player = p;
 			damage = _damage;
 			size = _size;
@@ -348,7 +352,7 @@ class Sword_Circle_Handler extends MalaSkill implements Listener
 				LivingEntity temp2 = (LivingEntity)temp;
 				if (temp2.getNoDamageTicks() == 0)
 				{
-					Damage.Attack(player, temp2, damage,
+					Damage.SkillAttack(cast, temp2, damage,
 							DamageType.PROJECTILE, DamageType.PHYSICAL, DamageType.SKILL);
 
 					EntityDamageEvent ede = new EntityDamageByEntityEvent(player, temp2, DamageCause.ENTITY_ATTACK, 1);

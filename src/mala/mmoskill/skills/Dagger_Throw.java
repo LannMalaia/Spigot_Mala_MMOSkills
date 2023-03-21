@@ -25,6 +25,7 @@ import laylia_core.main.Damage;
 import mala.mmoskill.manager.Summon_Manager;
 import mala.mmoskill.manager.Summoned_OBJ;
 import mala.mmoskill.skills.passive.Make_Doppel;
+import mala.mmoskill.util.AttackUtil;
 import mala.mmoskill.util.Buff_Manager;
 import mala.mmoskill.util.MalaSkill;
 import mala.mmoskill.util.Particle_Drawer;
@@ -45,8 +46,8 @@ public class Dagger_Throw extends RegisteredSkill
 		addModifier("distance", new LinearValue(30, 3));
 		addModifier("damage", new LinearValue(12, 4));
 		addModifier("additive", new LinearValue(10, 1.0));
-		addModifier("cooldown", new LinearValue(3, -0.1, 1.8, 5.0));
-		addModifier("stamina", new LinearValue(4, 0.3));
+		addModifier("cooldown", new LinearValue(1, 0));
+		addModifier("stamina", new LinearValue(3.6, 0.6));
 	}
 }
 
@@ -174,7 +175,7 @@ class Dagger_Throw_Skill implements Runnable
 				{
 					world.playSound(current_loc, Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1, 2);
 					world.playSound(current_loc, Sound.BLOCK_GLASS_BREAK, 2, 0.7f);
-					Damage.Attack(player, (LivingEntity)entity, damage, DamageType.PHYSICAL, DamageType.PROJECTILE);
+					AttackUtil.attack(player, (LivingEntity)entity, damage, null, DamageType.PHYSICAL, DamageType.PROJECTILE);
 					Buff_Manager.Add_Buff((LivingEntity)entity, PotionEffectType.BLINDNESS, 0, blind_tick, null);
 					return;
 				}

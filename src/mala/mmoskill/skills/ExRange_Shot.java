@@ -72,30 +72,32 @@ class ExRange_Shot_Handler extends MalaSkill implements Listener
 		Player player = data.getPlayer();
 		
 		// È¿°ú
-		player.getWorld().playSound(player.getEyeLocation(), Sound.BLOCK_LEVER_CLICK, 2, 1);
-		ArrowSkill_Manager.Get_Instance().Register_ArrowSkill(player, new ArrowTip_ExRange(player, second, damage));
+		player.getWorld().playSound(player, "mala_sound:skill.bow2", 1, 1);
+//		player.getWorld().playSound(player.getEyeLocation(), Sound.BLOCK_LEVER_CLICK, 2, 1);
+		ArrowSkill_Manager.Get_Instance().Register_ArrowSkill(player, new ArrowTip_ExRange(cast, player, second, damage));
 	}
 }
 
 class ArrowTip_ExRange extends ArrowTip implements Not_Skill
 {
 	double damage;
-	public ArrowTip_ExRange(Player _player, double _duration, double _damage)
+	public ArrowTip_ExRange(SkillMetadata cast, Player _player, double _duration, double _damage)
 	{
-		super("±¤Æø È­»ì", _player, _duration);
+		super(cast, "±¤Æø È­»ì", _player, _duration);
 		damage = _damage;
 	}
 	
 	@Override
 	public void Run()
 	{
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Edge_Arrow_Skill(player, 30.0, damage));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Edge_Arrow_Skill(cast, player, 30.0, damage));
 	}
 }
 
 // ±¤Æø È­»ì È¿°ú
 class Edge_Arrow_Skill implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	double damage;
 	double distance;
@@ -110,12 +112,13 @@ class Edge_Arrow_Skill implements Runnable
 	
 	Vector[] vecs;
 
-	public Edge_Arrow_Skill(Player _p, double _distance, double _damage)
+	public Edge_Arrow_Skill(SkillMetadata _cast, Player _p, double _distance, double _damage)
 	{
-		this(_p, _distance, _damage, 0.0, false);
+		this(_cast, _p, _distance, _damage, 0.0, false);
 	}
-	public Edge_Arrow_Skill(Player _p, double _distance, double _damage, double _angle_correct, boolean _special)
+	public Edge_Arrow_Skill(SkillMetadata _cast, Player _p, double _distance, double _damage, double _angle_correct, boolean _special)
 	{
+		cast = _cast;
 		player = _p;
 		distance = _distance;
 		damage = _damage;
@@ -172,7 +175,7 @@ class Edge_Arrow_Skill implements Runnable
 				continue;
 			// en.getWorld().spawnParticle(Particle.FLAME, en.getLocation().add(0, 2, 0), 1, 0d, 0d, 0d, 0d);
 
-			Damage.Attack(player, (LivingEntity)en, damage, DamageType.PROJECTILE, DamageType.SKILL, DamageType.PHYSICAL);
+			Damage.SkillAttack(cast, (LivingEntity)en, damage, DamageType.PROJECTILE, DamageType.SKILL, DamageType.PHYSICAL);
 		}
 		
 		distance -= speed;

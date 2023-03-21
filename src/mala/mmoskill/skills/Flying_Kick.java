@@ -100,12 +100,12 @@ class Flying_Kick_Handler extends MalaSkill implements Listener
 
 		double sec = cast.getModifier("sec");
 		double damage = cast.getModifier("damage");
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Tongbei_Shoot(data.getPlayer(), sec, damage));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new Tongbei_Shoot(cast, data.getPlayer(), sec, damage));
 	}
 	
 	class Tongbei_Shoot implements Runnable
 	{
-		
+		SkillMetadata cast;
 		Player player;
 		double sec;
 		double damage;
@@ -115,8 +115,9 @@ class Flying_Kick_Handler extends MalaSkill implements Listener
 		double angle = 0.0;
 		double y_angle = 0.0;
 		
-		public Tongbei_Shoot(Player _player, double _sec, double _damage)
+		public Tongbei_Shoot(SkillMetadata cast, Player _player, double _sec, double _damage)
 		{
+			this.cast = cast;
 			player = _player;
 			sec = _sec;
 			damage = _damage;
@@ -200,7 +201,7 @@ class Flying_Kick_Handler extends MalaSkill implements Listener
 				
 				if (Damage.Is_Possible(player, en))
 				{
-					Damage.Attack(player, (LivingEntity)en, damage, DamageType.UNARMED, DamageType.SKILL, DamageType.PHYSICAL);
+					Damage.SkillAttack(cast, (LivingEntity)en, damage, DamageType.UNARMED, DamageType.SKILL, DamageType.PHYSICAL);
 					player.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, en.getLocation().add(0, 0.5, 0), 1, 0, 0, 0, 0.0);
 					attacked = true;
 				}

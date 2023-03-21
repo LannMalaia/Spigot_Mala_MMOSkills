@@ -7,8 +7,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 import io.lumine.mythic.lib.damage.DamageType;
-import laylia_core.main.CooldownManager;
-import laylia_core.main.Damage;
 import mala.mmoskill.manager.Particle_Manager;
 import mala.mmoskill.skills.Cast_Ignis;
 import mala.mmoskill.util.AttackUtil;

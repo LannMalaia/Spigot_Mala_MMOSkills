@@ -23,6 +23,7 @@ import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import laylia_core.main.Damage;
 import mala.mmoskill.skills.passive.Gathering_Strike;
+import mala.mmoskill.util.AttackUtil;
 import mala.mmoskill.util.Hitbox;
 import mala.mmoskill.util.MalaSkill;
 import mala.mmoskill.util.Skill_Util;
@@ -135,9 +136,11 @@ class Powerful_Strike_Handler extends MalaSkill implements Listener
 				continue;
 
 			if (Gathering_Strike.Is_WeaponType(_player))
-				Damage.Attack(_player, (LivingEntity)en, _damage, DamageType.WEAPON, DamageType.PHYSICAL);
+				AttackUtil.attack(_player, (LivingEntity)en, _damage, null,
+						DamageType.WEAPON, DamageType.PHYSICAL);
 			else
-				Damage.Attack(_player, (LivingEntity)en, _damage, DamageType.SKILL, DamageType.PHYSICAL);
+				AttackUtil.attack(_player, (LivingEntity)en, _damage, null,
+						DamageType.SKILL, DamageType.PHYSICAL);
 			
 			if (Gathering_Strike.Can_Gathering(_player))
 			{

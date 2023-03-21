@@ -4,9 +4,12 @@ import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import io.lumine.mythic.lib.player.cooldown.CooldownInfo;
 import mala.mmoskill.events.FireMagicEvent;
@@ -19,6 +22,7 @@ import mala.mmoskill.skills.Frost_Wave;
 import mala.mmoskill.skills.Ice_Bolt;
 import mala.mmoskill.skills.Lightning_Bolt;
 import mala.mmoskill.skills.Thunder;
+import mala.mmoskill.util.Buff_Manager;
 import mala.mmoskill.util.MalaPassiveSkill;
 import mala_mmoskill.main.MalaMMO_Skill;
 import net.Indyuce.mmocore.MMOCore;
@@ -35,11 +39,13 @@ public class Magical_Harmonize extends RegisteredSkill
 	public Magical_Harmonize()
 	{	
 		super(new Magical_Harmonize_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("sec", new LinearValue(0.15, 0.15));
+		addModifier("sec", new LinearValue(0.2, 0.2));
 		skill = this;
 	}
 	
 	public static void addSpellType(Player player, SpellChainType scType) {
+		
+		
 		if (!lastUsedSpellType.containsKey(player)) {
 			lastUsedSpellType.put(player, scType);
 			return;
@@ -55,6 +61,18 @@ public class Magical_Harmonize extends RegisteredSkill
 		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(_player);
 		if (data.getSkillLevel(skill) < 1)
 			return;
+		
+		// 공중에 있을 경우 약간 띄움
+		if (data.getSkillLevel(skill) >= 10) {
+			if (!((LivingEntity)_player).isOnGround()) {
+				Vector vel = _player.getVelocity();
+				vel.setY(0.05);
+				Buff_Manager.Add_Buff(_player, PotionEffectType.LEVITATION, 0, 10, null);
+				Buff_Manager.Increase_Buff(_player, PotionEffectType.SLOW_FALLING, 0, 40, null, 0);
+				_player.setVelocity(vel);
+			}
+		}
+		
 		double reduceSec = skill.getModifier("sec", data.getSkillLevel(skill));
 		for (ClassSkill cs : data.getProfess().getSkills())
 		{
@@ -115,7 +133,9 @@ class Magical_Harmonize_Handler extends MalaPassiveSkill implements Listener
 				"&f&l[ &9스킬 목록 &f&l]",
 				"&c파이어 볼트, 플레어 디스크",
 				"&b아이스 볼트, 프로스트 웨이브",
-				"&e라이트닝 볼트, 썬더");
+				"&e라이트닝 볼트, 썬더",
+				"",
+				"&eLv.10 - 발동시 공중에 있다면 약간 떠오릅니다.");
 
 		Bukkit.getPluginManager().registerEvents(this, MalaMMO_Skill.plugin);
 	}

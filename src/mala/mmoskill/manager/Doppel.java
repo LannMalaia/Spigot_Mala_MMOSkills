@@ -20,7 +20,6 @@ import mala_mmoskill.main.MalaMMO_Skill;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import net.Indyuce.mmocore.MMOCore;
 import net.Indyuce.mmocore.api.player.PlayerData;
-import net.Indyuce.mmocore.api.player.stats.StatType;
 import net.Indyuce.mmocore.skill.RegisteredSkill;
 
 public class Doppel extends Summoned_OBJ implements Runnable
@@ -78,7 +77,7 @@ public class Doppel extends Summoned_OBJ implements Runnable
 			double def = mastery.getModifier("def", level);
 			double atk = mastery.getModifier("atk", level);
 			double speed = mastery.getModifier("speed", level);
-			double skill_per = 1.0 + _data.getStats().getStat(StatType.SKILL_DAMAGE) * 0.01;
+			double skill_per = 1.0 + _data.getStats().getStat("SKILL_DAMAGE") * 0.01;
 			
 			// hp *= skill_per;
 			atk *= skill_per;

@@ -42,8 +42,8 @@ public class Armored_Charge extends RegisteredSkill
 		super(new Armored_Charge_Handler(), MalaMMO_Skill.plugin.getConfig());
 
 		addModifier("power", new LinearValue(66, 6));
-		addModifier("slow", new LinearValue(1.1, 0.1, 1.0, 3.0));
-		addModifier("cooldown", new LinearValue(39, -1, 10, 40));
+		addModifier("slow", new LinearValue(4.1, 0.1, 1.0, 6.0));
+		addModifier("cooldown", new LinearValue(14, -1, 2, 40));
 		addModifier("stamina", new LinearValue(25, 5, 20, 100));
 	}
 }
@@ -64,12 +64,12 @@ class Armored_Charge_Handler extends MalaSkill implements Listener
 				"&73초간 전방으로 빠르게 돌진합니다.",
 				"&7돌진 중 부딪힌 적들에게는,",
 				"- &8{power}&7의 피해를 줍니다.",
-				"- 2초동안 구속 &8{slow}&7 버프를 부여합니다.",
+				"- 6초동안 구속 &8{slow}&7 버프를 부여합니다.",
 				"&7웅크리거나 스킬을 재사용하여 돌진을 취소할 수 있습니다.",
 				"",
 				MsgTBL.WEAPON_EFFECT,
 				MsgTBL.WEAPON_HORSE + "피해량 50% 증가",
-				MsgTBL.WEAPON_SHIELD + "디버프 시간 3초 증가",
+				MsgTBL.WEAPON_SHIELD + "동시에 약화를 부여",
 				"",
 				MsgTBL.Cooldown, MsgTBL.StaCost);
 		registerModifiers("power", "slow");
@@ -105,23 +105,26 @@ class Armored_Charge_Handler extends MalaSkill implements Listener
 		double damage = cast.getModifier("power"); // 공격력
 		double sec = 3.0;
 		int amp = (int)cast.getModifier("slow");
-		int duration = 2 * 20;
+		int duration = 6 * 20;
+		boolean addWeakness = false;
 		
 		if (Vehicle_Util.Is_Riding_Horse(data.getPlayer()))
 			damage *= 1.5;
 		if (Weapon_Identify.Hold_Shield(data.getPlayer()))
-			duration += 3 * 20;
+			addWeakness = true;
 		
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Armored_Charge_Skill(data.getPlayer(), sec, damage, amp, duration));
+				new Armored_Charge_Skill(cast, data.getPlayer(), sec, damage, amp, duration, addWeakness));
 	}
 
 	class Armored_Charge_Skill implements Runnable
 	{
+		SkillMetadata cast;
 		Player player;
 		double sec;
 		double damage;
 		int amp, tick;
+		boolean addWeakness;
 		
 		int count = 0;
 		double velocity = 0.4;
@@ -129,13 +132,15 @@ class Armored_Charge_Handler extends MalaSkill implements Listener
 		
 		ArrayList<LivingEntity> cant_damage = new ArrayList<LivingEntity>();
 		
-		public Armored_Charge_Skill(Player _player, double _sec, double _damage, int _amp, int _tick)
+		public Armored_Charge_Skill(SkillMetadata cast, Player _player, double _sec, double _damage, int _amp, int _tick, boolean _addWeakness)
 		{
+			this.cast = cast;
 			player = _player;
 			sec = _sec;
 			damage = _damage;
 			amp = _amp;
 			tick = _tick;
+			addWeakness = _addWeakness;
 			
 			angle = player.getLocation().getYaw();
 
@@ -238,7 +243,7 @@ class Armored_Charge_Handler extends MalaSkill implements Listener
 				LivingEntity le = (LivingEntity)en;
 				if (Damage.Is_Possible(player, le))
 				{
-					Damage.Attack(player, le, damage,
+					Damage.SkillAttack(cast, le, damage,
 							DamageType.SKILL, DamageType.PHYSICAL);
 					
 					Location loc = en.getLocation().add(0.0, en.getHeight() * 0.5, 0.0);
@@ -246,6 +251,9 @@ class Armored_Charge_Handler extends MalaSkill implements Listener
 					player.getWorld().playSound(en.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.5f);
 					
 					Buff_Manager.Add_Buff(le, PotionEffectType.SLOW, amp, tick, PotionEffectType.SPEED);
+					if (addWeakness) {
+						Buff_Manager.Add_Buff(le, PotionEffectType.WEAKNESS, amp, tick, PotionEffectType.INCREASE_DAMAGE);
+					}
 				}
 				else
 					cant_damage.add(le);

@@ -35,10 +35,11 @@ public class Ice_Bolt extends RegisteredSkill
 	{	
 		super(new Ice_Bolt_Handler(), MalaMMO_Skill.plugin.getConfig());
 
-		addModifier("distance", new LinearValue(10, 0.25));
-		addModifier("damage", new LinearValue(2, 2));
-		addModifier("cooldown", new LinearValue(4, 0));
-		addModifier("mana", new LinearValue(3, 0.7));
+		addModifier("distance", new LinearValue(20.5, 0.5));
+		addModifier("bolt_count", new LinearValue(1.5, 0.5));
+		addModifier("damage", new LinearValue(7, 2));
+		addModifier("cooldown", new LinearValue(5, 0.25));
+		addModifier("mana", new LinearValue(5, 1));
 	}
 }
 
@@ -51,8 +52,8 @@ class Ice_Bolt_Handler extends MalaSkill implements Listener
 				Material.SNOWBALL,
 				MsgTBL.PROJECTILE + MsgTBL.SKILL + MsgTBL.MAGIC_ICE + MsgTBL.MAGIC,
 				"",
-				"&8{distance}&7 거리까지 나아가는 빙결탄을 발사합니다.",
-				"&7빙결탄은 &8{damage}의 피해를 줍니다.",
+				"&e{distance}&7m 거리까지 나아가는 빙결탄을 &e{bolt_count}&7발 발사합니다.",
+				"&7빙결탄은 &e{damage}&7의 피해를 줍니다.",
 				"&7맞은 적은 이동속도가 낮아집니다.",
 				"",
 				MsgTBL.Cooldown, MsgTBL.ManaCost);
@@ -68,10 +69,18 @@ class Ice_Bolt_Handler extends MalaSkill implements Listener
 		double distance = cast.getModifier("distance");
 		double damage = cast.getModifier("damage");
 		damage *= Mastery_Ice.Get_Mult(data.getPlayer());
-		Vector dir = data.getPlayer().getLocation().getDirection();
-		
+
 		data.getPlayer().getWorld().playSound(data.getPlayer().getEyeLocation(), Sound.ENTITY_BLAZE_SHOOT, 1, 1);
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new IceBolt_Bolt(data.getPlayer().getEyeLocation().subtract(0, 0.2, 0), data.getPlayer(), dir, damage, 0.6, distance));
+		for (int i = 0; i < cast.getModifier("bolt_count"); i++) {
+			Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin,
+					new IceBolt_Bolt(
+							cast,
+							data.getPlayer(),
+							damage,
+							3.5,
+							distance),
+					2 * i);
+		}
 	}
 	
 
@@ -115,32 +124,39 @@ class Ice_Bolt_Handler extends MalaSkill implements Listener
 
 class IceBolt_Bolt implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	double damage;
 	double max_distance;
 	double speed;
-	Location start_loc;
 	Vector dir;
 
 	double current_distance = 0;
 	Location before_loc, current_loc;
 	
-	public IceBolt_Bolt(Location _start_loc, Player _player, Vector _dir, double _damage, double _speed, double _max_distance)
+	public IceBolt_Bolt(SkillMetadata cast, Player _player, double _damage, double _speed, double _max_distance)
 	{
-		start_loc = _start_loc;
+		this.cast = cast;
 		player = _player;
-		dir = _dir;
 		damage = _damage;
 		speed = _speed;
 		max_distance = _max_distance;
 
-		current_loc = start_loc.clone();
-		before_loc = start_loc.clone();
 		player.getWorld().getChunkAt(player.getLocation()).getEntities();
+		
 	}
 	
+	boolean started = false;
 	public void run()
 	{
+		if (!started) {
+			started = true;
+			current_loc = player.getEyeLocation().add(0, -0.2, 0);
+			before_loc = current_loc.clone();
+			dir = current_loc.getDirection();
+			current_loc.getWorld().playSound(current_loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2);
+		}
+		
 		current_distance += speed;
 		if(max_distance < current_distance)
 			speed = max_distance - current_distance;
@@ -154,9 +170,8 @@ class IceBolt_Bolt implements Runnable
 		for(double i = 0; i < gap.length(); i += 0.1)
 		{
 			Location loc = before_loc.clone().add(gap.clone().normalize().multiply(i));
-			current_loc.getWorld().spawnParticle(Particle.CLOUD, loc, 1, 0, 0, 0, 0);
+			current_loc.getWorld().spawnParticle(Particle.SNOWFLAKE, loc, 1, 0, 0, 0, 0);
 		}
-		current_loc.getWorld().playSound(current_loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2);
 		
 		
 		// 주변 적 찾기
@@ -177,7 +192,7 @@ class IceBolt_Bolt implements Runnable
 				damage = ar.getDamage();
 				
 				LivingEntity target = (LivingEntity)e;
-				Damage.Attack(player, target, damage, DamageType.MAGIC, DamageType.PROJECTILE, DamageType.SKILL);
+				Damage.SkillAttack(cast, target, damage, DamageType.MAGIC, DamageType.PROJECTILE, DamageType.SKILL);
 				loc.getWorld().playSound(current_loc, Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1, 2);
 				loc.getWorld().playSound(current_loc, Sound.BLOCK_GLASS_BREAK, 2, 0.7f);
 				current_loc.getWorld().spawnParticle(Particle.SNOWBALL, loc, 1, 0, 0, 0, 0);

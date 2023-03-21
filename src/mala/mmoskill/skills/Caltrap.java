@@ -78,12 +78,13 @@ class Caltrap_Handler extends MalaLocationSkill implements Listener
 		if (Weapon_Identify.Hold_MMO_Whip(data.getPlayer()))
 			isSlow = true;
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
-				new Caltrap_Skill(data.getPlayer(), _data.getTarget(), damage, duration, isSlow));
+				new Caltrap_Skill(cast, data.getPlayer(), _data.getTarget(), damage, duration, isSlow));
 	}
 }
 
 class Caltrap_Skill implements Runnable
 {
+	SkillMetadata cast;
 	Player player;
 	Location skillLoc;
 	double damage;
@@ -93,8 +94,9 @@ class Caltrap_Skill implements Runnable
 	Particle particle;
 	Set<Location> locations;
 	
-	public Caltrap_Skill(Player _player, Location _skillLoc, double _damage, double _duration, boolean _isSlow)
+	public Caltrap_Skill(SkillMetadata cast, Player _player, Location _skillLoc, double _damage, double _duration, boolean _isSlow)
 	{
+		this.cast = cast;
 		player = _player; skillLoc = _skillLoc; damage = _damage; duration = _duration; isSlow = _isSlow;
 
 		locations = new HashSet<>();
@@ -131,7 +133,7 @@ class Caltrap_Skill implements Runnable
 				{
 					if (entity.isOnGround())
 					{
-						Damage.Attack(player, (LivingEntity)entity, damage, DamageType.PHYSICAL, DamageType.SKILL);
+						Damage.SkillAttack(cast, (LivingEntity)entity, damage, DamageType.PHYSICAL, DamageType.SKILL);
 						if (isSlow)
 							Buff_Manager.Increase_Buff((LivingEntity)entity, PotionEffectType.SLOW, 0, 100, null, 0);
 					}

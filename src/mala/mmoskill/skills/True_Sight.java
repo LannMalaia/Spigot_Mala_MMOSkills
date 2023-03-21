@@ -53,9 +53,10 @@ class True_Sight_Handler extends MalaSkill implements Listener
 	public void whenCast(SimpleSkillResult _data, SkillMetadata cast)
 	{
 		PlayerData data = MMOCore.plugin.dataProvider.getDataManager().get(cast.getCaster().getPlayer());
-		
-		data.getPlayer().getWorld().playSound(data.getPlayer().getEyeLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 1.5f);
-		data.getPlayer().getWorld().playSound(data.getPlayer().getEyeLocation(), Sound.ENTITY_GENERIC_EXPLODE, 2, 1.5f);
+
+		data.getPlayer().getWorld().playSound(data.getPlayer().getEyeLocation(), "mala_sound:skill.flash", 2, 1.5f);
+//		data.getPlayer().getWorld().playSound(data.getPlayer().getEyeLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 1.5f);
+//		data.getPlayer().getWorld().playSound(data.getPlayer().getEyeLocation(), Sound.ENTITY_GENERIC_EXPLODE, 2, 1.5f);
 		
 		int ticks = (int)(cast.getModifier("second") * 20.0);
 		double distance = cast.getModifier("distance");

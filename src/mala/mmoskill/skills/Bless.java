@@ -90,7 +90,8 @@ class Bless_Handler extends MalaSkill implements Listener
 		Buff_Manager.Add_Buff(_target, PotionEffectType.INCREASE_DAMAGE, _amp, _ticks, PotionEffectType.WEAKNESS);
 		Buff_Manager.Add_Buff(_target, PotionEffectType.REGENERATION, _amp, _ticks, PotionEffectType.POISON);
 	
-		_target.getWorld().playSound(_target.getEyeLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
+		_target.getWorld().playSound(_target.getEyeLocation(), "mala_sound:skill.reinforce1", 1, 1);
+//		_target.getWorld().playSound(_target.getEyeLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
 		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new BlessEffect(_target, 10));
 		
 		

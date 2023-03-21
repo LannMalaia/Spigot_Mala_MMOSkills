@@ -29,6 +29,7 @@ import laylia_core.main.Damage;
 import mala.mmoskill.manager.ArrowSkill_Manager;
 import mala.mmoskill.manager.ArrowTip;
 import mala.mmoskill.manager.Not_Skill;
+import mala.mmoskill.util.AttackUtil;
 import mala.mmoskill.util.Buff_Manager;
 import mala.mmoskill.util.Hitbox;
 import mala.mmoskill.util.MalaSkill;
@@ -270,7 +271,7 @@ class CounterLine_Skill implements Runnable
 			if (Damage.Is_Possible(player, e) && e instanceof LivingEntity)
 			{
 				LivingEntity le = (LivingEntity)e;
-				Damage.Attack(player, le, damage, DamageType.PHYSICAL, DamageType.WEAPON);
+				AttackUtil.attack(player, le, damage, null, DamageType.PHYSICAL, DamageType.WEAPON);
 				if (isWeakness)
 					Buff_Manager.Increase_Buff(le, PotionEffectType.WEAKNESS, 0, 100, PotionEffectType.INCREASE_DAMAGE, 0);
 				Vector gap = le.getLocation().subtract(player.getLocation()).toVector().normalize();

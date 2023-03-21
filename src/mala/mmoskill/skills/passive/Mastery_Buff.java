@@ -16,7 +16,7 @@ public class Mastery_Buff extends RegisteredSkill
 	public Mastery_Buff()
 	{	
 		super(new Mastery_Buff_Handler(), MalaMMO_Skill.plugin.getConfig());
-		addModifier("percent", new LinearValue(15, 5));
+		addModifier("percent", new LinearValue(3, 3));
 	}
 	public static double Get_Mult(Player player)
 	{

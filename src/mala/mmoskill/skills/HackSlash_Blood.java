@@ -19,6 +19,7 @@ import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import laylia_core.main.Damage;
+import mala.mmoskill.util.AttackUtil;
 import mala.mmoskill.util.CooldownFixer;
 import mala.mmoskill.util.MalaSkill;
 import mala.mmoskill.util.Skill_Util;
@@ -54,7 +55,7 @@ class HackSlash_Blood_Handler extends MalaSkill implements Listener
 	public HackSlash_Blood_Handler()
 	{
 		super(	"HACKSLASH_BLOOD",
-				"ÇÍºû °Ë¹«",
+				"Ç÷Çâ°Ë¹«",
 				Material.RED_NETHER_BRICKS,
 				MsgTBL.NeedSkills,
 				"&e ³­µµÁú - lv.30",
@@ -172,7 +173,8 @@ class HackSlash_Blood_Handler extends MalaSkill implements Listener
 					LivingEntity temp2 = (LivingEntity)temp;
 					
 					temp2.setNoDamageTicks(0);
-					Damage.Attack(player, temp2, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
+					AttackUtil.attack(player, temp2, damage, null,
+							DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
 				}
 			}
 			

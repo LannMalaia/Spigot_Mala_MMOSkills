@@ -79,12 +79,14 @@ class Slash_Handler extends MalaSkill implements Listener
 			distance *= 1.3;
 		
 		data.getPlayer().swingMainHand();
-		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin, new SlashSkill(data.getPlayer(), distance, damage));
+		Bukkit.getScheduler().runTask(MalaMMO_Skill.plugin,
+				new SlashSkill(cast, data.getPlayer(), distance, damage));
 	}
 
 	// 검술 베어가르기  효과
 	class SlashSkill implements Runnable
 	{
+		SkillMetadata cast;
 		Player player;
 		double damage;
 		double distance;
@@ -92,8 +94,9 @@ class Slash_Handler extends MalaSkill implements Listener
 		
 		double angle = 180;
 		
-		public SlashSkill(Player p, double _distance, double _damage)
+		public SlashSkill(SkillMetadata cast, Player p, double _distance, double _damage)
 		{
+			this.cast = cast;
 			player = p;
 			distance = _distance;
 			damage = _damage;
@@ -161,7 +164,7 @@ class Slash_Handler extends MalaSkill implements Listener
 				
 				Draw_Entity_Effect((LivingEntity)en);
 				
-				Damage.Attack(player, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
+				Damage.SkillAttack(cast, (LivingEntity)en, damage, DamageType.WEAPON, DamageType.SKILL, DamageType.PHYSICAL);
 			}
 		}
 		void Draw_Entity_Effect(LivingEntity _target)

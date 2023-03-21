@@ -16,13 +16,17 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import io.lumine.mythic.bukkit.events.MythicConditionLoadEvent;
 import io.lumine.mythic.bukkit.events.MythicDropLoadEvent;
 import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
 import io.lumine.mythic.bukkit.events.MythicReloadedEvent;
+import io.lumine.mythic.lib.api.event.AttackEvent;
 import io.lumine.mythic.lib.api.event.PlayerAttackEvent;
+import io.lumine.mythic.lib.damage.DamageType;
+import io.lumine.mythic.lib.damage.MeleeAttackMetadata;
 import mala.mmoskill.util.Weapon_Identify;
 import net.Indyuce.mmocore.MMOCore;
 import net.Indyuce.mmocore.api.player.PlayerData;
@@ -45,21 +49,6 @@ public class Master_Event implements Listener
 					Bukkit.getScheduler().runTaskLater(MalaMMO_Skill.plugin, this, 1);
 			}
 		});
-	}
-	@EventHandler
-	public void whenReload(MythicMechanicLoadEvent event)
-	{
-//		Bukkit.getConsoleSender().sendMessage("§b메카닉 읽음");
-	}
-	@EventHandler
-	public void whenReload(MythicConditionLoadEvent event)
-	{
-//		Bukkit.getConsoleSender().sendMessage("§b컨디션 읽음");
-	}
-	@EventHandler
-	public void whenReload(MythicDropLoadEvent event)
-	{
-//		Bukkit.getConsoleSender().sendMessage("§b드랍템 읽음");
 	}
 	
 	@EventHandler
@@ -98,19 +87,24 @@ public class Master_Event implements Listener
 		}
 	}
 
-	@EventHandler
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.MONITOR)
 	public void when_attack(PlayerAttackEvent event)
 	{
-		if (Weapon_Identify.Weapon_Restrict(event.getPlayer()))
+		Player player = event.getAttacker().getPlayer();
+		if (event.getAttack() instanceof MeleeAttackMetadata)
+			event.setCancelled(false);
+		
+		if (Weapon_Identify.Weapon_Restrict(player))
 		{
-			event.getPlayer().sendMessage("§c[ 피해를 줄 수 없습니다. 주 슬롯과 보조 슬롯을 확인하세요. ]");
+			player.sendMessage("§c[ 피해를 줄 수 없습니다. 주 슬롯과 보조 슬롯을 확인하세요. ]");
 			event.setCancelled(true);
 		}
 		
-		if (event.getPlayer().hasPermission("*"))
+		
+		if (player.isOp())
 			return;
 		
-		if (event.getPlayer().isFlying())
+		if (player.isFlying())
 			event.setCancelled(true);
 	}
 

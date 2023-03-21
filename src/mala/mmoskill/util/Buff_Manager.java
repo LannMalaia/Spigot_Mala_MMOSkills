@@ -113,18 +113,18 @@ public class Buff_Manager
 		for (PotionEffect pes : _target.getActivePotionEffects())
 		{
 			PotionEffectType pet = pes.getType();
-			if (pet == PotionEffectType.BAD_OMEN ||
-				pet == PotionEffectType.BLINDNESS ||
-				pet == PotionEffectType.CONFUSION ||
-				pet == PotionEffectType.GLOWING ||
-				pet == PotionEffectType.HUNGER ||
-				pet == PotionEffectType.LEVITATION ||
-				pet == PotionEffectType.POISON ||
-				pet == PotionEffectType.SLOW ||
-				pet == PotionEffectType.SLOW_DIGGING ||
-				pet == PotionEffectType.UNLUCK ||
-				pet == PotionEffectType.WEAKNESS ||
-				pet == PotionEffectType.WITHER)
+			if (pet.equals(PotionEffectType.BAD_OMEN) ||
+				pet.equals(PotionEffectType.BLINDNESS) ||
+				pet.equals(PotionEffectType.CONFUSION) ||
+				pet.equals(PotionEffectType.GLOWING) ||
+				pet.equals(PotionEffectType.HUNGER) ||
+				pet.equals(PotionEffectType.LEVITATION) ||
+				pet.equals(PotionEffectType.POISON) ||
+				pet.equals(PotionEffectType.SLOW) ||
+				pet.equals(PotionEffectType.SLOW_DIGGING) ||
+				pet.equals(PotionEffectType.UNLUCK) ||
+				pet.equals(PotionEffectType.WEAKNESS) ||
+				pet.equals(PotionEffectType.WITHER))
 				result++;
 		}
 		return result;
@@ -209,6 +209,44 @@ public class Buff_Manager
 				_target.addPotionEffect(new PotionEffect(_type, duration, amp));
 				if(_target instanceof Player)
 					Buff_Title_Sender.Add_Msg((Player)_target, Get_EffectName(_type), (amp + 1));
+			}
+		}
+	}
+	/**
+	 * 모든 좋은 버프의 시간을 증가
+	 * @param _target
+	 * @param _ticks
+	 * @param _max_ticks
+	 */
+	public static void Increase_All_Good_Buff(LivingEntity _target, int _ticks, int _max_ticks)
+	{
+		for (PotionEffect pes : _target.getActivePotionEffects())
+		{
+			PotionEffectType pet = pes.getType();
+			if (pet.equals(PotionEffectType.ABSORPTION) ||
+				pet.equals(PotionEffectType.CONDUIT_POWER) ||
+				pet.equals(PotionEffectType.DAMAGE_RESISTANCE) ||
+				pet.equals(PotionEffectType.DOLPHINS_GRACE) ||
+				pet.equals(PotionEffectType.FAST_DIGGING) ||
+				pet.equals(PotionEffectType.FIRE_RESISTANCE) ||
+				pet.equals(PotionEffectType.HEALTH_BOOST) ||
+				pet.equals(PotionEffectType.HERO_OF_THE_VILLAGE) ||
+				pet.equals(PotionEffectType.INCREASE_DAMAGE) ||
+				pet.equals(PotionEffectType.INVISIBILITY) ||
+				pet.equals(PotionEffectType.JUMP) ||
+				pet.equals(PotionEffectType.LUCK) ||
+				pet.equals(PotionEffectType.NIGHT_VISION) ||
+				pet.equals(PotionEffectType.REGENERATION) ||
+				pet.equals(PotionEffectType.SATURATION) ||
+				pet.equals(PotionEffectType.SLOW_FALLING) ||
+				pet.equals(PotionEffectType.SPEED) ||
+				pet.equals(PotionEffectType.WATER_BREATHING)) {
+
+				int tick = pes.getDuration() + _ticks;
+				if (tick < _max_ticks) {
+					_target.removePotionEffect(pet);
+					_target.addPotionEffect(new PotionEffect(pet, tick, pes.getAmplifier()));
+				}
 			}
 		}
 	}
